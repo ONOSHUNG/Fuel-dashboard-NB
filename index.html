@@ -210,8 +210,15 @@ tbody tr:hover td { background:#f9fafb; }
 .pin-err-msg { font-size:12px;color:#dc2626;min-height:18px; }
 
 /* ── MAP PAGE ── */
-.map-page { display:flex; height:calc(100vh - 160px); min-height:500px; }
-.map-sidebar { width:300px; flex-shrink:0; background:#fff; border-right:1px solid #e5e7eb; display:flex; flex-direction:column; overflow:hidden; }
+.map-page { display:flex; height:calc(100vh - 160px); min-height:500px; position:relative; }
+.map-sidebar { width:300px; flex-shrink:0; background:#fff; border-right:1px solid #e5e7eb; display:flex; flex-direction:column; overflow:hidden; transition:width .25s,opacity .25s; }
+.map-sidebar.collapsed { width:0; opacity:0; pointer-events:none; border:none; }
+.sidebar-toggle { position:absolute; top:10px; left:10px; z-index:1000; width:32px; height:32px; border-radius:50%; background:#1a2235; color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,.25); transition:left .25s; font-size:14px; }
+.sidebar-toggle.open { left:308px; }
+@media(max-width:640px){ .map-sidebar { width:100%; position:absolute; top:0; left:0; height:100%; z-index:500; } .map-sidebar.collapsed { width:0; } .sidebar-toggle.open { left:8px; } }
+.gmaps-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:8px; background:#4285f4; color:#fff; border:none; border-radius:8px; font-family:'Noto Sans Thai',sans-serif; font-size:13px; font-weight:600; cursor:pointer; margin-top:8px; text-decoration:none; transition:background .12s; }
+.gmaps-btn:hover { background:#3367d6; }
+.gmaps-btn svg { width:16px; height:16px; fill:#fff; flex-shrink:0; }
 .map-sidebar-header { padding:.85rem 1rem; background:#1a2235; color:#fff; }
 .map-sidebar-title { font-family:'Kanit',sans-serif; font-size:14px; font-weight:600; }
 .map-sidebar-sub { font-size:11px; color:#94a3b8; margin-top:2px; }
@@ -288,9 +295,11 @@ tbody tr:hover td { background:#f9fafb; }
 
 <!-- ===================== MAP ===================== -->
 <div class="page" id="page-map">
-<div class="map-page">
+<div class="map-page" id="map-page-wrap">
+  <!-- TOGGLE BUTTON -->
+  <button class="sidebar-toggle open" id="sidebar-toggle-btn" onclick="toggleMapSidebar()" title="พับ/ขยาย">◀</button>
   <!-- SIDEBAR -->
-  <div class="map-sidebar">
+  <div class="map-sidebar" id="map-sidebar">
     <div class="map-sidebar-header">
       <div class="map-sidebar-title">🗺️ แผนที่สถานการณ์น้ำมัน</div>
       <div class="map-sidebar-sub">จ.หนองบัวลำภู · คลิกที่สถานีเพื่อดูรายละเอียด</div>
@@ -1072,6 +1081,16 @@ const STATUS_COLOR = { ok:'#059669', watch:'#d97706', danger:'#dc2626', none:'#9
 const STATUS_BG    = { ok:'#d1fae5', watch:'#fef3c7', danger:'#fee2e2', none:'#f3f4f6' };
 
 let mapInst = null;
+let sidebarOpen = true;
+function toggleMapSidebar(){
+  sidebarOpen=!sidebarOpen;
+  const sb=document.getElementById('map-sidebar');
+  const btn=document.getElementById('sidebar-toggle-btn');
+  sb.classList.toggle('collapsed',!sidebarOpen);
+  btn.classList.toggle('open',sidebarOpen);
+  btn.textContent=sidebarOpen?'◀':'▶';
+  setTimeout(()=>{if(mapInst)mapInst.invalidateSize();},300);
+}
 let mapMarkers = {};
 let activeMarkerId = null;
 
@@ -1140,6 +1159,7 @@ function buildPopupHtml(s){
   const si=getStationStatus(s.id);
   const color=STATUS_COLOR[si.key], bg=STATUS_BG[si.key];
   const bc=pct>=50?'#059669':pct>=25?'#d97706':'#dc2626';
+  const coords=STATION_COORDS[s.id]||[0,0];
   return `<div class="map-popup">
     <div class="map-popup-head" style="background:${bg};border-bottom:1px solid #e5e7eb">
       <div>
@@ -1160,6 +1180,10 @@ function buildPopupHtml(s){
         </div>`).join('')}
       </div>
       <div style="font-size:10px;color:#9ca3af;margin-top:6px;text-align:right">อัปเดต: ${d.updated_at||'—'}</div>
+      <a class="gmaps-btn" href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}&travelmode=driving" target="_blank">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        นำทางด้วย Google Maps
+      </a>
     </div>
   </div>`;
 }
