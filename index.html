@@ -265,6 +265,19 @@ tbody tr:hover td { background:#f9fafb; }
 .leaflet-popup-content { margin:0 !important; }
 .leaflet-popup-tip-container { display:none; }
 
+
+/* ── TREND PAGE ── */
+.trend-page { padding:1.1rem 1.5rem; }
+.trend-slicer { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-bottom:1.1rem; }
+.trend-slicer .slicer-grp select { min-width:170px; }
+.trend-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; margin-bottom:1.1rem; }
+.trend-card { background:#fff; border-radius:12px; border:1px solid #e5e7eb; padding:1rem 1.1rem; }
+.trend-card-title { font-size:11px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:.07em; margin-bottom:.65rem; display:flex; align-items:center; gap:6px; }
+.trend-card-dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+.trend-main-card { background:#fff; border-radius:12px; border:1px solid #e5e7eb; padding:1rem 1.1rem; margin-bottom:1.1rem; }
+.trend-loading { text-align:center; padding:2rem; color:#9ca3af; font-size:13px; }
+.trend-empty { text-align:center; padding:2.5rem; color:#9ca3af; font-size:13px; }
+
 </style>
 </head>
 <body>
@@ -298,6 +311,7 @@ tbody tr:hover td { background:#f9fafb; }
 <div class="nav-tabs">
   <div class="nav-tab active"  onclick="switchTab('dashboard')">แดชบอร์ดสรุป</div>
   <div class="nav-tab"         onclick="switchTab('map')">🗺️ แผนที่สถานการณ์</div>
+  <div class="nav-tab"         onclick="switchTab('trend')">📈 แนวโน้มรายวัน</div>
   <div class="nav-tab" id="tab-input"    onclick="switchTab('input')"    style="display:none">กรอกข้อมูล</div>
   <div class="nav-tab" id="tab-settings" onclick="switchTab('settings')" style="display:none">ตั้งค่า</div>
 </div>
@@ -341,6 +355,45 @@ tbody tr:hover td { background:#f9fafb; }
   <div class="map-container">
     <div id="map"></div>
   </div>
+</div>
+</div>
+
+
+<!-- ===================== TREND ===================== -->
+<div class="page" id="page-trend">
+<div class="trend-page">
+
+  <div class="trend-slicer">
+    <div class="slicer-grp">
+      <span class="slicer-label">เดือน</span>
+      <select id="trend-month-sel" onchange="loadTrend()"></select>
+    </div>
+    <div class="slicer-grp">
+      <span class="slicer-label">อำเภอ</span>
+      <select id="trend-amphoe-sel" onchange="renderTrendCharts()">
+        <option value="all">ทุกอำเภอ</option>
+      </select>
+    </div>
+    <div class="slicer-grp">
+      <span class="slicer-label">สถานีบริการ</span>
+      <select id="trend-station-sel" onchange="renderTrendCharts()">
+        <option value="all">ทุกสถานี</option>
+      </select>
+    </div>
+    <button class="btn btn-warn" onclick="loadTrend()" style="margin-left:auto">↓ โหลดข้อมูล</button>
+  </div>
+
+  <!-- กราฟรวมทุกประเภท -->
+  <div class="trend-main-card">
+    <div class="card-title">📈 ปริมาณน้ำมันคงเหลือรายวัน (ลิตร) — แยกตามประเภท</div>
+    <div id="trend-main-wrap" style="position:relative;width:100%;height:360px">
+      <div class="trend-loading">เลือกเดือนแล้วกด "โหลดข้อมูล"</div>
+    </div>
+  </div>
+
+  <!-- กราฟแยกแต่ละประเภท -->
+  <div class="trend-cards" id="trend-sub-cards"></div>
+
 </div>
 </div>
 
@@ -603,7 +656,7 @@ function loadData(){
 function persistData(){localStorage.setItem(LS_DATA,JSON.stringify(DATA));}
 let DATA=loadData();
 
-const DEFAULT_GS_URL='https://script.google.com/macros/s/AKfycbzxlHlk-n1FOJcQuU48Rj1z-G6MKBLSpEbiA21TIykwh6S7wZlfVpYGUx3AlihH69LHqA/exec';
+const DEFAULT_GS_URL='https://script.google.com/macros/s/AKfycbyGsO6e53iYL6S5GykurNc2KZTLTwJMXLFqgrh6-UZSZcp10DVNExamoFIdqJy-8P5EvA/exec';
 let GS_URL=localStorage.getItem(LS_URL)||DEFAULT_GS_URL;
 let AUTO_INTERVAL=parseInt(localStorage.getItem(LS_INTERVAL)||'60');
 let refreshTimer=null;
@@ -690,14 +743,14 @@ function switchTab(tab){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+tab).classList.add('active');
-  const tabs=['dashboard','map','input','settings'];
+  const tabs=['dashboard','map','trend','input','settings'];
   const idx=tabs.indexOf(tab);
   const navTabs=document.querySelectorAll('.nav-tab');
   if(navTabs[idx])navTabs[idx].classList.add('active');
-  // mode-btn highlight for map
   document.getElementById('mode-btn-map').classList.toggle('active', tab==='map');
   if(tab==='dashboard'){renderDashboard(); document.getElementById('mode-btn-view').classList.add('active');}
   if(tab==='map'){initMap();}
+  if(tab==='trend'){initTrend();}
   if(tab==='input'){buildInputSlicers();loadStationPanel();}
 }
 
@@ -1294,6 +1347,183 @@ function highlightSidebarItem(sid){
   const list=document.getElementById('map-station-list');
   const active=list.querySelector('.map-st-item.active');
   if(active)active.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+
+/* ─────────────────────────────────────────
+   TREND — กราฟแนวโน้มรายวัน
+───────────────────────────────────────── */
+let trendData = []; // raw history rows
+let trendChartMain = null;
+let trendChartSubs = {};
+
+function initTrend(){
+  // สร้าง month selector ถ้ายังไม่มี
+  const sel = document.getElementById('trend-month-sel');
+  if(sel.options.length === 0){
+    const now = new Date();
+    const curYear = now.getFullYear();
+    const months = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+                    'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+    // เดือนปัจจุบัน → ธันวาคม ของปีนี้
+    for(let m = now.getMonth(); m < 12; m++){
+      const val = curYear+'-'+String(m+1).padStart(2,'0');
+      const o = document.createElement('option');
+      o.value = val;
+      o.textContent = months[m]+' '+( curYear+543 );
+      sel.appendChild(o);
+    }
+  }
+  // amphoe filter
+  const af = document.getElementById('trend-amphoe-sel');
+  if(af.options.length === 1){
+    GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;af.appendChild(o);});
+  }
+  af.onchange = ()=>{ buildTrendStationFilter(); renderTrendCharts(); };
+  buildTrendStationFilter();
+  if(trendData.length === 0) loadTrend();
+}
+
+function buildTrendStationFilter(){
+  const amphoeId = document.getElementById('trend-amphoe-sel').value;
+  const ss = document.getElementById('trend-station-sel');
+  const prev = ss.value;
+  ss.innerHTML = '<option value="all">ทุกสถานี</option>';
+  const pool = amphoeId==='all' ? GROUPS.flatMap(g=>g.stations) : GROUPS.find(g=>g.id===amphoeId)?.stations||[];
+  pool.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});
+  if([...ss.options].some(o=>o.value===prev)) ss.value=prev;
+}
+
+function loadTrend(){
+  if(!GS_URL){ document.getElementById('trend-main-wrap').innerHTML='<div class="trend-empty">กรุณาตั้งค่า Google Sheet URL ก่อน</div>'; return; }
+  const month = document.getElementById('trend-month-sel').value;
+  document.getElementById('trend-main-wrap').innerHTML='<div class="trend-loading">⏳ กำลังโหลดข้อมูล...</div>';
+  gsGet(GS_URL+'?action=history&month='+month)
+    .then(json=>{
+      if(!json.ok) throw new Error(json.message||'error');
+      trendData = json.data||[];
+      renderTrendCharts();
+    })
+    .catch(err=>{
+      document.getElementById('trend-main-wrap').innerHTML=`<div class="trend-empty">โหลดไม่สำเร็จ: ${err.message}</div>`;
+    });
+}
+
+function renderTrendCharts(){
+  if(trendData.length===0){
+    document.getElementById('trend-main-wrap').innerHTML='<div class="trend-empty">ยังไม่มีข้อมูลประวัติในเดือนนี้</div>';
+    document.getElementById('trend-sub-cards').innerHTML='';
+    return;
+  }
+
+  const amphoeId = document.getElementById('trend-amphoe-sel').value;
+  const stationId = document.getElementById('trend-station-sel').value;
+
+  // filter
+  let rows = trendData;
+  if(amphoeId!=='all'){
+    const sids = new Set((GROUPS.find(g=>g.id===amphoeId)?.stations||[]).map(s=>s.id));
+    rows = rows.filter(r=>sids.has(r.station_id));
+  }
+  if(stationId!=='all') rows = rows.filter(r=>r.station_id===stationId);
+
+  if(rows.length===0){
+    document.getElementById('trend-main-wrap').innerHTML='<div class="trend-empty">ไม่มีข้อมูลตามเงื่อนไขที่เลือก</div>';
+    document.getElementById('trend-sub-cards').innerHTML='';
+    return;
+  }
+
+  // รวมค่าแต่ละวัน (sum ทุกสถานีที่เลือก)
+  const dayMap = {};
+  rows.forEach(r=>{
+    if(!dayMap[r.date]) dayMap[r.date]={diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0};
+    FUELS.forEach(f=>{ dayMap[r.date][f.key]+=(r[f.key]||0); });
+  });
+
+  const days = Object.keys(dayMap).sort();
+  const dayLabels = days.map(d=>{
+    const parts=d.split('-'); // YYYY-MM-DD
+    return parts[2]+'/'+parts[1]; // DD/MM
+  });
+
+  // ── กราฟรวม ──
+  const wrap = document.getElementById('trend-main-wrap');
+  wrap.innerHTML = '<canvas id="trend-main-chart"></canvas>';
+  wrap.style.height = '360px';
+  if(trendChartMain){ trendChartMain.destroy(); trendChartMain=null; }
+  trendChartMain = new Chart(document.getElementById('trend-main-chart'),{
+    type:'line',
+    data:{
+      labels: dayLabels,
+      datasets: FUELS.map(f=>({
+        label: f.label,
+        data: days.map(d=>dayMap[d][f.key]||0),
+        borderColor: f.color,
+        backgroundColor: f.color+'22',
+        borderWidth: 2.5,
+        pointRadius: days.length>20?2:4,
+        pointHoverRadius: 6,
+        tension: 0.3,
+        fill: false,
+      }))
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:true,position:'top',labels:{font:{size:11,family:'Noto Sans Thai'},boxWidth:12,padding:10}},
+        tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+ctx.parsed.y.toLocaleString()+' ล.'}}
+      },
+      scales:{
+        x:{ticks:{font:{size:10,family:'Noto Sans Thai'},maxRotation:45},grid:{color:'#f3f4f6'}},
+        y:{ticks:{callback:v=>v.toLocaleString(),font:{size:10}},grid:{color:'#f3f4f6'},beginAtZero:true}
+      }
+    }
+  });
+
+  // ── กราฟย่อยแต่ละประเภท ──
+  const subCards = document.getElementById('trend-sub-cards');
+  subCards.innerHTML = FUELS.map(f=>`
+    <div class="trend-card">
+      <div class="trend-card-title">
+        <div class="trend-card-dot" style="background:${f.color}"></div>${f.label}
+      </div>
+      <div style="position:relative;height:140px"><canvas id="trend-sub-${f.key}"></canvas></div>
+    </div>`).join('');
+
+  // destroy old sub charts
+  Object.values(trendChartSubs).forEach(c=>c.destroy());
+  trendChartSubs = {};
+
+  FUELS.forEach(f=>{
+    const vals = days.map(d=>dayMap[d][f.key]||0);
+    const max = Math.max(...vals);
+    trendChartSubs[f.key] = new Chart(document.getElementById('trend-sub-'+f.key),{
+      type:'line',
+      data:{
+        labels:dayLabels,
+        datasets:[{
+          data: vals,
+          borderColor: f.color,
+          backgroundColor: f.color+'33',
+          borderWidth:2,
+          pointRadius: days.length>20?1:3,
+          tension:0.3,
+          fill:true,
+        }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:ctx=>ctx.parsed.y.toLocaleString()+' ล.'}}
+        },
+        scales:{
+          x:{ticks:{font:{size:9},maxRotation:45,maxTicksLimit:8},grid:{display:false}},
+          y:{ticks:{callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v,font:{size:9}},beginAtZero:true,grid:{color:'#f9fafb'}}
+        }
+      }
+    });
+  });
 }
 
 /* ─────────────────────────────────────────
