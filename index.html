@@ -28,6 +28,7 @@ body { font-family: 'Noto Sans Thai', sans-serif; background: #f0f2f5; color: #1
 .sync-ing { background:#fef3c7;color:#92400e; } .sync-ing .sync-dot { background:#f59e0b; animation:blink .7s infinite; }
 .sync-none{ background:#f3f4f6;color:#6b7280; } .sync-none .sync-dot{ background:#9ca3af; }
 @keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
+@keyframes markerPulse { 0%{transform:scale(1);opacity:.7} 70%{transform:scale(1.9);opacity:0} 100%{transform:scale(1.9);opacity:0} }
 
 /* ── MODE TOGGLE ── */
 .mode-toggle { display:flex; gap:8px; padding:.6rem 1.5rem; background:#fff; border-bottom:1px solid #e5e7eb; align-items:center; flex-wrap:wrap; }
@@ -211,12 +212,21 @@ tbody tr:hover td { background:#f9fafb; }
 
 /* ── MAP PAGE ── */
 .map-page { display:flex; height:calc(100vh - 160px); min-height:500px; position:relative; }
-.map-sidebar { width:300px; flex-shrink:0; background:#fff; border-right:1px solid #e5e7eb; display:flex; flex-direction:column; overflow:hidden; transition:width .25s,opacity .25s; }
-.map-sidebar.collapsed { width:0; opacity:0; pointer-events:none; border:none; }
-.sidebar-toggle { position:absolute; top:10px; left:10px; z-index:1000; width:32px; height:32px; border-radius:50%; background:#1a2235; color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,.25); transition:left .25s; font-size:14px; }
-.sidebar-toggle.open { left:308px; }
-@media(max-width:640px){ .map-sidebar { width:100%; position:absolute; top:0; left:0; height:100%; z-index:500; } .map-sidebar.collapsed { width:0; } .sidebar-toggle.open { left:8px; } }
-.gmaps-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:8px; background:#4285f4; color:#fff; border:none; border-radius:8px; font-family:'Noto Sans Thai',sans-serif; font-size:13px; font-weight:600; cursor:pointer; margin-top:8px; text-decoration:none; transition:background .12s; }
+.map-sidebar { width:300px; flex-shrink:0; background:#fff; border-right:1px solid #e5e7eb; display:flex; flex-direction:column; overflow:hidden; transition:width .3s ease,opacity .3s ease; }
+.map-sidebar.collapsed { width:0 !important; opacity:0; pointer-events:none; border:none; }
+/* ปุ่มพับอยู่ใน header */
+.map-sidebar-header { padding:.75rem 1rem; background:#1a2235; color:#fff; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.map-sidebar-header-text { flex:1; min-width:0; }
+.sidebar-collapse-btn { width:30px; height:30px; border-radius:8px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.2); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; transition:background .12s; }
+.sidebar-collapse-btn:hover { background:rgba(255,255,255,.25); }
+/* ปุ่มเปิด sidebar เมื่อพับแล้ว — ลอยบนแผนที่ */
+.sidebar-open-fab { position:absolute; top:10px; left:10px; z-index:1000; display:none; width:40px; height:40px; border-radius:10px; background:#1a2235; color:#fff; border:none; cursor:pointer; align-items:center; justify-content:center; font-size:18px; box-shadow:0 3px 10px rgba(0,0,0,.3); }
+.sidebar-open-fab.show { display:flex; }
+@media(max-width:700px){
+  .map-sidebar { width:100% !important; position:absolute; top:0; left:0; height:100%; z-index:500; }
+  .map-sidebar.collapsed { width:0 !important; }
+}
+.gmaps-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:9px; background:#4285f4; color:#fff; border:none; border-radius:8px; font-family:'Noto Sans Thai',sans-serif; font-size:13px; font-weight:600; cursor:pointer; margin-top:8px; text-decoration:none; transition:background .12s; }
 .gmaps-btn:hover { background:#3367d6; }
 .gmaps-btn svg { width:16px; height:16px; fill:#fff; flex-shrink:0; }
 .map-sidebar-header { padding:.85rem 1rem; background:#1a2235; color:#fff; }
@@ -296,13 +306,16 @@ tbody tr:hover td { background:#f9fafb; }
 <!-- ===================== MAP ===================== -->
 <div class="page" id="page-map">
 <div class="map-page" id="map-page-wrap">
-  <!-- TOGGLE BUTTON -->
-  <button class="sidebar-toggle open" id="sidebar-toggle-btn" onclick="toggleMapSidebar()" title="พับ/ขยาย">◀</button>
+  <!-- FAB เปิด sidebar (แสดงเมื่อพับแล้ว) -->
+  <button class="sidebar-open-fab" id="sidebar-open-fab" onclick="toggleMapSidebar()" title="เปิดรายการสถานี">☰</button>
   <!-- SIDEBAR -->
   <div class="map-sidebar" id="map-sidebar">
     <div class="map-sidebar-header">
-      <div class="map-sidebar-title">🗺️ แผนที่สถานการณ์น้ำมัน</div>
-      <div class="map-sidebar-sub">จ.หนองบัวลำภู · คลิกที่สถานีเพื่อดูรายละเอียด</div>
+      <div class="map-sidebar-header-text">
+        <div class="map-sidebar-title">🗺️ แผนที่สถานการณ์น้ำมัน</div>
+        <div class="map-sidebar-sub">จ.หนองบัวลำภู · คลิกสถานีเพื่อดูรายละเอียด</div>
+      </div>
+      <button class="sidebar-collapse-btn" onclick="toggleMapSidebar()" title="พับรายการ">✕</button>
     </div>
     <div class="map-filter">
       <select id="map-amphoe-filter" onchange="filterMapStations()">
@@ -1085,11 +1098,10 @@ let sidebarOpen = true;
 function toggleMapSidebar(){
   sidebarOpen=!sidebarOpen;
   const sb=document.getElementById('map-sidebar');
-  const btn=document.getElementById('sidebar-toggle-btn');
+  const fab=document.getElementById('sidebar-open-fab');
   sb.classList.toggle('collapsed',!sidebarOpen);
-  btn.classList.toggle('open',sidebarOpen);
-  btn.textContent=sidebarOpen?'◀':'▶';
-  setTimeout(()=>{if(mapInst)mapInst.invalidateSize();},300);
+  fab.classList.toggle('show',!sidebarOpen);
+  setTimeout(()=>{if(mapInst)mapInst.invalidateSize();},320);
 }
 let mapMarkers = {};
 let activeMarkerId = null;
@@ -1127,28 +1139,52 @@ function initMap(){
   setTimeout(()=>mapInst.invalidateSize(),200);
 }
 
+function buildMarkerHtml(si, pct){
+  const cfg = {
+    ok:     { bg:'#059669', ring:'#34d399', shadow:'rgba(5,150,105,.45)', pulse:false, icon:'⛽' },
+    watch:  { bg:'#d97706', ring:'#fbbf24', shadow:'rgba(217,119,6,.45)',  pulse:true,  icon:'⚠️' },
+    danger: { bg:'#dc2626', ring:'#f87171', shadow:'rgba(220,38,38,.55)',  pulse:true,  icon:'🚨' },
+    none:   { bg:'#6b7280', ring:'#d1d5db', shadow:'rgba(0,0,0,.2)',       pulse:false, icon:'—'  },
+  }[si.key];
+
+  const hasData = pct > 0;
+  const label   = hasData ? pct+'%' : '?';
+  const size    = si.key==='danger' ? 48 : si.key==='none' ? 34 : 42;
+  const fontSize= size <= 34 ? 9 : size <= 42 ? 11 : 12;
+  const pulse   = cfg.pulse && hasData ? `
+    <div style="position:absolute;inset:-6px;border-radius:50%;border:3px solid ${cfg.ring};
+      opacity:.6;animation:markerPulse 1.6s ease-out infinite;pointer-events:none"></div>` : '';
+
+  return `<div style="position:relative;width:${size}px;height:${size}px;">
+    ${pulse}
+    <div style="
+      width:${size}px;height:${size}px;border-radius:50%;
+      background:linear-gradient(145deg,${cfg.ring},${cfg.bg});
+      border:3px solid #fff;
+      box-shadow:0 3px 12px ${cfg.shadow},0 1px 4px rgba(0,0,0,.2);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      font-family:'Kanit',sans-serif;color:#fff;cursor:pointer;gap:0;
+    ">
+      ${si.key!=='none'&&hasData ? `<div style="font-size:${fontSize}px;font-weight:800;line-height:1.1">${label}</div>` : `<div style="font-size:14px;line-height:1">${cfg.icon}</div>`}
+    </div>
+  </div>`;
+}
+
 function createMarker(s){
   const coords=STATION_COORDS[s.id];
   if(!coords)return null;
   const si=getStationStatus(s.id);
   const pct=getStationPct(s.id);
-  const color=STATUS_COLOR[si.key];
+  const size = si.key==='danger'?48:si.key==='none'?34:42;
 
   const icon=L.divIcon({
     className:'',
-    html:`<div style="
-      width:36px;height:36px;border-radius:50%;
-      background:${color};border:3px solid #fff;
-      box-shadow:0 2px 8px rgba(0,0,0,.3);
-      display:flex;align-items:center;justify-content:center;
-      font-family:'Kanit',sans-serif;font-size:10px;font-weight:700;color:#fff;
-      cursor:pointer;
-    ">${pct>0?pct+'%':'—'}</div>`,
-    iconSize:[36,36],iconAnchor:[18,18],popupAnchor:[0,-20]
+    html: buildMarkerHtml(si, pct),
+    iconSize:[size,size],iconAnchor:[size/2,size/2],popupAnchor:[0,-size/2-4]
   });
 
   const marker=L.marker(coords,{icon}).addTo(mapInst);
-  marker.bindPopup(buildPopupHtml(s),{maxWidth:260,className:'fuel-popup'});
+  marker.bindPopup(buildPopupHtml(s),{maxWidth:270,className:'fuel-popup'});
   marker.on('click',()=>highlightSidebarItem(s.id));
   return marker;
 }
@@ -1193,17 +1229,11 @@ function updateMapMarkers(){
     if(!mapMarkers[s.id])return;
     const si=getStationStatus(s.id);
     const pct=getStationPct(s.id);
-    const color=STATUS_COLOR[si.key];
+    const size=si.key==='danger'?48:si.key==='none'?34:42;
     const icon=L.divIcon({
       className:'',
-      html:`<div style="
-        width:36px;height:36px;border-radius:50%;
-        background:${color};border:3px solid #fff;
-        box-shadow:0 2px 8px rgba(0,0,0,.3);
-        display:flex;align-items:center;justify-content:center;
-        font-family:'Kanit',sans-serif;font-size:10px;font-weight:700;color:#fff;cursor:pointer;
-      ">${pct>0?pct+'%':'—'}</div>`,
-      iconSize:[36,36],iconAnchor:[18,18],popupAnchor:[0,-20]
+      html: buildMarkerHtml(si, pct),
+      iconSize:[size,size],iconAnchor:[size/2,size/2],popupAnchor:[0,-size/2-4]
     });
     mapMarkers[s.id].setIcon(icon);
     mapMarkers[s.id].setPopupContent(buildPopupHtml(s));
