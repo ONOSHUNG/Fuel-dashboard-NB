@@ -71,23 +71,45 @@ body { font-family: 'Noto Sans Thai', sans-serif; background: #f0f2f5; color: #1
 .slicer-grp select { border:1px solid #d1d5db; border-radius:6px; padding:5px 10px; font-size:13px; font-family:'Noto Sans Thai',sans-serif; background:#fff; color:#1a1a1a; cursor:pointer; min-width:165px; }
 .slicer-grp select:focus { outline:none; border-color:#3b82f6; }
 .main { padding:1.1rem 1.5rem; }
-.kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; margin-bottom:1.1rem; }
-.kpi-card { background:#fff; border-radius:12px; padding:1rem 1.1rem; border:1px solid #e5e7eb; }
-.kpi-label { font-size:11px; color:#6b7280; margin-bottom:6px; font-weight:600; display:flex; align-items:center; gap:5px; }
-.kpi-label .kpi-icon { font-size:14px; line-height:1; }
-.kpi-value { font-family:'Kanit',sans-serif; font-size:26px; font-weight:700; color:#1a1a1a; line-height:1.15; }
-.kpi-unit  { font-size:11px; color:#9ca3af; margin-top:2px; }
+.kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:12px; margin-bottom:1.1rem; }
+.kpi-card { background:#fff; border-radius:14px; padding:1.1rem 1.2rem 1rem; border:1px solid #e5e7eb; box-shadow:0 2px 8px rgba(0,0,0,.06); transition:transform .15s,box-shadow .15s; }
+.kpi-card:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.1); }
+.kpi-label { font-size:11px; color:#6b7280; margin-bottom:8px; font-weight:700; display:flex; align-items:center; gap:5px; text-transform:uppercase; letter-spacing:.04em; }
+.kpi-label .kpi-icon { font-size:15px; line-height:1; }
+.kpi-value { font-family:'Kanit',sans-serif; font-size:28px; font-weight:800; color:#1a1a1a; line-height:1.1; }
+.kpi-unit  { font-size:11px; color:#9ca3af; margin-top:4px; font-weight:500; }
+/* 4 การ์ดสรุป — gradient พื้นหลัง */
+.kpi-card-summary { background:linear-gradient(135deg,#1a2235 0%,#243550 100%) !important; border-color:#1a2235 !important; }
+.kpi-card-summary .kpi-label { color:rgba(255,255,255,.6); }
+.kpi-card-summary .kpi-value { color:#fff; }
+.kpi-card-summary .kpi-unit  { color:rgba(255,255,255,.45); }
+.kpi-card-summary .kpi-icon-wrap { width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:18px; }
 .kpi-ok{color:#059669} .kpi-warn{color:#d97706} .kpi-danger{color:#dc2626}
 .status-bar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:1.1rem; }
-.status-summary { display:flex; align-items:center; gap:10px; background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:.75rem 1rem; flex:1; min-width:130px; }
-.status-summary-icon { width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
-.status-summary-icon svg { width:20px;height:20px; }
-.status-summary-label { font-size:11px;color:#6b7280;font-weight:500;margin-bottom:1px; }
-.status-summary-count { font-family:'Kanit',sans-serif;font-size:24px;font-weight:600;line-height:1.1; }
-.ss-ok    .status-summary-icon{background:#d1fae5} .ss-ok    .status-summary-icon svg{fill:#059669} .ss-ok    .status-summary-count{color:#059669}
-.ss-watch .status-summary-icon{background:#fef3c7} .ss-watch .status-summary-icon svg{fill:#d97706} .ss-watch .status-summary-count{color:#d97706}
-.ss-danger.status-summary-icon{background:#fee2e2} .ss-danger .status-summary-icon svg{fill:#dc2626} .ss-danger.status-summary-count{color:#dc2626}
-.ss-none  .status-summary-icon{background:#f3f4f6} .ss-none  .status-summary-icon svg{fill:#9ca3af} .ss-none  .status-summary-count{color:#9ca3af}
+.status-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:1.1rem; }
+.status-summary { display:flex; align-items:center; gap:12px; border-radius:14px; padding:.85rem 1.1rem; flex:1; min-width:140px; box-shadow:0 2px 8px rgba(0,0,0,.08); border:none; transition:transform .15s; }
+.status-summary:hover { transform:translateY(-2px); }
+.status-summary-icon { width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,.25); }
+.status-summary-icon svg { width:22px;height:22px; }
+.status-summary-label { font-size:11px;font-weight:700;margin-bottom:2px;opacity:.85;text-transform:uppercase;letter-spacing:.04em; }
+.status-summary-count { font-family:'Kanit',sans-serif;font-size:26px;font-weight:800;line-height:1; }
+/* สี background ต่างกันชัดเจน */
+.ss-ok     { background:linear-gradient(135deg,#059669,#10b981); color:#fff; }
+.ss-ok     .status-summary-icon svg { fill:#fff; }
+.ss-ok     .status-summary-label { color:rgba(255,255,255,.8); }
+.ss-ok     .status-summary-count { color:#fff; }
+.ss-watch  { background:linear-gradient(135deg,#d97706,#f59e0b); color:#fff; }
+.ss-watch  .status-summary-icon svg { fill:#fff; }
+.ss-watch  .status-summary-label { color:rgba(255,255,255,.8); }
+.ss-watch  .status-summary-count { color:#fff; }
+.ss-danger { background:linear-gradient(135deg,#dc2626,#ef4444); color:#fff; }
+.ss-danger .status-summary-icon svg { fill:#fff; }
+.ss-danger .status-summary-label { color:rgba(255,255,255,.8); }
+.ss-danger .status-summary-count { color:#fff; }
+.ss-none   { background:linear-gradient(135deg,#6b7280,#9ca3af); color:#fff; }
+.ss-none   .status-summary-icon svg { fill:#fff; }
+.ss-none   .status-summary-label { color:rgba(255,255,255,.8); }
+.ss-none   .status-summary-count { color:#fff; }
 .charts-row { display:grid; grid-template-columns:1fr 320px; gap:11px; margin-bottom:1.1rem; }
 @media(max-width:860px){.charts-row{grid-template-columns:1fr}}
 .card { background:#fff; border-radius:12px; border:1px solid #e5e7eb; padding:1rem 1.1rem; }
@@ -1089,16 +1111,63 @@ function renderKPI(stations){
   const totalCap=stations.reduce((a,s)=>a+(getSD(s.id).cap||0),0),totalRemain=stations.reduce((a,s)=>a+getRemain(s.id),0);
   const pct=totalCap>0?Math.round(totalRemain/totalCap*100):0,si=getStatusInfo(pct,totalRemain),pc=pct>=50?'kpi-ok':pct>=25?'kpi-warn':'kpi-danger';
   document.getElementById('kpi-row').innerHTML=`
-    <div class="kpi-card"><div class="kpi-label"><span class="kpi-icon">📍</span>สถานีที่แสดง</div><div class="kpi-value">${stations.length}</div><div class="kpi-unit">แห่ง</div></div>
-    <div class="kpi-card"><div class="kpi-label"><span class="kpi-icon">🏭</span>ความจุรวม</div><div class="kpi-value">${totalCap.toLocaleString()}</div><div class="kpi-unit">ลิตร</div></div>
-    <div class="kpi-card"><div class="kpi-label"><span class="kpi-icon">🛢️</span>น้ำมันคงเหลือรวม</div><div class="kpi-value">${totalRemain.toLocaleString()}</div><div class="kpi-unit">ลิตร</div></div>
-    <div class="kpi-card"><div class="kpi-label"><span class="kpi-icon">📊</span>% คงเหลือ</div><div class="kpi-value ${pc}" style="display:flex;align-items:center;gap:6px">${pct}%<span class="status-pill ${si.pillClass}" style="font-size:10px;padding:2px 7px"><svg class="pill-icon" viewBox="0 0 24 24" style="fill:currentColor">${si.icon.replace(/<\/?svg[^>]*>/g,'')}</svg>${si.label}</span></div><div class="kpi-unit">จากความจุ</div></div>
-    <div class="kpi-card" style="border-top:3px solid #F59E0B"><div class="kpi-label"><span class="kpi-icon">⛽</span>ดีเซล B7</div><div class="kpi-value" style="color:#D97706">${sumFuel(stations,'diesel').toLocaleString()}</div><div class="kpi-unit">ลิตร</div></div>
-    <div class="kpi-card" style="border-top:3px solid #3B82F6"><div class="kpi-label"><span class="kpi-icon">🔵</span>แก๊สโซฮอล์ 91</div><div class="kpi-value" style="color:#2563EB">${sumFuel(stations,'g91').toLocaleString()}</div><div class="kpi-unit">ลิตร</div></div>
-    <div class="kpi-card" style="border-top:3px solid #10B981"><div class="kpi-label"><span class="kpi-icon">🟢</span>แก๊สโซฮอล์ 95</div><div class="kpi-value" style="color:#059669">${sumFuel(stations,'g95').toLocaleString()}</div><div class="kpi-unit">ลิตร</div></div>
-    <div class="kpi-card" style="border-top:3px solid #8B5CF6"><div class="kpi-label"><span class="kpi-icon">🟣</span>E20</div><div class="kpi-value" style="color:#7C3AED">${sumFuel(stations,'e20').toLocaleString()}</div><div class="kpi-unit">ลิตร</div></div>
-    <div class="kpi-card" style="border-top:3px solid #EC4899"><div class="kpi-label"><span class="kpi-icon">💎</span>95 พรีเมี่ยม</div><div class="kpi-value" style="color:#DB2777">${sumFuel(stations,'g95p').toLocaleString()}</div><div class="kpi-unit">ลิตร</div></div>
-    <div class="kpi-card" style="border-top:3px solid #EF4444"><div class="kpi-label"><span class="kpi-icon">🔴</span>พาวเวอร์ดีเซล</div><div class="kpi-value" style="color:#DC2626">${sumFuel(stations,'power').toLocaleString()}</div><div class="kpi-unit">ลิตร</div></div>`;
+    <div class="kpi-card kpi-card-summary">
+      <div class="kpi-icon-wrap">📍</div>
+      <div class="kpi-label">สถานีที่แสดง</div>
+      <div class="kpi-value">${stations.length}</div>
+      <div class="kpi-unit">แห่ง</div>
+    </div>
+    <div class="kpi-card kpi-card-summary">
+      <div class="kpi-icon-wrap">🏭</div>
+      <div class="kpi-label">ความจุรวม</div>
+      <div class="kpi-value">${totalCap.toLocaleString()}</div>
+      <div class="kpi-unit">ลิตร</div>
+    </div>
+    <div class="kpi-card kpi-card-summary">
+      <div class="kpi-icon-wrap">🛢️</div>
+      <div class="kpi-label">น้ำมันคงเหลือรวม</div>
+      <div class="kpi-value">${totalRemain.toLocaleString()}</div>
+      <div class="kpi-unit">ลิตร</div>
+    </div>
+    <div class="kpi-card kpi-card-summary">
+      <div class="kpi-icon-wrap">📊</div>
+      <div class="kpi-label">ร้อยละที่คงเหลือ</div>
+      <div class="kpi-value" style="display:flex;align-items:center;gap:8px">
+        <span style="color:${pct>=50?'#34d399':pct>=25?'#fbbf24':'#f87171'}">${pct}%</span>
+        <span class="status-pill ${si.pillClass}" style="font-size:10px;padding:2px 8px"><svg class="pill-icon" viewBox="0 0 24 24" style="fill:currentColor">${si.icon.replace(/<\/?svg[^>]*>/g,'')}</svg>${si.label}</span>
+      </div>
+      <div class="kpi-unit">จากความจุ</div>
+    </div>
+    <div class="kpi-card" style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1.5px solid #F59E0B">
+      <div class="kpi-label" style="color:#92400e"><span class="kpi-icon">⛽</span>ดีเซล B7</div>
+      <div class="kpi-value" style="color:#b45309">${sumFuel(stations,'diesel').toLocaleString()}</div>
+      <div class="kpi-unit" style="color:#d97706">ลิตร</div>
+    </div>
+    <div class="kpi-card" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid #3B82F6">
+      <div class="kpi-label" style="color:#1e40af"><span class="kpi-icon">🔵</span>แก๊สโซฮอล์ 91</div>
+      <div class="kpi-value" style="color:#1d4ed8">${sumFuel(stations,'g91').toLocaleString()}</div>
+      <div class="kpi-unit" style="color:#3b82f6">ลิตร</div>
+    </div>
+    <div class="kpi-card" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #10B981">
+      <div class="kpi-label" style="color:#065f46"><span class="kpi-icon">🟢</span>แก๊สโซฮอล์ 95</div>
+      <div class="kpi-value" style="color:#047857">${sumFuel(stations,'g95').toLocaleString()}</div>
+      <div class="kpi-unit" style="color:#059669">ลิตร</div>
+    </div>
+    <div class="kpi-card" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #8B5CF6">
+      <div class="kpi-label" style="color:#4c1d95"><span class="kpi-icon">🟣</span>E20</div>
+      <div class="kpi-value" style="color:#6d28d9">${sumFuel(stations,'e20').toLocaleString()}</div>
+      <div class="kpi-unit" style="color:#7c3aed">ลิตร</div>
+    </div>
+    <div class="kpi-card" style="background:linear-gradient(135deg,#fdf2f8,#fce7f3);border:1.5px solid #EC4899">
+      <div class="kpi-label" style="color:#831843"><span class="kpi-icon">💎</span>95 พรีเมี่ยม</div>
+      <div class="kpi-value" style="color:#be185d">${sumFuel(stations,'g95p').toLocaleString()}</div>
+      <div class="kpi-unit" style="color:#ec4899">ลิตร</div>
+    </div>
+    <div class="kpi-card" style="background:linear-gradient(135deg,#fff1f2,#fee2e2);border:1.5px solid #EF4444">
+      <div class="kpi-label" style="color:#7f1d1d"><span class="kpi-icon">🔴</span>พาวเวอร์ดีเซล</div>
+      <div class="kpi-value" style="color:#b91c1c">${sumFuel(stations,'power').toLocaleString()}</div>
+      <div class="kpi-unit" style="color:#ef4444">ลิตร</div>
+    </div>`;
   renderStatusBar(stations);
 }
 function renderLegend(){document.getElementById('fuel-legend').innerHTML=FUELS.map(f=>`<span><span class="leg-dot" style="background:${f.color}"></span>${f.label}</span>`).join('');}
