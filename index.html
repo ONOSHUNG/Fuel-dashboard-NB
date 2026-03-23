@@ -342,6 +342,15 @@ tbody tr:hover td { background:#f9fafb; }
         <option value="danger">วิกฤต (&lt;25%)</option>
         <option value="none">ไม่มีข้อมูล</option>
       </select>
+      <select id="map-fuel-filter" onchange="filterMapStations()">
+        <option value="all">ทุกประเภทน้ำมัน</option>
+        <option value="diesel">⛽ ดีเซล B7</option>
+        <option value="g91">🔵 แก๊สโซฮอล์ 91</option>
+        <option value="g95">🟢 แก๊สโซฮอล์ 95</option>
+        <option value="e20">🟣 E20</option>
+        <option value="g95p">💎 95 พรีเมี่ยม</option>
+        <option value="power">🔴 พาวเวอร์ดีเซล</option>
+      </select>
     </div>
     <div class="map-legend">
       <div class="map-leg-item"><div class="map-leg-dot" style="background:#059669"></div>ปกติ</div>
@@ -1295,16 +1304,60 @@ function updateMapMarkers(){
   renderMapSidebar();
 }
 
+// คำนวณ % ของประเภทน้ำมันที่เลือก เทียบกับความจุ
+function getFuelPct(sid, fuelKey){
+  const d=getSD(sid);
+  const cap=d.cap||0;
+  if(cap===0) return 0;
+  return Math.round((d[fuelKey]||0)/cap*100);
+}
+
+function getActiveFuelKey(){
+  return document.getElementById('map-fuel-filter')?.value||'all';
+}
+
+// override getStationStatus ให้รองรับ fuel filter
+function getEffectiveStatus(sid){
+  const fuelKey=getActiveFuelKey();
+  if(fuelKey==='all') return getStationStatus(sid);
+  const d=getSD(sid);
+  const cap=d.cap||0;
+  const val=d[fuelKey]||0;
+  const remain=val; // ดูเฉพาะประเภทนั้น
+  const pct=cap>0?Math.round(val/cap*100):0;
+  return getStatusInfo(pct, remain);
+}
+
+function getEffectivePct(sid){
+  const fuelKey=getActiveFuelKey();
+  if(fuelKey==='all') return getStationPct(sid);
+  return getFuelPct(sid, fuelKey);
+}
+
 function filterMapStations(){
   const amphoe=document.getElementById('map-amphoe-filter').value;
   const status=document.getElementById('map-status-filter').value;
+  const fuelKey=getActiveFuelKey();
   ALL_STATIONS.forEach(s=>{
     if(!mapMarkers[s.id])return;
-    const si=getStationStatus(s.id);
+    const si=getEffectiveStatus(s.id);
     const inAmphoe=amphoe==='all'||GROUPS.find(g=>g.id===amphoe)?.stations.some(x=>x.id===s.id);
     const inStatus=status==='all'||si.key===status;
     if(inAmphoe&&inStatus){ mapMarkers[s.id].addTo(mapInst); }
     else { mapInst.removeLayer(mapMarkers[s.id]); }
+  });
+  // อัปเดต marker icon ตามประเภทที่เลือก
+  ALL_STATIONS.forEach(s=>{
+    if(!mapMarkers[s.id])return;
+    const si=getEffectiveStatus(s.id);
+    const pct=getEffectivePct(s.id);
+    const size=si.key==='danger'?48:si.key==='none'?34:42;
+    const icon=L.divIcon({
+      className:'',
+      html: buildMarkerHtml(si, pct),
+      iconSize:[size,size],iconAnchor:[size/2,size/2],popupAnchor:[0,-size/2-4]
+    });
+    mapMarkers[s.id].setIcon(icon);
   });
   renderMapSidebar();
 }
@@ -1312,18 +1365,30 @@ function filterMapStations(){
 function renderMapSidebar(){
   const amphoe=document.getElementById('map-amphoe-filter').value;
   const status=document.getElementById('map-status-filter').value;
+  const fuelKey=getActiveFuelKey();
+  const fuelLabel=fuelKey!=='all'?(FUELS.find(f=>f.key===fuelKey)?.label||''):'';
   const list=document.getElementById('map-station-list');
   let html='';
+  // header แสดงว่ากรองประเภทไหน
+  if(fuelKey!=='all'){
+    const fuelObj=FUELS.find(f=>f.key===fuelKey);
+    html+=`<div style="padding:6px 1rem;background:#f9fafb;border-bottom:1px solid #e5e7eb;font-size:11px;color:#6b7280;display:flex;align-items:center;gap:5px">
+      <span style="width:8px;height:8px;border-radius:2px;background:${fuelObj?.color||'#999'};display:inline-block"></span>
+      แสดงเฉพาะ: <strong style="color:#1a1a1a">${fuelLabel}</strong>
+    </div>`;
+  }
   GROUPS.forEach(g=>{
     if(amphoe!=='all'&&g.id!==amphoe)return;
     g.stations.forEach(s=>{
-      const si=getStationStatus(s.id);
+      const si=getEffectiveStatus(s.id);
       if(status!=='all'&&si.key!==status)return;
-      const pct=getStationPct(s.id);
+      const pct=getEffectivePct(s.id);
       const color=STATUS_COLOR[si.key];
+      const d=getSD(s.id);
+      const subVal=fuelKey!=='all'?`<span style="font-size:10px;color:#9ca3af">${(d[fuelKey]||0).toLocaleString()} ล.</span>`:'';
       html+=`<div class="map-st-item${s.id===activeMarkerId?' active':''}" onclick="focusStation('${s.id}')">
         <div class="map-st-dot" style="background:${color}"></div>
-        <div class="map-st-name">${s.name}<br><span style="font-size:10px;color:#9ca3af">${g.amphoe}</span></div>
+        <div class="map-st-name">${s.name}<br><span style="font-size:10px;color:#9ca3af">${g.amphoe}</span>${subVal?'<br>'+subVal:''}</div>
         <div class="map-st-pct" style="color:${color}">${pct>0?pct+'%':'—'}</div>
       </div>`;
     });
