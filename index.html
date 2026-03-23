@@ -1176,7 +1176,8 @@ function initMap(){
     GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;af.appendChild(o);});
   }
   if(!mapInst){
-    mapInst=L.map('map',{center:[17.1,102.35],zoom:10,zoomControl:true});
+    mapInst=L.map('map',{center:[17.1,102.35],zoom:10,zoomControl:false});
+    L.control.zoom({position:'bottomright'}).addTo(mapInst);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
       attribution:'© OpenStreetMap',maxZoom:19
     }).addTo(mapInst);
