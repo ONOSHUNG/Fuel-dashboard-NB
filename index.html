@@ -1402,12 +1402,45 @@ function loadTrend(){
   gsGet(GS_URL+'?action=history&month='+month)
     .then(json=>{
       if(!json.ok) throw new Error(json.message||'error');
-      trendData = json.data||[];
+      // รองรับทั้ง array (Code.gs ใหม่) และ object (Code.gs เก่า — fallback แปลงเอง)
+      if(Array.isArray(json.data)){
+        trendData = json.data;
+      } else if(json.data && typeof json.data === 'object'){
+        // Code.gs เก่า ส่ง FuelData มา (object) → แปลงเป็น array รายวันจาก localStorage
+        trendData = buildTrendFromLocal(month);
+      } else {
+        trendData = [];
+      }
       renderTrendCharts();
     })
     .catch(err=>{
       document.getElementById('trend-main-wrap').innerHTML=`<div class="trend-empty">โหลดไม่สำเร็จ: ${err.message}</div>`;
     });
+}
+
+// fallback: สร้างข้อมูล trend จาก localStorage (กรณี Code.gs ยังไม่มี history)
+function buildTrendFromLocal(month){
+  // ดึง DATA ปัจจุบัน แล้วสร้าง "วันนี้" เป็น 1 จุด
+  const today = new Date();
+  const ymd = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  const ym = ymd.substring(0,7);
+  if(month && ym !== month) return [];
+  const rows = [];
+  GROUPS.forEach(g=>{
+    g.stations.forEach(s=>{
+      const d = getSD(s.id);
+      const total = FUELS.reduce((a,f)=>a+(d[f.key]||0),0);
+      if(total===0 && !d.updated_at) return;
+      rows.push({
+        date: ymd, station_id: s.id, station_name: s.name,
+        amphoe: g.amphoe, brand: s.brand, cap: d.cap||0,
+        diesel:d.diesel||0, g91:d.g91||0, g95:d.g95||0,
+        e20:d.e20||0, g95p:d.g95p||0, power:d.power||0,
+        total, pct: d.cap>0?Math.round(total/d.cap*100):0
+      });
+    });
+  });
+  return rows;
 }
 
 function renderTrendCharts(){
