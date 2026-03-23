@@ -6,6 +6,8 @@
 <title>สถานการณ์น้ำมัน จ.หนองบัวลำภู</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Noto Sans Thai', sans-serif; background: #f0f2f5; color: #1a1a1a; font-size: 14px; line-height: 1.6; }
@@ -142,6 +144,8 @@ tbody tr:hover td { background:#f9fafb; }
 .fuel-cell-input:focus { outline:none; border-color:#3b82f6; background:#eff6ff; box-shadow:0 0 0 3px rgba(59,130,246,.12); }
 .fuel-cell-input.dirty { border-color:#f59e0b; background:#fffbeb; }
 .fuel-cell-input.saving { border-color:#10b981; background:#f0fdf4; }
+.fuel-cell-input.over-cap { border-color:#dc2626 !important; background:#fff1f2 !important; box-shadow:0 0 0 3px rgba(220,38,38,.12) !important; }
+.cap-over-warn { font-size:11px; color:#dc2626; font-weight:600; display:flex; align-items:center; gap:4px; padding:4px 8px; background:#fff1f2; border-radius:6px; border:1px solid #fecaca; }
 
 .fuel-cell-unit { font-size:11px; color:#9ca3af; text-align:right; margin-top:-2px; }
 
@@ -204,6 +208,46 @@ tbody tr:hover td { background:#f9fafb; }
 .pin-btn:active { background:#d1d5db;transform:scale(.97); }
 .pin-btn.del { font-size:14px;color:#6b7280; }
 .pin-err-msg { font-size:12px;color:#dc2626;min-height:18px; }
+
+/* ── MAP PAGE ── */
+.map-page { display:flex; height:calc(100vh - 160px); min-height:500px; }
+.map-sidebar { width:300px; flex-shrink:0; background:#fff; border-right:1px solid #e5e7eb; display:flex; flex-direction:column; overflow:hidden; }
+.map-sidebar-header { padding:.85rem 1rem; background:#1a2235; color:#fff; }
+.map-sidebar-title { font-family:'Kanit',sans-serif; font-size:14px; font-weight:600; }
+.map-sidebar-sub { font-size:11px; color:#94a3b8; margin-top:2px; }
+.map-filter { padding:.65rem 1rem; border-bottom:1px solid #e5e7eb; display:flex; flex-direction:column; gap:6px; }
+.map-filter select { border:1px solid #d1d5db; border-radius:6px; padding:4px 8px; font-size:12px; font-family:'Noto Sans Thai',sans-serif; background:#fff; }
+.map-legend { display:flex; gap:8px; flex-wrap:wrap; padding:.5rem 1rem; border-bottom:1px solid #e5e7eb; }
+.map-leg-item { display:flex; align-items:center; gap:4px; font-size:11px; color:#6b7280; }
+.map-leg-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.map-station-list { flex:1; overflow-y:auto; }
+.map-st-item { padding:.6rem 1rem; border-bottom:1px solid #f3f4f6; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background .1s; }
+.map-st-item:hover { background:#f9fafb; }
+.map-st-item.active { background:#eff6ff; border-left:3px solid #3b82f6; }
+.map-st-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; border:2px solid rgba(0,0,0,.1); }
+.map-st-name { font-size:12px; color:#374151; font-weight:500; flex:1; }
+.map-st-pct { font-family:'Kanit',sans-serif; font-size:12px; font-weight:600; }
+.map-container { flex:1; position:relative; background:#e8f0e8; }
+#map { width:100%; height:100%; }
+/* Custom marker */
+.marker-wrap { position:relative; }
+.marker-pin { width:32px; height:32px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); display:flex; align-items:center; justify-content:center; border:2px solid rgba(255,255,255,.8); box-shadow:0 2px 8px rgba(0,0,0,.25); cursor:pointer; }
+.marker-pin-inner { transform:rotate(45deg); font-size:10px; font-family:'Kanit',sans-serif; font-weight:700; color:#fff; }
+/* Popup */
+.map-popup { background:#fff; border-radius:12px; padding:0; min-width:220px; box-shadow:0 4px 20px rgba(0,0,0,.15); overflow:hidden; }
+.map-popup-head { padding:.65rem .9rem; display:flex; align-items:center; justify-content:space-between; }
+.map-popup-name { font-family:'Kanit',sans-serif; font-size:14px; font-weight:600; color:#1a2235; }
+.map-popup-body { padding:.5rem .9rem .75rem; }
+.map-popup-row { display:flex; justify-content:space-between; align-items:center; padding:3px 0; font-size:12px; }
+.map-popup-label { color:#6b7280; display:flex; align-items:center; gap:4px; }
+.map-popup-val { font-family:'Kanit',sans-serif; font-weight:600; color:#1a2235; }
+.map-popup-bar { height:5px; background:#e5e7eb; border-radius:3px; margin:.4rem 0; overflow:hidden; }
+.map-popup-bar-fill { height:100%; border-radius:3px; }
+.map-popup-pct { font-family:'Kanit',sans-serif; font-size:18px; font-weight:700; text-align:center; padding:.3rem 0 .5rem; }
+.leaflet-popup-content-wrapper { padding:0 !important; border-radius:12px !important; box-shadow:0 4px 20px rgba(0,0,0,.15) !important; }
+.leaflet-popup-content { margin:0 !important; }
+.leaflet-popup-tip-container { display:none; }
+
 </style>
 </head>
 <body>
@@ -227,6 +271,7 @@ tbody tr:hover td { background:#f9fafb; }
 <div class="mode-toggle">
   <span class="mode-label">โหมด:</span>
   <button class="mode-btn active" id="mode-btn-view"     onclick="setMode('view',true)">👁 ดูข้อมูล</button>
+  <button class="mode-btn"        id="mode-btn-map"      onclick="switchTab('map')">🗺️ แผนที่</button>
   <button class="mode-btn"        id="mode-btn-edit"     onclick="setMode('edit',false)">✏️ กรอกข้อมูล</button>
   <button class="mode-btn"        id="mode-btn-settings" onclick="requestSettings()">⚙️ ตั้งค่า</button>
   <span class="mode-hint" id="mode-hint">โหมดดูข้อมูล — ดึงข้อมูลจาก Sheet อัตโนมัติ</span>
@@ -235,8 +280,46 @@ tbody tr:hover td { background:#f9fafb; }
 <!-- NAV -->
 <div class="nav-tabs">
   <div class="nav-tab active"  onclick="switchTab('dashboard')">แดชบอร์ดสรุป</div>
+  <div class="nav-tab"         onclick="switchTab('map')">🗺️ แผนที่สถานการณ์</div>
   <div class="nav-tab" id="tab-input"    onclick="switchTab('input')"    style="display:none">กรอกข้อมูล</div>
   <div class="nav-tab" id="tab-settings" onclick="switchTab('settings')" style="display:none">ตั้งค่า</div>
+</div>
+
+
+<!-- ===================== MAP ===================== -->
+<div class="page" id="page-map">
+<div class="map-page">
+  <!-- SIDEBAR -->
+  <div class="map-sidebar">
+    <div class="map-sidebar-header">
+      <div class="map-sidebar-title">🗺️ แผนที่สถานการณ์น้ำมัน</div>
+      <div class="map-sidebar-sub">จ.หนองบัวลำภู · คลิกที่สถานีเพื่อดูรายละเอียด</div>
+    </div>
+    <div class="map-filter">
+      <select id="map-amphoe-filter" onchange="filterMapStations()">
+        <option value="all">ทุกอำเภอ</option>
+      </select>
+      <select id="map-status-filter" onchange="filterMapStations()">
+        <option value="all">ทุกสถานะ</option>
+        <option value="ok">ปกติ (≥50%)</option>
+        <option value="watch">เฝ้าระวัง (25-49%)</option>
+        <option value="danger">วิกฤต (&lt;25%)</option>
+        <option value="none">ไม่มีข้อมูล</option>
+      </select>
+    </div>
+    <div class="map-legend">
+      <div class="map-leg-item"><div class="map-leg-dot" style="background:#059669"></div>ปกติ</div>
+      <div class="map-leg-item"><div class="map-leg-dot" style="background:#d97706"></div>เฝ้าระวัง</div>
+      <div class="map-leg-item"><div class="map-leg-dot" style="background:#dc2626"></div>วิกฤต</div>
+      <div class="map-leg-item"><div class="map-leg-dot" style="background:#9ca3af"></div>ไม่มีข้อมูล</div>
+    </div>
+    <div class="map-station-list" id="map-station-list"></div>
+  </div>
+  <!-- MAP -->
+  <div class="map-container">
+    <div id="map"></div>
+  </div>
+</div>
 </div>
 
 <!-- ===================== SETTINGS ===================== -->
@@ -585,11 +668,14 @@ function switchTab(tab){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+tab).classList.add('active');
-  const tabs=['dashboard','input','settings'];
+  const tabs=['dashboard','map','input','settings'];
   const idx=tabs.indexOf(tab);
   const navTabs=document.querySelectorAll('.nav-tab');
   if(navTabs[idx])navTabs[idx].classList.add('active');
-  if(tab==='dashboard')renderDashboard();
+  // mode-btn highlight for map
+  document.getElementById('mode-btn-map').classList.toggle('active', tab==='map');
+  if(tab==='dashboard'){renderDashboard(); document.getElementById('mode-btn-view').classList.add('active');}
+  if(tab==='map'){initMap();}
   if(tab==='input'){buildInputSlicers();loadStationPanel();}
 }
 
@@ -625,6 +711,7 @@ function pullFromSheet(){
       setSyncBadge('ok','ซิงค์แล้ว '+now);
       if(!onInputPage) showToast('ดึงข้อมูลจาก Sheet สำเร็จ ✓');
       renderDashboard();
+      if(mapInst)updateMapMarkers();
     })
     .catch(err=>{setSyncBadge('err','ดึงข้อมูลไม่สำเร็จ');showToast('Error: '+err.message,3000,true);})
     .finally(()=>setButtons(false));
@@ -772,11 +859,35 @@ function loadStationPanel(silent){
 
 function onFuelCellInput(fkey,el){
   if(!currentSid)return;
-  DATA[currentSid][fkey]=parseFloat(el.value)||0;
-  el.classList.add('dirty');
-  const remain=getRemain(currentSid);
+  const val=parseFloat(el.value)||0;
   const cap=DATA[currentSid].cap||0;
-  updateCapBar(remain,cap);
+
+  // คำนวณรวมน้ำมันชนิดอื่น (ไม่รวมชนิดที่กำลังกรอก)
+  const otherSum=FUELS.filter(f=>f.key!==fkey).reduce((a,f)=>a+(DATA[currentSid][f.key]||0),0);
+  const newTotal=otherSum+val;
+
+  if(cap>0 && newTotal>cap){
+    // เกินความจุ — จำกัดค่าไม่ให้เกิน
+    const maxAllowed=Math.max(0, cap-otherSum);
+    el.value=maxAllowed;
+    DATA[currentSid][fkey]=maxAllowed;
+    el.classList.add('over-cap');
+    // แสดง toast แจ้งเตือน
+    showCapWarn(fkey, cap, newTotal);
+    setTimeout(()=>el.classList.remove('over-cap'),1500);
+  } else {
+    DATA[currentSid][fkey]=val;
+    el.classList.remove('over-cap');
+    el.classList.add('dirty');
+  }
+
+  const remain=getRemain(currentSid);
+  updateCapBar(remain, cap);
+}
+
+function showCapWarn(fkey, cap, tried){
+  const fuelName=FUELS.find(f=>f.key===fkey)?.label||fkey;
+  showToast(`⚠️ ${fuelName}: รวมเกินความจุ ${cap.toLocaleString()} ล. — ปรับค่าอัตโนมัติ`, 2500, true);
 }
 function onCapChange(){
   if(!currentSid)return;
@@ -787,17 +898,26 @@ function onCapChange(){
 }
 function updateCapBar(remain,cap){
   const pct=cap>0?Math.round(remain/cap*100):0;
-  const bc=pct>=50?'#10B981':pct>=25?'#F59E0B':'#EF4444';
+  const over=pct>100;
+  const bc=over?'#dc2626':pct>=50?'#10B981':pct>=25?'#F59E0B':'#EF4444';
   document.getElementById('sp-bar-fill').style.width=Math.min(pct,100)+'%';
   document.getElementById('sp-bar-fill').style.background=bc;
   document.getElementById('sp-pct').textContent=cap>0?pct+'%':'—';
   document.getElementById('sp-pct').style.color=cap>0?bc:'#9ca3af';
   document.getElementById('sp-remain-val').textContent=remain.toLocaleString();
   /* status pill */
-  const si=getStatusInfo(pct,remain);
+  const si=getStatusInfo(Math.min(pct,100),remain);
   const spill=document.getElementById('sp-status-pill');
-  spill.className='status-pill '+si.pillClass;
-  spill.innerHTML=`<svg class="pill-icon" viewBox="0 0 24 24" style="fill:currentColor">${si.icon.replace(/<\/?svg[^>]*>/g,'')}</svg>${si.label}`;
+  spill.className='status-pill '+(over?'pill-danger':si.pillClass);
+  spill.innerHTML=over
+    ?'⚠️ เกินความจุ'
+    :`<svg class="pill-icon" viewBox="0 0 24 24" style="fill:currentColor">${si.icon.replace(/<\/?svg[^>]*>/g,'')}</svg>${si.label}`;
+  /* ปุ่ม save — disable ถ้าเกิน */
+  const saveBtn=document.getElementById('btn-save-one');
+  if(saveBtn){
+    saveBtn.disabled=over;
+    saveBtn.title=over?'รวมน้ำมันเกินความจุ กรุณาแก้ไขก่อน':'';
+  }
 }
 
 function saveCurrentToSheet(){
@@ -921,6 +1041,206 @@ function renderTable(stations){
   }).join('');
 }
 function renderDashboard(){const s=getFilteredStations();renderKPI(s);renderMainChart(s);renderDonut(s);renderTable(s);}
+
+
+/* ─────────────────────────────────────────
+   MAP — Leaflet + พิกัดสถานีบริการ
+───────────────────────────────────────── */
+const STATION_COORDS = {
+  's01':[16.9974023,102.3996407], 's02':[17.1872222,102.4336667],
+  's03':[17.1012977,102.4756776], 's04':[17.219319,102.422869],
+  's05':[17.1822598,102.4322574], 's06':[17.24449456,102.5281420],
+  's07':[17.2780322,102.3124381], 's08':[17.0862857,102.3804854],
+  's09':[17.0419762,102.3431759], 's10':[17.1560278,102.4418333],
+  's11':[17.3435203,102.3822241], 's12':[17.2356419,102.3966293],
+  's13':[17.2728804,102.3216934], 's14':[17.2610557,102.5874651],
+  's15':[17.1972222,102.4151667],
+  's16':[16.9555031,102.2639628], 's17':[16.8845203,102.2006392],
+  's18':[16.9795016,102.2911407], 's19':[16.9826233,102.2942222],
+  's20':[16.9893761,102.5598702], 's21':[16.8747778,102.5718056],
+  's22':[16.9520187,102.5767978], 's23':[16.8548369,102.5142381],
+  's24':[16.8816056,102.573864],  's25':[16.8550000,102.5145278],
+  's26':[17.3086303,102.1828790], 's27':[17.3031553,102.1971977],
+  's28':[17.2927834,102.2427188], 's29':[17.2169573,102.2283172],
+  's30':[17.2953594,102.2192290],
+  's31':[17.3215177,102.1091528], 's32':[17.3214987,102.0048563],
+  's33':[17.3251667,102.0637274],
+  's34':[17.5669773,102.2896430], 's35':[17.5705962,102.2940894],
+};
+
+const STATUS_COLOR = { ok:'#059669', watch:'#d97706', danger:'#dc2626', none:'#9ca3af' };
+const STATUS_BG    = { ok:'#d1fae5', watch:'#fef3c7', danger:'#fee2e2', none:'#f3f4f6' };
+
+let mapInst = null;
+let mapMarkers = {};
+let activeMarkerId = null;
+
+function getStationStatus(sid){
+  const d=getSD(sid), remain=getRemain(sid);
+  const pct=d.cap>0?Math.round(remain/d.cap*100):0;
+  return getStatusInfo(pct,remain);
+}
+function getStationPct(sid){
+  const d=getSD(sid), remain=getRemain(sid);
+  return d.cap>0?Math.round(remain/d.cap*100):0;
+}
+
+function initMap(){
+  // build amphoe filter
+  const af=document.getElementById('map-amphoe-filter');
+  if(af.options.length===1){
+    GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;af.appendChild(o);});
+  }
+  if(!mapInst){
+    mapInst=L.map('map',{center:[17.1,102.35],zoom:10,zoomControl:true});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution:'© OpenStreetMap',maxZoom:19
+    }).addTo(mapInst);
+    // สร้าง marker ทุกสถานี
+    ALL_STATIONS.forEach(s=>{
+      if(!STATION_COORDS[s.id])return;
+      const marker=createMarker(s);
+      if(marker)mapMarkers[s.id]=marker;
+    });
+  }
+  updateMapMarkers();
+  renderMapSidebar();
+  setTimeout(()=>mapInst.invalidateSize(),200);
+}
+
+function createMarker(s){
+  const coords=STATION_COORDS[s.id];
+  if(!coords)return null;
+  const si=getStationStatus(s.id);
+  const pct=getStationPct(s.id);
+  const color=STATUS_COLOR[si.key];
+
+  const icon=L.divIcon({
+    className:'',
+    html:`<div style="
+      width:36px;height:36px;border-radius:50%;
+      background:${color};border:3px solid #fff;
+      box-shadow:0 2px 8px rgba(0,0,0,.3);
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Kanit',sans-serif;font-size:10px;font-weight:700;color:#fff;
+      cursor:pointer;
+    ">${pct>0?pct+'%':'—'}</div>`,
+    iconSize:[36,36],iconAnchor:[18,18],popupAnchor:[0,-20]
+  });
+
+  const marker=L.marker(coords,{icon}).addTo(mapInst);
+  marker.bindPopup(buildPopupHtml(s),{maxWidth:260,className:'fuel-popup'});
+  marker.on('click',()=>highlightSidebarItem(s.id));
+  return marker;
+}
+
+function buildPopupHtml(s){
+  const d=getSD(s.id), remain=getRemain(s.id);
+  const cap=d.cap||0, pct=cap>0?Math.round(remain/cap*100):0;
+  const si=getStationStatus(s.id);
+  const color=STATUS_COLOR[si.key], bg=STATUS_BG[si.key];
+  const bc=pct>=50?'#059669':pct>=25?'#d97706':'#dc2626';
+  return `<div class="map-popup">
+    <div class="map-popup-head" style="background:${bg};border-bottom:1px solid #e5e7eb">
+      <div>
+        <div class="map-popup-name">${s.name}</div>
+        <div style="font-size:11px;color:#6b7280">${s.amphoe} · <span style="color:${color};font-weight:600">${si.label}</span></div>
+      </div>
+      <span style="font-size:10px;padding:2px 8px;border-radius:10px;background:${color};color:#fff;font-weight:600">${s.brand}</span>
+    </div>
+    <div class="map-popup-body">
+      <div class="map-popup-pct" style="color:${remain>0?bc:'#9ca3af'}">${remain>0?pct+'%':'ไม่มีข้อมูล'}</div>
+      <div class="map-popup-bar"><div class="map-popup-bar-fill" style="width:${pct}%;background:${bc}"></div></div>
+      <div class="map-popup-row"><span class="map-popup-label">⛽ น้ำมันคงเหลือ</span><span class="map-popup-val">${remain.toLocaleString()} ล.</span></div>
+      <div class="map-popup-row"><span class="map-popup-label">🏭 ความจุ</span><span class="map-popup-val">${cap.toLocaleString()} ล.</span></div>
+      <div style="border-top:1px solid #f3f4f6;margin-top:6px;padding-top:6px">
+        ${FUELS.map(f=>`<div class="map-popup-row">
+          <span class="map-popup-label"><span style="width:8px;height:8px;border-radius:2px;background:${f.color};display:inline-block"></span>${f.label}</span>
+          <span class="map-popup-val" style="color:${f.color}">${(d[f.key]||0).toLocaleString()} ล.</span>
+        </div>`).join('')}
+      </div>
+      <div style="font-size:10px;color:#9ca3af;margin-top:6px;text-align:right">อัปเดต: ${d.updated_at||'—'}</div>
+    </div>
+  </div>`;
+}
+
+function updateMapMarkers(){
+  ALL_STATIONS.forEach(s=>{
+    if(!mapMarkers[s.id])return;
+    const si=getStationStatus(s.id);
+    const pct=getStationPct(s.id);
+    const color=STATUS_COLOR[si.key];
+    const icon=L.divIcon({
+      className:'',
+      html:`<div style="
+        width:36px;height:36px;border-radius:50%;
+        background:${color};border:3px solid #fff;
+        box-shadow:0 2px 8px rgba(0,0,0,.3);
+        display:flex;align-items:center;justify-content:center;
+        font-family:'Kanit',sans-serif;font-size:10px;font-weight:700;color:#fff;cursor:pointer;
+      ">${pct>0?pct+'%':'—'}</div>`,
+      iconSize:[36,36],iconAnchor:[18,18],popupAnchor:[0,-20]
+    });
+    mapMarkers[s.id].setIcon(icon);
+    mapMarkers[s.id].setPopupContent(buildPopupHtml(s));
+  });
+  renderMapSidebar();
+}
+
+function filterMapStations(){
+  const amphoe=document.getElementById('map-amphoe-filter').value;
+  const status=document.getElementById('map-status-filter').value;
+  ALL_STATIONS.forEach(s=>{
+    if(!mapMarkers[s.id])return;
+    const si=getStationStatus(s.id);
+    const inAmphoe=amphoe==='all'||GROUPS.find(g=>g.id===amphoe)?.stations.some(x=>x.id===s.id);
+    const inStatus=status==='all'||si.key===status;
+    if(inAmphoe&&inStatus){ mapMarkers[s.id].addTo(mapInst); }
+    else { mapInst.removeLayer(mapMarkers[s.id]); }
+  });
+  renderMapSidebar();
+}
+
+function renderMapSidebar(){
+  const amphoe=document.getElementById('map-amphoe-filter').value;
+  const status=document.getElementById('map-status-filter').value;
+  const list=document.getElementById('map-station-list');
+  let html='';
+  GROUPS.forEach(g=>{
+    if(amphoe!=='all'&&g.id!==amphoe)return;
+    g.stations.forEach(s=>{
+      const si=getStationStatus(s.id);
+      if(status!=='all'&&si.key!==status)return;
+      const pct=getStationPct(s.id);
+      const color=STATUS_COLOR[si.key];
+      html+=`<div class="map-st-item${s.id===activeMarkerId?' active':''}" onclick="focusStation('${s.id}')">
+        <div class="map-st-dot" style="background:${color}"></div>
+        <div class="map-st-name">${s.name}<br><span style="font-size:10px;color:#9ca3af">${g.amphoe}</span></div>
+        <div class="map-st-pct" style="color:${color}">${pct>0?pct+'%':'—'}</div>
+      </div>`;
+    });
+  });
+  list.innerHTML=html||'<div style="padding:1rem;font-size:12px;color:#9ca3af;text-align:center">ไม่มีสถานีที่ตรงเงื่อนไข</div>';
+}
+
+function focusStation(sid){
+  activeMarkerId=sid;
+  const coords=STATION_COORDS[sid];
+  if(coords&&mapInst){
+    mapInst.setView(coords,14,{animate:true});
+    if(mapMarkers[sid])mapMarkers[sid].openPopup();
+  }
+  renderMapSidebar();
+}
+
+function highlightSidebarItem(sid){
+  activeMarkerId=sid;
+  renderMapSidebar();
+  // scroll sidebar to item
+  const list=document.getElementById('map-station-list');
+  const active=list.querySelector('.map-st-item.active');
+  if(active)active.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
 
 /* ─────────────────────────────────────────
    INIT
