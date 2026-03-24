@@ -313,9 +313,13 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
 
 
 /* ── TREND PAGE ── */
-.trend-page { padding:1.1rem 1.5rem; }
-.trend-slicer { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-bottom:1.1rem; }
-.trend-slicer .slicer-grp select { min-width:170px; }
+.trend-page { padding:0 0 1.1rem; }
+.trend-slicer { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-bottom:1.1rem; background:linear-gradient(135deg,#1a2235,#243550); padding:.75rem 1.5rem; box-shadow:0 2px 8px rgba(0,0,0,.15); }
+.trend-slicer .slicer-grp select { min-width:170px; border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:6px 10px; font-size:13px; font-family:'Noto Sans Thai',sans-serif; background:rgba(255,255,255,.1); color:#fff; cursor:pointer; }
+.trend-slicer .slicer-grp select option { background:#1a2235; color:#fff; }
+.trend-slicer .slicer-grp select:focus { outline:none; border-color:#f59e0b; }
+.trend-slicer .slicer-label { color:#f59e0b; }
+.trend-content { padding:1.1rem 1.5rem; }
 .trend-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; margin-bottom:1.1rem; }
 .trend-card { background:#fff; border-radius:12px; border:1px solid #e5e7eb; padding:1rem 1.1rem; }
 .trend-card-title { font-size:11px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:.07em; margin-bottom:.65rem; display:flex; align-items:center; gap:6px; }
@@ -438,6 +442,7 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
     <button class="btn btn-warn" onclick="loadTrend()" style="margin-left:auto">↓ โหลดข้อมูล</button>
   </div>
 
+  <div class="trend-content">
   <!-- กราฟรวมทุกประเภท -->
   <div class="trend-main-card">
     <div class="card-title">📈 ปริมาณน้ำมันคงเหลือรายวัน (ลิตร) — แยกตามประเภท</div>
@@ -450,7 +455,7 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
   <div class="trend-cards" id="trend-sub-cards"></div>
 
 </div>
-</div>
+</div></div>
 
 <!-- ===================== SETTINGS ===================== -->
 <div class="page" id="page-settings">
