@@ -384,16 +384,36 @@ body {
   background: #fff; border-radius: var(--radius); border: 1px solid var(--gray-200);
   padding: 0; margin-bottom: .75rem; overflow: hidden; box-shadow: var(--shadow-sm);
 }
-.table-card .card-title { padding: .7rem .85rem; border-bottom: 2px solid #f0f2f5; margin: 0; }
-.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table-card .card-title {
+  padding: .7rem .85rem; border-bottom: 2px solid #f0f2f5; margin: 0;
+  position: sticky; top: 0; z-index: 20; background: #fff;
+}
+.table-scroll {
+  overflow: auto; -webkit-overflow-scrolling: touch;
+  max-height: 520px;
+}
+@media(max-width:600px){ .table-scroll { max-height: 400px; } }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
 thead tr { background: linear-gradient(135deg, var(--navy), var(--navy-light)); }
 thead th {
   text-align: left; font-weight: 600; color: rgba(255,255,255,.75);
   font-size: 10px; padding: 8px 7px; border: none; white-space: nowrap;
-  letter-spacing: .04em; position: sticky; top: 0; z-index: 10;
-  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  letter-spacing: .04em;
+  position: sticky; top: 0; z-index: 15;
+  background: var(--navy);
 }
+/* คอลัมน์แรก (ชื่อสถานี) ล็อคทั้งแนวตั้ง+แนวนอน */
+thead th:first-child {
+  position: sticky; left: 0; z-index: 16;
+  background: var(--navy);
+}
+tbody td:first-child {
+  position: sticky; left: 0; z-index: 5;
+  background: #fff;
+  border-right: 2px solid var(--gray-200);
+}
+tbody tr:nth-child(even) td:first-child { background: #fafbfc; }
+tbody tr:hover td:first-child { background: #eff6ff !important; }
 thead th.th-num { text-align: right; }
 tbody td { padding: 7px 7px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); white-space: nowrap; font-size: 12px; }
 tbody tr:last-child td { border-bottom: none; }
@@ -510,10 +530,7 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
   .sp-actions .btn { font-size:11px; padding:5px 10px; }
 }
 
-.station-nav { display:flex; align-items:center; gap:6px; margin-top:.75rem; justify-content:space-between; }
-.station-nav .nav-info { font-size:12px; color:var(--gray-500); text-align:center; flex:1; }
-.station-nav .nav-info strong { color:var(--gray-900); }
-.nav-arrow { display:flex; align-items:center; }
+
 
 .no-url-notice {
   background:#fffbeb; border:1.5px solid var(--amber); border-radius:10px;
@@ -1004,11 +1021,7 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
           <button class="btn btn-success" id="btn-save-one" onclick="saveCurrentToSheet()">💾 บันทึก</button>
         </div>
       </div>
-      <div class="station-nav">
-        <div class="nav-arrow"><button class="btn" onclick="navigateStation(-1)">← ก่อนหน้า</button></div>
-        <div class="nav-info" id="nav-info"></div>
-        <div class="nav-arrow"><button class="btn" onclick="navigateStation(1)">ถัดไป →</button></div>
-      </div>
+
     </div>
   </div>
 </div>
@@ -1018,6 +1031,21 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
   ข้อมูลซิงค์กับ Google Sheet · อัปเดตอัตโนมัติ
 </div>
 <div class="toast" id="toast"></div>
+
+<!-- AUTO LOGOUT overlay -->
+<div class="pin-overlay hidden" id="autologout-overlay">
+  <div class="pin-box" style="max-width:300px">
+    <div style="font-size:36px;margin-bottom:.5rem">⏱️</div>
+    <div class="pin-title">ไม่มีการใช้งาน</div>
+    <div class="pin-sub">ระบบจะออกจากระบบอัตโนมัติใน</div>
+    <div style="font-family:'Kanit',sans-serif;font-size:48px;font-weight:800;color:var(--red);line-height:1;margin:.5rem 0" id="autologout-countdown">30</div>
+    <div class="pin-sub">วินาที</div>
+    <div style="display:flex;gap:8px;margin-top:1rem">
+      <button class="btn" onclick="doAutoLogout()" style="flex:1;color:var(--red)">ออกจากระบบ</button>
+      <button class="btn btn-primary" onclick="cancelAutoLogout()" style="flex:1">ใช้งานต่อ</button>
+    </div>
+  </div>
+</div>
 
 <!-- PIN overlay -->
 <div class="pin-overlay hidden" id="pin-overlay">
@@ -1202,9 +1230,9 @@ function checkStationPin(){
   const pin=document.getElementById('station-pin-input').value.trim();
   const hint=document.getElementById('station-pin-hint');
   if(pin.length<7){hint.textContent='กรุณากรอกรหัส 7 หลัก';return;}
-  if(pin===ADMIN_PIN){inputMode='admin';inputStationId=null;document.getElementById('input-pin-screen').style.display='none';document.getElementById('input-admin-screen').style.display='block';buildInputSlicers();loadStationPanel();document.getElementById('no-url-notice').style.display=GS_URL?'none':'flex';return;}
+  if(pin===ADMIN_PIN){inputMode='admin';inputStationId=null;document.getElementById('input-pin-screen').style.display='none';document.getElementById('input-admin-screen').style.display='block';buildInputSlicers();loadStationPanel();document.getElementById('no-url-notice').style.display=GS_URL?'none':'flex';if(typeof resetIdleTimer==='function')resetIdleTimer();return;}
   const sid=Object.keys(STATION_PINS).find(k=>STATION_PINS[k]===pin);
-  if(sid){inputMode='station';inputStationId=sid;document.getElementById('input-pin-screen').style.display='none';document.getElementById('input-admin-screen').style.display='block';document.querySelector('.input-slicer').style.display='none';const g=GROUPS.find(gr=>gr.stations.some(s=>s.id===sid));buildInputSlicers();if(g)document.getElementById('inp-amphoe').value=g.id;buildInputStationSlicer(g?g.id:'all');document.getElementById('inp-station').value=sid;loadStationPanel();document.getElementById('no-url-notice').style.display=GS_URL?'none':'flex';return;}
+  if(sid){inputMode='station';inputStationId=sid;document.getElementById('input-pin-screen').style.display='none';document.getElementById('input-admin-screen').style.display='block';document.querySelector('.input-slicer').style.display='none';const g=GROUPS.find(gr=>gr.stations.some(s=>s.id===sid));buildInputSlicers();if(g)document.getElementById('inp-amphoe').value=g.id;buildInputStationSlicer(g?g.id:'all');document.getElementById('inp-station').value=sid;loadStationPanel();document.getElementById('no-url-notice').style.display=GS_URL?'none':'flex';if(typeof resetIdleTimer==='function')resetIdleTimer();return;}
   hint.textContent='รหัสไม่ถูกต้อง กรุณาลองใหม่';document.getElementById('station-pin-input').value='';
 }
 function buildInputStationSlicer(groupId){const ss=document.getElementById('inp-station');ss.innerHTML='';const g=GROUPS.find(x=>x.id===groupId);if(g)g.stations.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});}
@@ -1223,7 +1251,7 @@ function loadStationPanel(){
   document.getElementById('sp-cap').value=cap||'';updateCapBar(0,cap);
   const grid=document.getElementById('fuel-grid');
   grid.innerHTML=FUELS.map(f=>`<div class="fuel-cell"><div class="fuel-cell-label"><span class="fuel-dot" style="background:${f.color}"></span>${f.label}</div><input class="fuel-cell-input" type="number" id="fci-${f.key}" min="0" step="100" value="" placeholder="0" oninput="onFuelCellInput('${f.key}',this)" inputmode="numeric"><div class="fuel-cell-unit">ลิตร</div></div>`).join('');
-  document.getElementById('sp-sync-time').textContent=d.updated_at?'บันทึกล่าสุด '+d.updated_at:'';setRtBadge(false);updateNavInfo();
+  document.getElementById('sp-sync-time').textContent=d.updated_at?'บันทึกล่าสุด '+d.updated_at:'';setRtBadge(false);
 }
 function onFuelCellInput(fkey,el){
   if(!currentSid)return;const val=parseFloat(el.value)||0;const cap=DATA[currentSid].cap||0;
@@ -1252,8 +1280,7 @@ function saveCurrentToSheet(){
   saveOneStation(currentSid).then(()=>{renderDashboard();FUELS.forEach(f=>{DATA[currentSid][f.key]=0;const el=document.getElementById('fci-'+f.key);if(el){el.value='';el.classList.remove('dirty','saving');}});persistData();updateCapBar(0,DATA[currentSid].cap||0);showToast('บันทึกสำเร็จ ✓');});
 }
 function clearCurrentStation(){if(!currentSid)return;if(!confirm('ล้างข้อมูลสถานีนี้?'))return;DATA[currentSid]={cap:0,diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0,updated_at:''};persistData();loadStationPanel();showToast('ล้างข้อมูลแล้ว');}
-function navigateStation(dir){const amphoeId=document.getElementById('inp-amphoe').value;const g=GROUPS.find(x=>x.id===amphoeId);if(!g)return;const stList=g.stations;const idx=stList.findIndex(s=>s.id===currentSid);const newIdx=(idx+dir+stList.length)%stList.length;document.getElementById('inp-station').value=stList[newIdx].id;loadStationPanel();}
-function updateNavInfo(){const amphoeId=document.getElementById('inp-amphoe').value;const g=GROUPS.find(x=>x.id===amphoeId);if(!g){document.getElementById('nav-info').textContent='';return;}const idx=g.stations.findIndex(s=>s.id===currentSid)+1;document.getElementById('nav-info').innerHTML=`<strong>${idx}</strong> / ${g.stations.length} สถานี`;}
+
 
 let mainChartInst=null,donutChartInst=null;
 function buildDashboardSelects(){const sa=document.getElementById('sel-amphoe');sa.innerHTML='<option value="all">ทั้งหมด (6 อำเภอ)</option>';GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;sa.appendChild(o);});buildDashStationSelect('all');}
@@ -1394,6 +1421,73 @@ if(window.innerWidth<700){sidebarOpen=false;document.getElementById('map-sidebar
 
 // Re-render charts on resize
 let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{if(document.getElementById('page-dashboard').classList.contains('active'))renderDashboard();},300);});
+
+// ── AUTO LOGOUT SYSTEM ──
+const AUTO_LOGOUT_IDLE = 5 * 60 * 1000;   // 5 นาทีไม่ใช้งาน → แสดง warning
+const AUTO_LOGOUT_COUNTDOWN = 30;          // 30 วินาที countdown
+let idleTimer = null;
+let countdownTimer = null;
+let countdownSec = AUTO_LOGOUT_COUNTDOWN;
+
+function resetIdleTimer(){
+  if(!inputMode) return; // ไม่ได้ login อยู่ ไม่ต้อง track
+  clearTimeout(idleTimer);
+  clearInterval(countdownTimer);
+  document.getElementById('autologout-overlay').classList.add('hidden');
+  idleTimer = setTimeout(showAutoLogoutWarning, AUTO_LOGOUT_IDLE);
+}
+
+function showAutoLogoutWarning(){
+  if(!inputMode) return;
+  countdownSec = AUTO_LOGOUT_COUNTDOWN;
+  document.getElementById('autologout-countdown').textContent = countdownSec;
+  document.getElementById('autologout-overlay').classList.remove('hidden');
+  countdownTimer = setInterval(()=>{
+    countdownSec--;
+    document.getElementById('autologout-countdown').textContent = countdownSec;
+    if(countdownSec <= 0){
+      clearInterval(countdownTimer);
+      doAutoLogout();
+    }
+  }, 1000);
+}
+
+function cancelAutoLogout(){
+  clearInterval(countdownTimer);
+  document.getElementById('autologout-overlay').classList.remove('hidden');
+  document.getElementById('autologout-overlay').classList.add('hidden');
+  resetIdleTimer();
+  showToast('ใช้งานต่อ ✓');
+}
+
+function doAutoLogout(){
+  clearTimeout(idleTimer);
+  clearInterval(countdownTimer);
+  document.getElementById('autologout-overlay').classList.add('hidden');
+  logoutInput();
+  switchTab('dashboard');
+  showToast('ออกจากระบบอัตโนมัติ เนื่องจากไม่มีการใช้งาน', 3000);
+}
+
+// Track user activity on input page
+['click','touchstart','keydown','scroll','input'].forEach(evt=>{
+  document.addEventListener(evt, ()=>{
+    if(inputMode && document.getElementById('page-input').classList.contains('active')){
+      resetIdleTimer();
+    }
+  }, {passive:true});
+});
+
+// Hook into login to start idle timer
+const _origCheckStationPin = checkStationPin;
+// Override logoutInput to also clear idle timer
+const _origLogoutInput = logoutInput;
+logoutInput = function(){
+  clearTimeout(idleTimer);
+  clearInterval(countdownTimer);
+  _origLogoutInput();
+};
+
 </script>
 </body>
 </html>
