@@ -72,7 +72,7 @@ body { font-family: 'Noto Sans Thai', sans-serif; background: #eef1f7; color: #1
 .slicer-grp select option { background:#1a2235; color:#fff; }
 .slicer-grp select:focus { outline:none; border-color:#f59e0b; background:rgba(255,255,255,.18); }
 
-/* ── INPUT slicer — เหมือน dashboard slicer ── */
+/* ── INPUT slicer ── */
 .input-slicer { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-bottom:0;
   background:linear-gradient(135deg,#1a2235,#243550);
   padding:.75rem 1.5rem;
@@ -351,17 +351,17 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
   <span class="mode-label">โหมด:</span>
   <button class="mode-btn active" id="mode-btn-view"     onclick="setMode('view',true)">👁 ดูข้อมูล</button>
   <button class="mode-btn"        id="mode-btn-map"      onclick="switchTab('map')">🗺️ แผนที่</button>
-  <button class="mode-btn"        id="mode-btn-edit"     onclick="setMode('edit',false)">✏️ กรอกข้อมูล</button>
+  <button class="mode-btn"        id="mode-btn-edit"     onclick="switchTab('input')">✏️ กรอกข้อมูล</button>
   <button class="mode-btn"        id="mode-btn-settings" onclick="requestSettings()">⚙️ ตั้งค่า</button>
   <span class="mode-hint" id="mode-hint">โหมดดูข้อมูล — ดึงข้อมูลจาก Sheet อัตโนมัติ</span>
 </div>
 
-<!-- NAV -->
+<!-- NAV — กรอกข้อมูล แสดงตลอด ถัดจากแนวโน้มรายวัน -->
 <div class="nav-tabs">
   <div class="nav-tab active"  onclick="switchTab('dashboard')">แดชบอร์ดสรุป</div>
   <div class="nav-tab"         onclick="switchTab('map')">🗺️ แผนที่สถานการณ์</div>
   <div class="nav-tab"         onclick="switchTab('trend')">📈 แนวโน้มรายวัน</div>
-  <div class="nav-tab" id="tab-input"    onclick="switchTab('input')"    style="display:none">กรอกข้อมูล</div>
+  <div class="nav-tab"         onclick="switchTab('input')">✏️ กรอกข้อมูล</div>
   <div class="nav-tab" id="tab-settings" onclick="switchTab('settings')" style="display:none">ตั้งค่า</div>
 </div>
 
@@ -559,7 +559,7 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
       <button class="btn btn-warn" onclick="requestSettings()" style="margin-left:auto;padding:3px 10px;font-size:11px;">ตั้งค่าเลย</button>
     </div>
 
-    <!-- INPUT SLICER — dark navy เหมือน dashboard -->
+    <!-- INPUT SLICER -->
     <div class="input-slicer">
       <div class="slicer-grp">
         <span class="slicer-label">อำเภอ</span>
@@ -618,7 +618,7 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
 <div class="footer">สำนักงานสถิติจังหวัดหนองบัวลำภู · Sync กับ Google Sheet ผ่าน Google Apps Script</div>
 <div class="toast" id="toast"></div>
 
-<!-- PIN overlay -->
+<!-- PIN overlay (ใช้เฉพาะตั้งค่า) -->
 <div class="pin-overlay hidden" id="pin-overlay">
   <div class="pin-box">
     <div class="pin-icon"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></div>
@@ -714,43 +714,73 @@ function getStatusInfo(pct,remain){
   return                       {key:'danger',label:'วิกฤต',      pillClass:'pill-danger',ssClass:'ss-danger',icon:ICON_DANGER};
 }
 
+// ── โหมด view/edit (ปุ่มบน mode-toggle) ──
 function setMode(mode,skipPin){
-  if(mode==='edit'&&!skipPin){showPinFor('edit');return;}
   CURRENT_MODE=mode;localStorage.setItem(LS_MODE,mode);
   document.getElementById('mode-btn-view').classList.toggle('active',mode==='view');
   document.getElementById('mode-btn-edit').classList.toggle('active',mode==='edit');
-  const tabInput=document.getElementById('tab-input');
-  if(mode==='edit'){tabInput.style.display='';document.getElementById('mode-hint').textContent='โหมดแก้ไข — กรอกและบันทึกข้อมูลลง Sheet ได้';}
-  else{tabInput.style.display='none';document.getElementById('mode-hint').textContent='โหมดดูข้อมูล — ดึงข้อมูลจาก Sheet อัตโนมัติ';if(document.getElementById('page-input').classList.contains('active'))switchTab('dashboard');}
+  if(mode==='view'){
+    document.getElementById('mode-hint').textContent='โหมดดูข้อมูล — ดึงข้อมูลจาก Sheet อัตโนมัติ';
+  }
 }
+
 function requestSettings(){showPinFor('settings');}
 
 const PIN_CORRECT='3900039';
 let pinBuffer='',pinTarget='';
-function showPinFor(target){pinTarget=target;pinBuffer='';updatePinDots();document.getElementById('pin-err').textContent='';document.getElementById('pin-sub-text').textContent=target==='edit'?'กรอกรหัส 7 หลัก เพื่อเข้าโหมดกรอกข้อมูล':'กรอกรหัส 7 หลัก เพื่อเข้าตั้งค่า';document.getElementById('pin-overlay').classList.remove('hidden');}
+function showPinFor(target){
+  pinTarget=target;pinBuffer='';updatePinDots();
+  document.getElementById('pin-err').textContent='';
+  document.getElementById('pin-sub-text').textContent='กรอกรหัส 7 หลัก เพื่อเข้าตั้งค่า';
+  document.getElementById('pin-overlay').classList.remove('hidden');
+}
 function pinPress(d){if(pinBuffer.length>=7)return;pinBuffer+=d;updatePinDots();if(pinBuffer.length===7)setTimeout(()=>checkPin(),120);}
 function pinDelete(){pinBuffer=pinBuffer.slice(0,-1);updatePinDots();document.getElementById('pin-err').textContent='';}
 function updatePinDots(){for(let i=0;i<7;i++){const el=document.getElementById('pd'+i);el.classList.toggle('filled',i<pinBuffer.length);el.classList.remove('error');}}
 function checkPin(){
-  if(pinBuffer===PIN_CORRECT){document.getElementById('pin-overlay').classList.add('hidden');pinBuffer='';updatePinDots();if(pinTarget==='edit')setMode('edit',true);else doSwitchSettings();}
-  else{for(let i=0;i<7;i++)document.getElementById('pd'+i).classList.add('error');document.getElementById('pin-err').textContent='รหัสไม่ถูกต้อง ลองใหม่';setTimeout(()=>{pinBuffer='';updatePinDots();},800);}
+  if(pinBuffer===PIN_CORRECT){
+    document.getElementById('pin-overlay').classList.add('hidden');pinBuffer='';updatePinDots();
+    doSwitchSettings();
+  } else {
+    for(let i=0;i<7;i++)document.getElementById('pd'+i).classList.add('error');
+    document.getElementById('pin-err').textContent='รหัสไม่ถูกต้อง ลองใหม่';
+    setTimeout(()=>{pinBuffer='';updatePinDots();},800);
+  }
 }
 function pinCancel(){pinBuffer='';updatePinDots();document.getElementById('pin-err').textContent='';document.getElementById('pin-overlay').classList.add('hidden');}
 
-function doSwitchSettings(){switchTab('settings');document.getElementById('tab-settings').style.display='';document.getElementById('gs-url').value=GS_URL;document.getElementById('sel-interval').value=AUTO_INTERVAL;}
+function doSwitchSettings(){
+  switchTab('settings');
+  document.getElementById('tab-settings').style.display='';
+  document.getElementById('gs-url').value=GS_URL;
+  document.getElementById('sel-interval').value=AUTO_INTERVAL;
+}
+
+// ── สลับแท็บ ──
 function switchTab(tab){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+tab).classList.add('active');
+
+  // highlight nav tab ตาม index
   const tabs=['dashboard','map','trend','input','settings'];
   const idx=tabs.indexOf(tab);
   const navTabs=document.querySelectorAll('.nav-tab');
   if(navTabs[idx])navTabs[idx].classList.add('active');
+
   document.getElementById('mode-btn-map').classList.toggle('active', tab==='map');
+  document.getElementById('mode-btn-edit').classList.toggle('active', tab==='input');
+
   if(tab==='dashboard'){renderDashboard();document.getElementById('mode-btn-view').classList.add('active');}
   if(tab==='map'){initMap();}
   if(tab==='trend'){initTrend();}
-  if(tab==='input'){if(!inputMode){document.getElementById('input-pin-screen').style.display='block';document.getElementById('input-admin-screen').style.display='none';}}
+  if(tab==='input'){
+    // ถ้ายังไม่ได้ login → แสดงหน้า pin เสมอ
+    if(!inputMode){
+      document.getElementById('input-pin-screen').style.display='block';
+      document.getElementById('input-admin-screen').style.display='none';
+    }
+  }
 }
 
 function gsGet(url){return fetch(url,{redirect:'follow'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});}
@@ -806,13 +836,44 @@ function checkStationPin(){
   const pin=document.getElementById('station-pin-input').value.trim();
   const hint=document.getElementById('station-pin-hint');
   if(pin.length<7){hint.textContent='กรุณากรอกรหัส 7 หลัก';return;}
-  if(pin===ADMIN_PIN){inputMode='admin';inputStationId=null;document.getElementById('input-pin-screen').style.display='none';document.getElementById('input-admin-screen').style.display='block';buildInputSlicers();loadStationPanel();document.getElementById('no-url-notice').style.display=GS_URL?'none':'flex';return;}
+  if(pin===ADMIN_PIN){
+    inputMode='admin';inputStationId=null;
+    document.getElementById('input-pin-screen').style.display='none';
+    document.getElementById('input-admin-screen').style.display='block';
+    buildInputSlicers();loadStationPanel();
+    document.getElementById('no-url-notice').style.display=GS_URL?'none':'flex';
+    return;
+  }
   const sid=Object.keys(STATION_PINS).find(k=>STATION_PINS[k]===pin);
-  if(sid){inputMode='station';inputStationId=sid;document.getElementById('input-pin-screen').style.display='none';document.getElementById('input-admin-screen').style.display='block';document.querySelector('.input-slicer').style.display='none';const stInfo=ALL_STATIONS.find(s=>s.id===sid);if(stInfo){const g=GROUPS.find(gr=>gr.stations.some(s=>s.id===sid));buildInputSlicers();if(g)document.getElementById('inp-amphoe').value=g.id;buildInputStationSlicer(g?g.id:'all');document.getElementById('inp-station').value=sid;}loadStationPanel();document.getElementById('no-url-notice').style.display=GS_URL?'none':'flex';return;}
-  hint.textContent='รหัสไม่ถูกต้อง กรุณาลองใหม่';document.getElementById('station-pin-input').value='';
+  if(sid){
+    inputMode='station';inputStationId=sid;
+    document.getElementById('input-pin-screen').style.display='none';
+    document.getElementById('input-admin-screen').style.display='block';
+    document.querySelector('.input-slicer').style.display='none';
+    const g=GROUPS.find(gr=>gr.stations.some(s=>s.id===sid));
+    buildInputSlicers();
+    if(g)document.getElementById('inp-amphoe').value=g.id;
+    buildInputStationSlicer(g?g.id:'all');
+    document.getElementById('inp-station').value=sid;
+    loadStationPanel();
+    document.getElementById('no-url-notice').style.display=GS_URL?'none':'flex';
+    return;
+  }
+  hint.textContent='รหัสไม่ถูกต้อง กรุณาลองใหม่';
+  document.getElementById('station-pin-input').value='';
 }
 function buildInputStationSlicer(groupId){const ss=document.getElementById('inp-station');ss.innerHTML='';const g=GROUPS.find(x=>x.id===groupId);if(g)g.stations.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});}
-function logoutInput(){inputMode=null;inputStationId=null;document.getElementById('station-pin-input').value='';document.getElementById('station-pin-hint').textContent='';document.getElementById('input-pin-screen').style.display='block';document.getElementById('input-admin-screen').style.display='none';document.querySelector('.input-slicer').style.display='flex';}
+
+// logout → กลับหน้า pin และ reset inputMode
+function logoutInput(){
+  inputMode=null;inputStationId=null;
+  document.getElementById('station-pin-input').value='';
+  document.getElementById('station-pin-hint').textContent='';
+  document.getElementById('input-pin-screen').style.display='block';
+  document.getElementById('input-admin-screen').style.display='none';
+  document.querySelector('.input-slicer').style.display='flex';
+}
+
 function buildInputSlicers(){const sa=document.getElementById('inp-amphoe');if(sa.options.length<=1){GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;sa.appendChild(o);});}if(!sa.value||sa.value==='all'){sa.value=GROUPS[0].id;}buildStationSlicer(sa.value);document.getElementById('no-url-notice').style.display=GS_URL?'none':'flex';}
 function buildStationSlicer(groupId){const ss=document.getElementById('inp-station');const prevSid=ss.value;ss.innerHTML='';const g=GROUPS.find(x=>x.id===groupId);if(g){g.stations.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});if(prevSid&&[...ss.options].some(o=>o.value===prevSid))ss.value=prevSid;}}
 function onInputAmphoeChange(){buildStationSlicer(document.getElementById('inp-amphoe').value);loadStationPanel();}
