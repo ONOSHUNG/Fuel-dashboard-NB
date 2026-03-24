@@ -64,13 +64,38 @@ body { font-family: 'Noto Sans Thai', sans-serif; background: #eef1f7; color: #1
 .pill-danger{ background:#fee2e2;color:#991b1b; } .pill-none  { background:#f3f4f6;color:#6b7280; }
 .pill-icon  { width:13px;height:13px;flex-shrink:0; }
 
-/* ── DASHBOARD ── */
+/* ── DASHBOARD slicer ── */
 .slicer-bar { background:linear-gradient(135deg,#1a2235,#243550); border-bottom:none; padding:.75rem 1.5rem; display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; box-shadow:0 2px 8px rgba(0,0,0,.15); }
 .slicer-grp { display:flex; flex-direction:column; gap:3px; }
 .slicer-label { font-size:10px; color:#f59e0b; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
-.slicer-grp select { border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:6px 10px; font-size:13px; font-family:'Noto Sans Thai',sans-serif; background:rgba(255,255,255,.1); color:#fff; cursor:pointer; min-width:165px; backdrop-filter:blur(4px); }
+.slicer-grp select { border:1.5px solid rgba(255,255,255,.25); border-radius:8px; padding:6px 10px; font-size:13px; font-family:'Noto Sans Thai',sans-serif; background:rgba(255,255,255,.12); color:#fff !important; cursor:pointer; min-width:165px; }
 .slicer-grp select option { background:#1a2235; color:#fff; }
-.slicer-grp select:focus { outline:none; border-color:#f59e0b; background:rgba(255,255,255,.15); }
+.slicer-grp select:focus { outline:none; border-color:#f59e0b; background:rgba(255,255,255,.18); }
+
+/* ── INPUT slicer — เหมือน dashboard slicer ── */
+.input-slicer { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-bottom:0;
+  background:linear-gradient(135deg,#1a2235,#243550);
+  padding:.75rem 1.5rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.15); }
+.input-slicer .slicer-grp { flex:1; }
+.input-slicer .slicer-grp select {
+  min-width:200px; font-size:14px; padding:7px 12px;
+  border:1.5px solid rgba(255,255,255,.35) !important;
+  border-radius:8px;
+  background:rgba(255,255,255,.15) !important;
+  color:#fff !important;
+  font-family:'Noto Sans Thai',sans-serif;
+  cursor:pointer;
+  -webkit-appearance:none; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") !important;
+  background-repeat:no-repeat !important;
+  background-position:right 10px center !important;
+  padding-right:30px;
+}
+.input-slicer .slicer-grp select option { background:#1a2235; color:#fff; }
+.input-slicer .slicer-grp select:focus { outline:none; border-color:#f59e0b !important; background:rgba(255,255,255,.2) !important; }
+.input-slicer .slicer-label { color:#f59e0b; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; display:block; margin-bottom:3px; }
+
 .main { padding:1.1rem 1.5rem; }
 .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:12px; margin-bottom:.5rem; }
 @media(max-width:600px){ .kpi-row { grid-template-columns:repeat(2,1fr); } }
@@ -84,14 +109,12 @@ body { font-family: 'Noto Sans Thai', sans-serif; background: #eef1f7; color: #1
 .kpi-label .kpi-icon { font-size:15px; line-height:1; }
 .kpi-value { font-family:'Kanit',sans-serif; font-size:28px; font-weight:800; color:#1a1a1a; line-height:1.1; }
 .kpi-unit  { font-size:11px; color:#9ca3af; margin-top:4px; font-weight:500; }
-/* 4 การ์ดสรุป — gradient พื้นหลัง */
 .kpi-card-summary { background:linear-gradient(135deg,#1a2235 0%,#243550 100%) !important; border-color:#1a2235 !important; }
 .kpi-card-summary .kpi-label { color:rgba(255,255,255,.6); }
 .kpi-card-summary .kpi-value { color:#fff; }
 .kpi-card-summary .kpi-unit  { color:rgba(255,255,255,.45); }
 .kpi-card-summary .kpi-icon-wrap { width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:18px; }
 .kpi-ok{color:#059669} .kpi-warn{color:#d97706} .kpi-danger{color:#dc2626}
-.status-bar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:1.1rem; }
 .status-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:1.1rem; }
 .status-summary { display:flex; align-items:center; gap:12px; border-radius:14px; padding:.85rem 1.1rem; flex:1; min-width:140px; box-shadow:0 2px 8px rgba(0,0,0,.08); border:none; transition:transform .15s; }
 .status-summary:hover { transform:translateY(-2px); }
@@ -99,7 +122,6 @@ body { font-family: 'Noto Sans Thai', sans-serif; background: #eef1f7; color: #1
 .status-summary-icon svg { width:22px;height:22px; }
 .status-summary-label { font-size:11px;font-weight:700;margin-bottom:2px;opacity:.85;text-transform:uppercase;letter-spacing:.04em; }
 .status-summary-count { font-family:'Kanit',sans-serif;font-size:26px;font-weight:800;line-height:1; }
-/* สี background ต่างกันชัดเจน */
 .ss-ok     { background:linear-gradient(135deg,#059669,#10b981); color:#fff; }
 .ss-ok     .status-summary-icon svg { fill:#fff; }
 .ss-ok     .status-summary-label { color:rgba(255,255,255,.8); }
@@ -136,7 +158,6 @@ tbody td { padding:9px 10px; border-bottom:1px solid #f3f4f6; color:#374151; whi
 tbody tr:last-child td { border-bottom:none; }
 tbody tr:nth-child(even) td { background:#fafbfc; }
 tbody tr:hover td { background:#eff6ff !important; }
-/* ตัวเลขน้ำมันแต่ละประเภท */
 td.td-diesel { color:#b45309; font-family:'Kanit',sans-serif; font-weight:600; text-align:right; }
 td.td-g91    { color:#1d4ed8; font-family:'Kanit',sans-serif; font-weight:600; text-align:right; }
 td.td-g95    { color:#047857; font-family:'Kanit',sans-serif; font-weight:600; text-align:right; }
@@ -145,28 +166,24 @@ td.td-g95p   { color:#be185d; font-family:'Kanit',sans-serif; font-weight:600; t
 td.td-power  { color:#b91c1c; font-family:'Kanit',sans-serif; font-weight:600; text-align:right; }
 td.td-remain { color:#1a2235; font-family:'Kanit',sans-serif; font-weight:800; font-size:14px; text-align:right; }
 td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; }
-/* pct cell */
 .pct-cell { display:flex; align-items:center; gap:8px; min-width:100px; }
 .pct-bar-wrap { flex:1; height:7px; background:#e5e7eb; border-radius:4px; overflow:hidden; }
 .pct-bar { height:100%; border-radius:4px; transition:width .4s; }
 .pct-num { font-family:'Kanit',sans-serif; font-weight:700; font-size:13px; min-width:36px; text-align:right; }
 
-/* ── INPUT PAGE (single panel) ── */
-.input-page { padding:1.25rem 1.5rem; max-width:900px; margin:0 auto; }
-
-/* slicer row */
-.input-slicer { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-bottom:1.1rem; }
-.input-slicer .slicer-grp select { min-width:200px; font-size:14px; padding:7px 12px; }
-.input-slicer .slicer-grp { flex:1; }
-
-/* station panel */
+/* ── INPUT PAGE ── */
+.input-page-wrap { padding:1.1rem 1.5rem; }
+.pin-station-box { max-width:340px; margin:2rem auto; background:#fff; border-radius:16px; border:1px solid #e5e7eb; padding:2rem; text-align:center; box-shadow:0 4px 20px rgba(0,0,0,.1); }
+.pin-station-title { font-family:'Kanit',sans-serif; font-size:18px; font-weight:700; color:#1a2235; margin-bottom:.3rem; }
+.pin-station-sub { font-size:12px; color:#6b7280; margin-bottom:1.25rem; }
+.pin-station-input { border:2px solid #e5e7eb; border-radius:10px; padding:10px 14px; font-size:22px; font-family:'Kanit',sans-serif; text-align:center; width:100%; letter-spacing:.15em; color:#1a2235; margin-bottom:.75rem; transition:border-color .15s; }
+.pin-station-input:focus { outline:none; border-color:#f59e0b; }
+.pin-station-hint { font-size:11px; color:#dc2626; min-height:18px; margin-bottom:.75rem; }
 .station-panel { background:#fff; border-radius:14px; border:1px solid #e5e7eb; overflow:hidden; }
 .sp-header { background:linear-gradient(135deg,#1a2235 0%,#243550 100%); padding:1rem 1.4rem; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
 .sp-name  { font-family:'Kanit',sans-serif; font-size:20px; font-weight:600; color:#fff; letter-spacing:.01em; }
 .sp-meta  { display:flex; align-items:center; gap:8px; }
 .sp-amphoe{ font-size:12px; color:#94a3b8; }
-
-/* capacity bar */
 .sp-cap-bar { padding:.75rem 1.4rem; background:#f8fafc; border-bottom:1px solid #e5e7eb; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
 .sp-cap-label { font-size:12px; color:#6b7280; font-weight:500; white-space:nowrap; }
 .cap-input-wrap { display:flex; align-items:center; gap:6px; }
@@ -178,8 +195,6 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
 .sp-pct-text  { font-family:'Kanit',sans-serif; font-size:16px; font-weight:700; min-width:46px; text-align:right; }
 .sp-remain    { font-size:12px; color:#6b7280; white-space:nowrap; }
 .sp-remain strong { font-family:'Kanit',sans-serif; font-size:15px; color:#1a1a1a; }
-
-/* fuel grid */
 .fuel-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0; }
 @media(max-width:640px){ .fuel-grid { grid-template-columns:repeat(2,1fr); } }
 .fuel-cell { padding:1rem 1.4rem; border-right:1px solid #f0f2f5; border-bottom:1px solid #f0f2f5; display:flex; flex-direction:column; gap:6px; }
@@ -192,11 +207,7 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
 .fuel-cell-input.dirty { border-color:#f59e0b; background:#fffbeb; }
 .fuel-cell-input.saving { border-color:#10b981; background:#f0fdf4; }
 .fuel-cell-input.over-cap { border-color:#dc2626 !important; background:#fff1f2 !important; box-shadow:0 0 0 3px rgba(220,38,38,.12) !important; }
-.cap-over-warn { font-size:11px; color:#dc2626; font-weight:600; display:flex; align-items:center; gap:4px; padding:4px 8px; background:#fff1f2; border-radius:6px; border:1px solid #fecaca; }
-
 .fuel-cell-unit { font-size:11px; color:#9ca3af; text-align:right; margin-top:-2px; }
-
-/* action bar */
 .sp-actions { padding:.85rem 1.4rem; background:#f8fafc; border-top:1px solid #e5e7eb; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
 .sp-actions .spacer { flex:1; }
 .sp-sync-time { font-size:11px; color:#9ca3af; }
@@ -204,14 +215,10 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
 .sp-rt-badge .rt-dot { width:7px;height:7px;border-radius:50%;background:#059669;animation:blink .7s infinite; }
 .sp-rt-badge.off { background:#f3f4f6;color:#6b7280; }
 .sp-rt-badge.off .rt-dot { background:#9ca3af;animation:none; }
-
-/* prev/next nav */
 .station-nav { display:flex; align-items:center; gap:8px; margin-top:1rem; justify-content:space-between; }
 .station-nav .nav-info { font-size:13px; color:#6b7280; text-align:center; }
 .station-nav .nav-info strong { color:#1a1a1a; }
 .nav-arrow { display:flex; align-items:center; gap:6px; }
-
-/* no-url notice */
 .no-url-notice { background:#fffbeb; border:1.5px solid #f59e0b; border-radius:10px; padding:.85rem 1.1rem; font-size:13px; color:#92400e; display:flex; align-items:center; gap:8px; margin-bottom:1rem; }
 .no-url-notice svg { width:18px;height:18px;fill:#d97706;flex-shrink:0; }
 
@@ -234,10 +241,9 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
 .toast { position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;background:#1a2235;color:#fff;padding:.6rem 1.1rem;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;max-width:320px; }
 .toast.show { opacity:1; }
 .toast.err  { background:#dc2626; }
-
 .footer { text-align:center;font-size:11px;color:#9ca3af;padding:.5rem 1.5rem 1.25rem; }
 
-/* ── PIN ── */
+/* ── PIN overlay ── */
 .pin-overlay { position:fixed;inset:0;background:rgba(15,20,35,.75);z-index:9000;display:flex;align-items:center;justify-content:center; }
 .pin-overlay.hidden { display:none; }
 .pin-box { background:#fff;border-radius:16px;padding:2rem 2rem 1.5rem;width:300px;text-align:center; }
@@ -260,12 +266,10 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
 .map-page { display:flex; height:calc(100vh - 160px); min-height:500px; position:relative; }
 .map-sidebar { width:300px; flex-shrink:0; background:#fff; border-right:1px solid #e5e7eb; display:flex; flex-direction:column; overflow:hidden; transition:width .3s ease,opacity .3s ease; }
 .map-sidebar.collapsed { width:0 !important; opacity:0; pointer-events:none; border:none; }
-/* ปุ่มพับอยู่ใน header */
 .map-sidebar-header { padding:.75rem 1rem; background:#1a2235; color:#fff; display:flex; align-items:center; justify-content:space-between; gap:8px; }
 .map-sidebar-header-text { flex:1; min-width:0; }
 .sidebar-collapse-btn { width:30px; height:30px; border-radius:8px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.2); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; transition:background .12s; }
 .sidebar-collapse-btn:hover { background:rgba(255,255,255,.25); }
-/* ปุ่มเปิด sidebar เมื่อพับแล้ว — ลอยบนแผนที่ */
 .sidebar-open-fab { position:absolute; top:10px; left:10px; z-index:1000; display:none; width:40px; height:40px; border-radius:10px; background:#1a2235; color:#fff; border:none; cursor:pointer; align-items:center; justify-content:center; font-size:18px; box-shadow:0 3px 10px rgba(0,0,0,.3); }
 .sidebar-open-fab.show { display:flex; }
 @media(max-width:700px){
@@ -275,7 +279,6 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
 .gmaps-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:9px; background:#4285f4; color:#fff; border:none; border-radius:8px; font-family:'Noto Sans Thai',sans-serif; font-size:13px; font-weight:600; cursor:pointer; margin-top:8px; text-decoration:none; transition:background .12s; }
 .gmaps-btn:hover { background:#3367d6; }
 .gmaps-btn svg { width:16px; height:16px; fill:#fff; flex-shrink:0; }
-.map-sidebar-header { padding:.85rem 1rem; background:#1a2235; color:#fff; }
 .map-sidebar-title { font-family:'Kanit',sans-serif; font-size:14px; font-weight:600; }
 .map-sidebar-sub { font-size:11px; color:#94a3b8; margin-top:2px; }
 .map-filter { padding:.65rem 1rem; border-bottom:1px solid #e5e7eb; display:flex; flex-direction:column; gap:6px; }
@@ -292,11 +295,9 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
 .map-st-pct { font-family:'Kanit',sans-serif; font-size:12px; font-weight:600; }
 .map-container { flex:1; position:relative; background:#e8f0e8; }
 #map { width:100%; height:100%; }
-/* Custom marker */
 .marker-wrap { position:relative; }
 .marker-pin { width:32px; height:32px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); display:flex; align-items:center; justify-content:center; border:2px solid rgba(255,255,255,.8); box-shadow:0 2px 8px rgba(0,0,0,.25); cursor:pointer; }
 .marker-pin-inner { transform:rotate(45deg); font-size:10px; font-family:'Kanit',sans-serif; font-weight:700; color:#fff; }
-/* Popup */
 .map-popup { background:#fff; border-radius:12px; padding:0; min-width:220px; box-shadow:0 4px 20px rgba(0,0,0,.15); overflow:hidden; }
 .map-popup-head { padding:.65rem .9rem; display:flex; align-items:center; justify-content:space-between; }
 .map-popup-name { font-family:'Kanit',sans-serif; font-size:14px; font-weight:600; color:#1a2235; }
@@ -311,14 +312,13 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
 .leaflet-popup-content { margin:0 !important; }
 .leaflet-popup-tip-container { display:none; }
 
-
 /* ── TREND PAGE ── */
 .trend-page { padding:0 0 1.1rem; }
 .trend-slicer { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-bottom:1.1rem; background:linear-gradient(135deg,#1a2235,#243550); padding:.75rem 1.5rem; box-shadow:0 2px 8px rgba(0,0,0,.15); }
-.trend-slicer .slicer-grp select { min-width:170px; border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:6px 10px; font-size:13px; font-family:'Noto Sans Thai',sans-serif; background:rgba(255,255,255,.1); color:#fff; cursor:pointer; }
+.trend-slicer .slicer-grp select { min-width:170px; border:1.5px solid rgba(255,255,255,.25); border-radius:8px; padding:6px 10px; font-size:13px; font-family:'Noto Sans Thai',sans-serif; background:rgba(255,255,255,.12); color:#fff !important; cursor:pointer; }
 .trend-slicer .slicer-grp select option { background:#1a2235; color:#fff; }
 .trend-slicer .slicer-grp select:focus { outline:none; border-color:#f59e0b; }
-.trend-slicer .slicer-label { color:#f59e0b; }
+.trend-slicer .slicer-label { color:#f59e0b; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; display:block; margin-bottom:3px; }
 .trend-content { padding:1.1rem 1.5rem; }
 .trend-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; margin-bottom:1.1rem; }
 .trend-card { background:#fff; border-radius:12px; border:1px solid #e5e7eb; padding:1rem 1.1rem; }
@@ -327,7 +327,6 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
 .trend-main-card { background:#fff; border-radius:12px; border:1px solid #e5e7eb; padding:1rem 1.1rem; margin-bottom:1.1rem; }
 .trend-loading { text-align:center; padding:2rem; color:#9ca3af; font-size:13px; }
 .trend-empty { text-align:center; padding:2.5rem; color:#9ca3af; font-size:13px; }
-
 </style>
 </head>
 <body>
@@ -366,13 +365,10 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
   <div class="nav-tab" id="tab-settings" onclick="switchTab('settings')" style="display:none">ตั้งค่า</div>
 </div>
 
-
 <!-- ===================== MAP ===================== -->
 <div class="page" id="page-map">
 <div class="map-page" id="map-page-wrap">
-  <!-- FAB เปิด sidebar (แสดงเมื่อพับแล้ว) -->
   <button class="sidebar-open-fab" id="sidebar-open-fab" onclick="toggleMapSidebar()" title="เปิดรายการสถานี">☰</button>
-  <!-- SIDEBAR -->
   <div class="map-sidebar" id="map-sidebar">
     <div class="map-sidebar-header">
       <div class="map-sidebar-header-text">
@@ -410,18 +406,13 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
     </div>
     <div class="map-station-list" id="map-station-list"></div>
   </div>
-  <!-- MAP -->
-  <div class="map-container">
-    <div id="map"></div>
-  </div>
+  <div class="map-container"><div id="map"></div></div>
 </div>
 </div>
-
 
 <!-- ===================== TREND ===================== -->
 <div class="page" id="page-trend">
 <div class="trend-page">
-
   <div class="trend-slicer">
     <div class="slicer-grp">
       <span class="slicer-label">เดือน</span>
@@ -441,21 +432,17 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
     </div>
     <button class="btn btn-warn" onclick="loadTrend()" style="margin-left:auto">↓ โหลดข้อมูล</button>
   </div>
-
   <div class="trend-content">
-  <!-- กราฟรวมทุกประเภท -->
-  <div class="trend-main-card">
-    <div class="card-title">📈 ปริมาณน้ำมันคงเหลือรายวัน (ลิตร) — แยกตามประเภท</div>
-    <div id="trend-main-wrap" style="position:relative;width:100%;height:360px">
-      <div class="trend-loading">เลือกเดือนแล้วกด "โหลดข้อมูล"</div>
+    <div class="trend-main-card">
+      <div class="card-title">📈 ปริมาณน้ำมันคงเหลือรายวัน (ลิตร) — แยกตามประเภท</div>
+      <div id="trend-main-wrap" style="position:relative;width:100%;height:360px">
+        <div class="trend-loading">เลือกเดือนแล้วกด "โหลดข้อมูล"</div>
+      </div>
     </div>
+    <div class="trend-cards" id="trend-sub-cards"></div>
   </div>
-
-  <!-- กราฟแยกแต่ละประเภท -->
-  <div class="trend-cards" id="trend-sub-cards"></div>
-
 </div>
-</div></div>
+</div>
 
 <!-- ===================== SETTINGS ===================== -->
 <div class="page" id="page-settings">
@@ -551,90 +538,87 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
   </div>
 </div>
 
-<!-- ===================== INPUT (single panel) ===================== -->
+<!-- ===================== INPUT ===================== -->
 <div class="page" id="page-input">
-<div class="input-page">
-
-  <!-- no-url notice -->
-  <div class="no-url-notice" id="no-url-notice" style="display:none">
-    <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-    ยังไม่ได้ตั้งค่า Google Sheet URL — ข้อมูลจะบันทึกในเครื่องเท่านั้น
-    <button class="btn btn-warn" onclick="requestSettings()" style="margin-left:auto;padding:3px 10px;font-size:11px;">ตั้งค่าเลย</button>
-  </div>
-
-  <!-- SLICER -->
-  <div class="input-slicer">
-    <div class="slicer-grp">
-      <span class="slicer-label">อำเภอ</span>
-      <select id="inp-amphoe" onchange="onInputAmphoeChange()"></select>
-    </div>
-    <div class="slicer-grp">
-      <span class="slicer-label">สถานีบริการ</span>
-      <select id="inp-station" onchange="loadStationPanel()"></select>
-    </div>
-    <div style="display:flex;gap:8px;align-items:flex-end;padding-bottom:1px;">
-      <button class="btn btn-warn" onclick="pullFromSheet()" id="btn-pull2">↓ ดึงข้อมูล Sheet</button>
+  <div id="input-pin-screen">
+    <div class="pin-station-box">
+      <div style="font-size:36px;margin-bottom:.5rem">🔑</div>
+      <div class="pin-station-title">ใส่รหัสเข้าระบบ</div>
+      <div class="pin-station-sub">รหัสแอดมิน หรือ รหัสสถานีบริการ (7 หลัก)</div>
+      <input class="pin-station-input" type="password" id="station-pin-input" maxlength="7"
+        placeholder="●●●●●●●" oninput="onStationPinInput(this)" onkeydown="if(event.key==='Enter')checkStationPin()">
+      <div class="pin-station-hint" id="station-pin-hint"></div>
+      <button class="btn btn-primary" onclick="checkStationPin()" style="width:100%;padding:10px;font-size:14px">เข้าสู่ระบบ</button>
     </div>
   </div>
 
-  <!-- STATION PANEL -->
-  <div class="station-panel" id="station-panel">
-    <div class="sp-header">
-      <div>
-        <div class="sp-name"  id="sp-name">—</div>
-        <div class="sp-amphoe" id="sp-amphoe">เลือกสถานีด้านบน</div>
+  <div id="input-admin-screen" style="display:none">
+    <div class="no-url-notice" id="no-url-notice" style="display:none">
+      <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+      ยังไม่ได้ตั้งค่า Google Sheet URL
+      <button class="btn btn-warn" onclick="requestSettings()" style="margin-left:auto;padding:3px 10px;font-size:11px;">ตั้งค่าเลย</button>
+    </div>
+
+    <!-- INPUT SLICER — dark navy เหมือน dashboard -->
+    <div class="input-slicer">
+      <div class="slicer-grp">
+        <span class="slicer-label">อำเภอ</span>
+        <select id="inp-amphoe" onchange="onInputAmphoeChange()"></select>
       </div>
-      <div class="sp-meta">
-        <span class="brand" id="sp-brand"></span>
-        <span class="status-pill pill-none" id="sp-status-pill">ไม่มีข้อมูล</span>
+      <div class="slicer-grp">
+        <span class="slicer-label">สถานีบริการ</span>
+        <select id="inp-station" onchange="loadStationPanel()"></select>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-end;padding-bottom:1px;">
+        <button class="btn btn-warn" onclick="pullFromSheet()" id="btn-pull2">↓ ดึงข้อมูล Sheet</button>
+        <button class="btn btn-danger" onclick="logoutInput()" style="font-size:12px;padding:5px 10px">ออกจากระบบ</button>
       </div>
     </div>
 
-    <!-- CAPACITY ROW -->
-    <div class="sp-cap-bar">
-      <span class="sp-cap-label">ความจุคลัง (ลิตร)</span>
-      <div class="cap-input-wrap">
-        <input type="number" id="sp-cap" min="0" step="1000" placeholder="0" oninput="onCapChange()">
-        <span class="unit">ล.</span>
+    <div class="input-page-wrap">
+      <div class="station-panel" id="station-panel">
+        <div class="sp-header">
+          <div>
+            <div class="sp-name"  id="sp-name">—</div>
+            <div class="sp-amphoe" id="sp-amphoe">เลือกสถานีด้านบน</div>
+          </div>
+          <div class="sp-meta">
+            <span class="brand" id="sp-brand"></span>
+            <span class="status-pill pill-none" id="sp-status-pill">ไม่มีข้อมูล</span>
+          </div>
+        </div>
+        <div class="sp-cap-bar">
+          <span class="sp-cap-label">ความจุคลัง (ลิตร)</span>
+          <div class="cap-input-wrap">
+            <input type="number" id="sp-cap" min="0" step="1000" placeholder="0" oninput="onCapChange()">
+            <span class="unit">ล.</span>
+          </div>
+          <div class="sp-bar-track"><div class="sp-bar-fill" id="sp-bar-fill" style="width:0%;background:#e5e7eb"></div></div>
+          <span class="sp-pct-text" id="sp-pct">—</span>
+          <span class="sp-remain">คงเหลือ: <strong id="sp-remain-val">0</strong> ล.</span>
+        </div>
+        <div class="fuel-grid" id="fuel-grid"></div>
+        <div class="sp-actions">
+          <div class="sp-rt-badge off" id="rt-badge"><span class="rt-dot"></span>Realtime</div>
+          <span class="sp-sync-time" id="sp-sync-time"></span>
+          <div class="spacer"></div>
+          <button class="btn" onclick="clearCurrentStation()">ล้างข้อมูล</button>
+          <button class="btn btn-success" id="btn-save-one" onclick="saveCurrentToSheet()">💾 บันทึกขึ้น Sheet</button>
+        </div>
       </div>
-      <div class="sp-bar-track"><div class="sp-bar-fill" id="sp-bar-fill" style="width:0%;background:#e5e7eb"></div></div>
-      <span class="sp-pct-text" id="sp-pct">—</span>
-      <span class="sp-remain">คงเหลือ: <strong id="sp-remain-val">0</strong> ล.</span>
-    </div>
-
-    <!-- FUEL GRID -->
-    <div class="fuel-grid" id="fuel-grid"></div>
-
-    <!-- ACTIONS -->
-    <div class="sp-actions">
-      <div class="sp-rt-badge off" id="rt-badge">
-        <span class="rt-dot"></span>Realtime
+      <div class="station-nav">
+        <div class="nav-arrow"><button class="btn" onclick="navigateStation(-1)">← ก่อนหน้า</button></div>
+        <div class="nav-info" id="nav-info"></div>
+        <div class="nav-arrow"><button class="btn" onclick="navigateStation(1)">ถัดไป →</button></div>
       </div>
-      <span class="sp-sync-time" id="sp-sync-time"></span>
-      <div class="spacer"></div>
-      <button class="btn" onclick="clearCurrentStation()">ล้างข้อมูล</button>
-      <button class="btn btn-success" id="btn-save-one" onclick="saveCurrentToSheet()">💾 บันทึกขึ้น Sheet</button>
     </div>
   </div>
-
-  <!-- PREV / NEXT -->
-  <div class="station-nav">
-    <div class="nav-arrow">
-      <button class="btn" onclick="navigateStation(-1)">← ก่อนหน้า</button>
-    </div>
-    <div class="nav-info" id="nav-info"></div>
-    <div class="nav-arrow">
-      <button class="btn" onclick="navigateStation(1)">ถัดไป →</button>
-    </div>
-  </div>
-
-</div>
 </div>
 
 <div class="footer">สำนักงานสถิติจังหวัดหนองบัวลำภู · Sync กับ Google Sheet ผ่าน Google Apps Script</div>
 <div class="toast" id="toast"></div>
 
-<!-- PIN -->
+<!-- PIN overlay -->
 <div class="pin-overlay hidden" id="pin-overlay">
   <div class="pin-box">
     <div class="pin-icon"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></div>
@@ -658,9 +642,6 @@ td.td-cap    { color:#6b7280; font-family:'Kanit',sans-serif; text-align:right; 
 </div>
 
 <script>
-/* ─────────────────────────────────────────
-   DATA DEFINITIONS
-───────────────────────────────────────── */
 const GROUPS = [
   { amphoe:'อ.เมืองหนองบัวลำภู', id:'muang', stations:[
     {id:'s01',name:'บางจาก หัวนา',brand:'Bangchak'},{id:'s02',name:'ปตท.วังหมื่น',brand:'PTT'},
@@ -695,7 +676,6 @@ const GROUPS = [
   ]},
 ];
 const ALL_STATIONS = GROUPS.flatMap(g => g.stations.map(s => ({...s, amphoe: g.amphoe, groupId: g.id})));
-
 const FUELS = [
   {key:'diesel',label:'ดีเซล B7',    color:'#F59E0B'},
   {key:'g91',   label:'แก๊สโซฮอล์ 91',color:'#3B82F6'},
@@ -705,32 +685,17 @@ const FUELS = [
   {key:'power', label:'พาวเวอร์ดีเซล',color:'#EF4444'},
 ];
 
-/* ─────────────────────────────────────────
-   STORAGE
-───────────────────────────────────────── */
 const LS_DATA='nbl_fuel_data_v3', LS_URL='nbl_gas_url', LS_INTERVAL='nbl_gas_interval', LS_MODE='nbl_fuel_mode';
-
-function defaultData(){
-  const d={};
-  GROUPS.forEach(g=>g.stations.forEach(s=>{d[s.id]={cap:0,diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0,updated_at:''};}));
-  return d;
-}
-function loadData(){
-  try{const raw=localStorage.getItem(LS_DATA);if(raw){const p=JSON.parse(raw),def=defaultData();Object.keys(def).forEach(id=>{if(p[id])def[id]={...def[id],...p[id]};});return def;}}catch(e){}
-  return defaultData();
-}
+function defaultData(){const d={};GROUPS.forEach(g=>g.stations.forEach(s=>{d[s.id]={cap:0,diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0,updated_at:''};}));return d;}
+function loadData(){try{const raw=localStorage.getItem(LS_DATA);if(raw){const p=JSON.parse(raw),def=defaultData();Object.keys(def).forEach(id=>{if(p[id])def[id]={...def[id],...p[id]};});return def;}}catch(e){}return defaultData();}
 function persistData(){localStorage.setItem(LS_DATA,JSON.stringify(DATA));}
 let DATA=loadData();
-
 const DEFAULT_GS_URL='https://script.google.com/macros/s/AKfycbyGsO6e53iYL6S5GykurNc2KZTLTwJMXLFqgrh6-UZSZcp10DVNExamoFIdqJy-8P5EvA/exec';
 let GS_URL=localStorage.getItem(LS_URL)||DEFAULT_GS_URL;
 let AUTO_INTERVAL=parseInt(localStorage.getItem(LS_INTERVAL)||'60');
 let refreshTimer=null;
 let CURRENT_MODE=localStorage.getItem(LS_MODE)||'view';
 
-/* ─────────────────────────────────────────
-   HELPERS
-───────────────────────────────────────── */
 function getSD(sid){return DATA[sid]||{cap:0,diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0,updated_at:''};}
 function getRemain(sid){const d=getSD(sid);return FUELS.reduce((a,f)=>a+(d[f.key]||0),0);}
 function sumFuel(stations,key){return stations.reduce((a,s)=>a+(getSD(s.id)[key]||0),0);}
@@ -749,62 +714,30 @@ function getStatusInfo(pct,remain){
   return                       {key:'danger',label:'วิกฤต',      pillClass:'pill-danger',ssClass:'ss-danger',icon:ICON_DANGER};
 }
 
-/* ─────────────────────────────────────────
-   MODE
-───────────────────────────────────────── */
 function setMode(mode,skipPin){
   if(mode==='edit'&&!skipPin){showPinFor('edit');return;}
-  CURRENT_MODE=mode;
-  localStorage.setItem(LS_MODE,mode);
+  CURRENT_MODE=mode;localStorage.setItem(LS_MODE,mode);
   document.getElementById('mode-btn-view').classList.toggle('active',mode==='view');
   document.getElementById('mode-btn-edit').classList.toggle('active',mode==='edit');
   const tabInput=document.getElementById('tab-input');
-  if(mode==='edit'){
-    tabInput.style.display='';
-    document.getElementById('mode-hint').textContent='โหมดแก้ไข — กรอกและบันทึกข้อมูลลง Sheet ได้';
-  } else {
-    tabInput.style.display='none';
-    document.getElementById('mode-hint').textContent='โหมดดูข้อมูล — ดึงข้อมูลจาก Sheet อัตโนมัติ';
-    if(document.getElementById('page-input').classList.contains('active'))switchTab('dashboard');
-  }
+  if(mode==='edit'){tabInput.style.display='';document.getElementById('mode-hint').textContent='โหมดแก้ไข — กรอกและบันทึกข้อมูลลง Sheet ได้';}
+  else{tabInput.style.display='none';document.getElementById('mode-hint').textContent='โหมดดูข้อมูล — ดึงข้อมูลจาก Sheet อัตโนมัติ';if(document.getElementById('page-input').classList.contains('active'))switchTab('dashboard');}
 }
 function requestSettings(){showPinFor('settings');}
 
-/* ─────────────────────────────────────────
-   PIN
-───────────────────────────────────────── */
 const PIN_CORRECT='3900039';
 let pinBuffer='',pinTarget='';
-function showPinFor(target){
-  pinTarget=target;pinBuffer='';updatePinDots();
-  document.getElementById('pin-err').textContent='';
-  document.getElementById('pin-sub-text').textContent=target==='edit'?'กรอกรหัส 7 หลัก เพื่อเข้าโหมดกรอกข้อมูล':'กรอกรหัส 7 หลัก เพื่อเข้าตั้งค่า';
-  document.getElementById('pin-overlay').classList.remove('hidden');
-}
+function showPinFor(target){pinTarget=target;pinBuffer='';updatePinDots();document.getElementById('pin-err').textContent='';document.getElementById('pin-sub-text').textContent=target==='edit'?'กรอกรหัส 7 หลัก เพื่อเข้าโหมดกรอกข้อมูล':'กรอกรหัส 7 หลัก เพื่อเข้าตั้งค่า';document.getElementById('pin-overlay').classList.remove('hidden');}
 function pinPress(d){if(pinBuffer.length>=7)return;pinBuffer+=d;updatePinDots();if(pinBuffer.length===7)setTimeout(()=>checkPin(),120);}
 function pinDelete(){pinBuffer=pinBuffer.slice(0,-1);updatePinDots();document.getElementById('pin-err').textContent='';}
 function updatePinDots(){for(let i=0;i<7;i++){const el=document.getElementById('pd'+i);el.classList.toggle('filled',i<pinBuffer.length);el.classList.remove('error');}}
 function checkPin(){
-  if(pinBuffer===PIN_CORRECT){
-    document.getElementById('pin-overlay').classList.add('hidden');pinBuffer='';updatePinDots();
-    if(pinTarget==='edit')setMode('edit',true);else doSwitchSettings();
-  } else {
-    for(let i=0;i<7;i++)document.getElementById('pd'+i).classList.add('error');
-    document.getElementById('pin-err').textContent='รหัสไม่ถูกต้อง ลองใหม่';
-    setTimeout(()=>{pinBuffer='';updatePinDots();},800);
-  }
+  if(pinBuffer===PIN_CORRECT){document.getElementById('pin-overlay').classList.add('hidden');pinBuffer='';updatePinDots();if(pinTarget==='edit')setMode('edit',true);else doSwitchSettings();}
+  else{for(let i=0;i<7;i++)document.getElementById('pd'+i).classList.add('error');document.getElementById('pin-err').textContent='รหัสไม่ถูกต้อง ลองใหม่';setTimeout(()=>{pinBuffer='';updatePinDots();},800);}
 }
 function pinCancel(){pinBuffer='';updatePinDots();document.getElementById('pin-err').textContent='';document.getElementById('pin-overlay').classList.add('hidden');}
 
-/* ─────────────────────────────────────────
-   NAVIGATION
-───────────────────────────────────────── */
-function doSwitchSettings(){
-  switchTab('settings');
-  document.getElementById('tab-settings').style.display='';
-  document.getElementById('gs-url').value=GS_URL;
-  document.getElementById('sel-interval').value=AUTO_INTERVAL;
-}
+function doSwitchSettings(){switchTab('settings');document.getElementById('tab-settings').style.display='';document.getElementById('gs-url').value=GS_URL;document.getElementById('sel-interval').value=AUTO_INTERVAL;}
 function switchTab(tab){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
@@ -814,953 +747,246 @@ function switchTab(tab){
   const navTabs=document.querySelectorAll('.nav-tab');
   if(navTabs[idx])navTabs[idx].classList.add('active');
   document.getElementById('mode-btn-map').classList.toggle('active', tab==='map');
-  if(tab==='dashboard'){renderDashboard(); document.getElementById('mode-btn-view').classList.add('active');}
+  if(tab==='dashboard'){renderDashboard();document.getElementById('mode-btn-view').classList.add('active');}
   if(tab==='map'){initMap();}
   if(tab==='trend'){initTrend();}
-  if(tab==='input'){buildInputSlicers();loadStationPanel();}
+  if(tab==='input'){if(!inputMode){document.getElementById('input-pin-screen').style.display='block';document.getElementById('input-admin-screen').style.display='none';}}
 }
 
-/* ─────────────────────────────────────────
-   GOOGLE SHEET SYNC
-───────────────────────────────────────── */
-/* ── fetch GET (รองรับ redirect ของ Apps Script) ── */
-function gsGet(url){
-  return fetch(url,{redirect:'follow'})
-    .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});
-}
-/* ── fetch POST no-cors ── */
-function gsPost(url,body){
-  return fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)});
-}
+function gsGet(url){return fetch(url,{redirect:'follow'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});}
+function gsPost(url,body){return fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)});}
 
 function pullFromSheet(){
   if(!GS_URL){showToast('กรุณาตั้งค่า URL ก่อน',2500,true);return;}
-  setSyncBadge('ing','กำลังดึงข้อมูล...');
-  setButtons(true);
-  gsGet(GS_URL)
-    .then(json=>{
-      if(!json.ok)throw new Error(json.message||'Sheet error');
-      const onInputPage = document.getElementById('page-input').classList.contains('active');
-      Object.keys(json.data).forEach(sid=>{
-        if(DATA[sid]===undefined) return;
-        // ถ้ากำลังกรอกสถานีนี้อยู่ → ข้ามไม่เขียนทับ
-        if(onInputPage && sid===currentSid) return;
-        DATA[sid]={...DATA[sid],...json.data[sid]};
-      });
-      persistData();
-      const now=new Date().toLocaleTimeString('th-TH');
-      setSyncBadge('ok','ซิงค์แล้ว '+now);
-      if(!onInputPage) showToast('ดึงข้อมูลจาก Sheet สำเร็จ ✓');
-      renderDashboard();
-      if(mapInst)updateMapMarkers();
-    })
-    .catch(err=>{setSyncBadge('err','ดึงข้อมูลไม่สำเร็จ');showToast('Error: '+err.message,3000,true);})
-    .finally(()=>setButtons(false));
+  setSyncBadge('ing','กำลังดึงข้อมูล...');setButtons(true);
+  gsGet(GS_URL).then(json=>{
+    if(!json.ok)throw new Error(json.message||'Sheet error');
+    const onInputPage=document.getElementById('page-input').classList.contains('active');
+    Object.keys(json.data).forEach(sid=>{if(DATA[sid]===undefined)return;if(onInputPage&&sid===currentSid)return;DATA[sid]={...DATA[sid],...json.data[sid]};});
+    persistData();const now=new Date().toLocaleTimeString('th-TH');setSyncBadge('ok','ซิงค์แล้ว '+now);
+    if(!onInputPage)showToast('ดึงข้อมูลจาก Sheet สำเร็จ ✓');renderDashboard();if(mapInst)updateMapMarkers();
+  }).catch(err=>{setSyncBadge('err','ดึงข้อมูลไม่สำเร็จ');showToast('Error: '+err.message,3000,true);}).finally(()=>setButtons(false));
 }
 
 function saveOneStation(sid){
   persistData();
   if(!GS_URL){showToast('บันทึกในเครื่องแล้ว (ยังไม่ได้ตั้งค่า URL)');return Promise.resolve();}
-  // แนบ station_name, amphoe, brand ไปด้วยเพื่อบันทึกลง FuelHistory
-  const stInfo = ALL_STATIONS.find(s=>s.id===sid)||{};
-  const payload = {
-    ...DATA[sid],
-    station_name: stInfo.name  || sid,
-    amphoe:       stInfo.amphoe|| '',
-    brand:        stInfo.brand || ''
-  };
-  return gsPost(GS_URL,{action:'save_one',station_id:sid,data:payload})
-    .then(()=>{
-      const now=new Date().toLocaleTimeString('th-TH');
-      DATA[sid].updated_at=now;
-      persistData();
-      setSyncBadge('ok','บันทึกแล้ว '+now);
-      const el=document.getElementById('sp-sync-time');
-      if(el)el.textContent='บันทึกแล้ว '+now;
-      setRtBadge(true);
-      showToast('บันทึกสถานีสำเร็จ ✓');
-    })
-    .catch(err=>showToast('บันทึกไม่สำเร็จ: '+err.message,3000,true));
+  const stInfo=ALL_STATIONS.find(s=>s.id===sid)||{};
+  const payload={...DATA[sid],station_name:stInfo.name||sid,amphoe:stInfo.amphoe||'',brand:stInfo.brand||''};
+  return gsPost(GS_URL,{action:'save_one',station_id:sid,data:payload}).then(()=>{
+    const now=new Date().toLocaleTimeString('th-TH');DATA[sid].updated_at=now;persistData();
+    setSyncBadge('ok','บันทึกแล้ว '+now);const el=document.getElementById('sp-sync-time');if(el)el.textContent='บันทึกแล้ว '+now;
+    setRtBadge(true);showToast('บันทึกสถานีสำเร็จ ✓');
+  }).catch(err=>showToast('บันทึกไม่สำเร็จ: '+err.message,3000,true));
 }
 
-function setButtons(disabled){
-  ['btn-pull','btn-pull2','btn-save-one'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=disabled;});
-}
-function setRtBadge(on){
-  const b=document.getElementById('rt-badge');
-  b.className='sp-rt-badge'+(on?'':' off');
-  b.innerHTML=`<span class="rt-dot"></span>${on?'Realtime ✓':'Realtime'}`;
-}
+function setButtons(disabled){['btn-pull','btn-pull2','btn-save-one'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=disabled;});}
+function setRtBadge(on){const b=document.getElementById('rt-badge');b.className='sp-rt-badge'+(on?'':' off');b.innerHTML=`<span class="rt-dot"></span>${on?'Realtime ✓':'Realtime'}`;}
 
 async function testAndSaveURL(){
   const url=document.getElementById('gs-url').value.trim();
   if(!url){document.getElementById('url-hint').textContent='กรุณากรอก URL';return;}
   document.getElementById('url-hint').textContent='กำลังทดสอบ...';
-  try{
-    const json=await gsGet(url);
-    if(!json.ok)throw new Error('Sheet ตอบกลับ error');
-    GS_URL=url;localStorage.setItem(LS_URL,url);
-    document.getElementById('url-hint').textContent='✓ เชื่อมต่อสำเร็จ!';
-    setSyncBadge('ok','เชื่อมต่อแล้ว');
-    showToast('บันทึก URL สำเร็จ กำลังดึงข้อมูล...');
-    setTimeout(()=>pullFromSheet(),500);
-  }catch(err){document.getElementById('url-hint').textContent='เชื่อมต่อไม่ได้: '+err.message;}
+  try{const json=await gsGet(url);if(!json.ok)throw new Error('Sheet ตอบกลับ error');GS_URL=url;localStorage.setItem(LS_URL,url);document.getElementById('url-hint').textContent='✓ เชื่อมต่อสำเร็จ!';setSyncBadge('ok','เชื่อมต่อแล้ว');showToast('บันทึก URL สำเร็จ กำลังดึงข้อมูล...');setTimeout(()=>pullFromSheet(),500);}
+  catch(err){document.getElementById('url-hint').textContent='เชื่อมต่อไม่ได้: '+err.message;}
 }
 function clearURL(){GS_URL='';localStorage.removeItem(LS_URL);document.getElementById('gs-url').value='';document.getElementById('url-hint').textContent='ล้างแล้ว';setSyncBadge('none','ยังไม่ได้ตั้งค่า');}
 function saveInterval(){AUTO_INTERVAL=parseInt(document.getElementById('sel-interval').value);localStorage.setItem(LS_INTERVAL,AUTO_INTERVAL);startAutoRefresh();}
-function startAutoRefresh(){
-  if(refreshTimer)clearInterval(refreshTimer);
-  if(AUTO_INTERVAL>0&&GS_URL){
-    refreshTimer=setInterval(()=>{
-      // ข้าม auto-refresh ถ้ากำลังอยู่หน้ากรอกข้อมูล
-      const onInputPage=document.getElementById('page-input').classList.contains('active');
-      if(!onInputPage) pullFromSheet();
-    }, AUTO_INTERVAL*1000);
-  }
+function startAutoRefresh(){if(refreshTimer)clearInterval(refreshTimer);if(AUTO_INTERVAL>0&&GS_URL){refreshTimer=setInterval(()=>{const onInputPage=document.getElementById('page-input').classList.contains('active');if(!onInputPage)pullFromSheet();},AUTO_INTERVAL*1000);}}
+
+let currentSid=null;
+let inputMode=null;
+let inputStationId=null;
+
+const STATION_PINS={"s01":"0039001","s02":"0039002","s03":"0039003","s04":"0039004","s05":"0039005","s06":"0039006","s07":"0039007","s08":"0039008","s09":"0039009","s10":"0039010","s11":"0039011","s12":"0039012","s13":"0039013","s14":"0039014","s15":"0039015","s16":"0039101","s17":"0039102","s18":"0039103","s19":"0039104","s20":"0039201","s21":"0039202","s22":"0039203","s23":"0039204","s24":"0039205","s25":"0039206","s26":"0039301","s27":"0039302","s28":"0039303","s29":"0039304","s30":"0039305","s31":"0039401","s32":"0039402","s33":"0039403","s34":"0039501","s35":"0039502"};
+const ADMIN_PIN='3900039';
+
+function onStationPinInput(el){document.getElementById('station-pin-hint').textContent='';el.value=el.value.replace(/[^0-9]/g,'');}
+function checkStationPin(){
+  const pin=document.getElementById('station-pin-input').value.trim();
+  const hint=document.getElementById('station-pin-hint');
+  if(pin.length<7){hint.textContent='กรุณากรอกรหัส 7 หลัก';return;}
+  if(pin===ADMIN_PIN){inputMode='admin';inputStationId=null;document.getElementById('input-pin-screen').style.display='none';document.getElementById('input-admin-screen').style.display='block';buildInputSlicers();loadStationPanel();document.getElementById('no-url-notice').style.display=GS_URL?'none':'flex';return;}
+  const sid=Object.keys(STATION_PINS).find(k=>STATION_PINS[k]===pin);
+  if(sid){inputMode='station';inputStationId=sid;document.getElementById('input-pin-screen').style.display='none';document.getElementById('input-admin-screen').style.display='block';document.querySelector('.input-slicer').style.display='none';const stInfo=ALL_STATIONS.find(s=>s.id===sid);if(stInfo){const g=GROUPS.find(gr=>gr.stations.some(s=>s.id===sid));buildInputSlicers();if(g)document.getElementById('inp-amphoe').value=g.id;buildInputStationSlicer(g?g.id:'all');document.getElementById('inp-station').value=sid;}loadStationPanel();document.getElementById('no-url-notice').style.display=GS_URL?'none':'flex';return;}
+  hint.textContent='รหัสไม่ถูกต้อง กรุณาลองใหม่';document.getElementById('station-pin-input').value='';
 }
+function buildInputStationSlicer(groupId){const ss=document.getElementById('inp-station');ss.innerHTML='';const g=GROUPS.find(x=>x.id===groupId);if(g)g.stations.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});}
+function logoutInput(){inputMode=null;inputStationId=null;document.getElementById('station-pin-input').value='';document.getElementById('station-pin-hint').textContent='';document.getElementById('input-pin-screen').style.display='block';document.getElementById('input-admin-screen').style.display='none';document.querySelector('.input-slicer').style.display='flex';}
+function buildInputSlicers(){const sa=document.getElementById('inp-amphoe');if(sa.options.length<=1){GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;sa.appendChild(o);});}if(!sa.value||sa.value==='all'){sa.value=GROUPS[0].id;}buildStationSlicer(sa.value);document.getElementById('no-url-notice').style.display=GS_URL?'none':'flex';}
+function buildStationSlicer(groupId){const ss=document.getElementById('inp-station');const prevSid=ss.value;ss.innerHTML='';const g=GROUPS.find(x=>x.id===groupId);if(g){g.stations.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});if(prevSid&&[...ss.options].some(o=>o.value===prevSid))ss.value=prevSid;}}
+function onInputAmphoeChange(){buildStationSlicer(document.getElementById('inp-amphoe').value);loadStationPanel();}
 
-/* ─────────────────────────────────────────
-   INPUT — SINGLE PANEL
-───────────────────────────────────────── */
-let currentSid = null;
-
-function buildInputSlicers(){
-  /* อำเภอ */
-  const sa=document.getElementById('inp-amphoe');
-  if(sa.options.length<=1){
-    GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;sa.appendChild(o);});
-  }
-  /* ถ้ายังไม่มีอำเภอเลือก ให้เลือกตัวแรก */
-  if(!sa.value||sa.value==='all'){sa.value=GROUPS[0].id;}
-  buildStationSlicer(sa.value);
-  /* notice */
-  document.getElementById('no-url-notice').style.display=GS_URL?'none':'flex';
-}
-
-function buildStationSlicer(groupId){
-  const ss=document.getElementById('inp-station');
-  const prevSid=ss.value;
-  ss.innerHTML='';
-  const g=GROUPS.find(x=>x.id===groupId);
-  if(g){
-    g.stations.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});
-    /* keep selection if possible */
-    if(prevSid&&[...ss.options].some(o=>o.value===prevSid))ss.value=prevSid;
-  }
-}
-
-function onInputAmphoeChange(){
-  buildStationSlicer(document.getElementById('inp-amphoe').value);
-  loadStationPanel();
-}
-
-function loadStationPanel(silent){
+function loadStationPanel(){
   const sid=document.getElementById('inp-station').value;
-  if(!sid)return;
-  currentSid=sid;
-
-  const stInfo=ALL_STATIONS.find(s=>s.id===sid);
-  const d=getSD(sid);
-  // ช่องกรอก: เริ่มว่างเสมอ (0) — ไม่ดึงค่าเก่ามาแสดง
-  const cap=d.cap||0; // ความจุยังคงเดิม เพื่อไม่ต้องกรอกใหม่ทุกครั้ง
-  const si=getStatusInfo(0,0); // panel ใหม่ = ว่าง = ไม่มีข้อมูล
-
-  /* header */
+  if(!sid)return;currentSid=sid;
+  const stInfo=ALL_STATIONS.find(s=>s.id===sid);const d=getSD(sid);const cap=d.cap||0;
   document.getElementById('sp-name').textContent=stInfo?stInfo.name:'—';
   document.getElementById('sp-amphoe').textContent=stInfo?stInfo.amphoe:'';
-  const brandEl=document.getElementById('sp-brand');
-  brandEl.textContent=stInfo?stInfo.brand:'';
-  brandEl.className='brand brand-'+(stInfo?stInfo.brand:'');
-  const spill=document.getElementById('sp-status-pill');
-  spill.className='status-pill pill-none';
-  spill.innerHTML='รอกรอกข้อมูล';
-
-  /* capacity — คงเดิม */
-  document.getElementById('sp-cap').value=cap||'';
-  updateCapBar(0, cap); // remain=0 จนกว่าจะกรอก
-
-  /* fuel grid — ว่างทั้งหมด */
+  const brandEl=document.getElementById('sp-brand');brandEl.textContent=stInfo?stInfo.brand:'';brandEl.className='brand brand-'+(stInfo?stInfo.brand:'');
+  const spill=document.getElementById('sp-status-pill');spill.className='status-pill pill-none';spill.innerHTML='รอกรอกข้อมูล';
+  document.getElementById('sp-cap').value=cap||'';updateCapBar(0,cap);
   const grid=document.getElementById('fuel-grid');
-  grid.innerHTML=FUELS.map(f=>`
-    <div class="fuel-cell">
-      <div class="fuel-cell-label"><span class="fuel-dot" style="background:${f.color}"></span>${f.label}</div>
-      <input class="fuel-cell-input" type="number" id="fci-${f.key}" min="0" step="100"
-        value="" placeholder="0"
-        oninput="onFuelCellInput('${f.key}',this)">
-      <div class="fuel-cell-unit">ลิตร</div>
-    </div>`).join('');
-
-  /* sync time */
-  document.getElementById('sp-sync-time').textContent=d.updated_at?'บันทึกล่าสุด '+d.updated_at:'';
-  setRtBadge(false);
-
-  /* nav info */
-  updateNavInfo();
+  grid.innerHTML=FUELS.map(f=>`<div class="fuel-cell"><div class="fuel-cell-label"><span class="fuel-dot" style="background:${f.color}"></span>${f.label}</div><input class="fuel-cell-input" type="number" id="fci-${f.key}" min="0" step="100" value="" placeholder="0" oninput="onFuelCellInput('${f.key}',this)"><div class="fuel-cell-unit">ลิตร</div></div>`).join('');
+  document.getElementById('sp-sync-time').textContent=d.updated_at?'บันทึกล่าสุด '+d.updated_at:'';setRtBadge(false);updateNavInfo();
 }
-
 function onFuelCellInput(fkey,el){
-  if(!currentSid)return;
-  const val=parseFloat(el.value)||0;
-  const cap=DATA[currentSid].cap||0;
-
-  // คำนวณรวมน้ำมันชนิดอื่น (ไม่รวมชนิดที่กำลังกรอก)
-  const otherSum=FUELS.filter(f=>f.key!==fkey).reduce((a,f)=>a+(DATA[currentSid][f.key]||0),0);
-  const newTotal=otherSum+val;
-
-  if(cap>0 && newTotal>cap){
-    // เกินความจุ — จำกัดค่าไม่ให้เกิน
-    const maxAllowed=Math.max(0, cap-otherSum);
-    el.value=maxAllowed;
-    DATA[currentSid][fkey]=maxAllowed;
-    el.classList.add('over-cap');
-    // แสดง toast แจ้งเตือน
-    showCapWarn(fkey, cap, newTotal);
-    setTimeout(()=>el.classList.remove('over-cap'),1500);
-  } else {
-    DATA[currentSid][fkey]=val;
-    el.classList.remove('over-cap');
-    el.classList.add('dirty');
-  }
-
-  const remain=getRemain(currentSid);
-  updateCapBar(remain, cap);
+  if(!currentSid)return;const val=parseFloat(el.value)||0;const cap=DATA[currentSid].cap||0;
+  const otherSum=FUELS.filter(f=>f.key!==fkey).reduce((a,f)=>a+(DATA[currentSid][f.key]||0),0);const newTotal=otherSum+val;
+  if(cap>0&&newTotal>cap){const maxAllowed=Math.max(0,cap-otherSum);el.value=maxAllowed;DATA[currentSid][fkey]=maxAllowed;el.classList.add('over-cap');showCapWarn(fkey,cap,newTotal);setTimeout(()=>el.classList.remove('over-cap'),1500);}
+  else{DATA[currentSid][fkey]=val;el.classList.remove('over-cap');el.classList.add('dirty');}
+  const remain=getRemain(currentSid);updateCapBar(remain,cap);
 }
-
-function showCapWarn(fkey, cap, tried){
-  const fuelName=FUELS.find(f=>f.key===fkey)?.label||fkey;
-  showToast(`⚠️ ${fuelName}: รวมเกินความจุ ${cap.toLocaleString()} ล. — ปรับค่าอัตโนมัติ`, 2500, true);
-}
-function onCapChange(){
-  if(!currentSid)return;
-  const v=parseFloat(document.getElementById('sp-cap').value)||0;
-  DATA[currentSid].cap=v;
-  const remain=getRemain(currentSid);
-  updateCapBar(remain,v);
-}
+function showCapWarn(fkey,cap,tried){const fuelName=FUELS.find(f=>f.key===fkey)?.label||fkey;showToast(`⚠️ ${fuelName}: รวมเกินความจุ ${cap.toLocaleString()} ล. — ปรับค่าอัตโนมัติ`,2500,true);}
+function onCapChange(){if(!currentSid)return;const v=parseFloat(document.getElementById('sp-cap').value)||0;DATA[currentSid].cap=v;const remain=getRemain(currentSid);updateCapBar(remain,v);}
 function updateCapBar(remain,cap){
-  const pct=cap>0?Math.round(remain/cap*100):0;
-  const over=pct>100;
+  const pct=cap>0?Math.round(remain/cap*100):0;const over=pct>100;
   const bc=over?'#dc2626':pct>=50?'#10B981':pct>=25?'#F59E0B':'#EF4444';
-  document.getElementById('sp-bar-fill').style.width=Math.min(pct,100)+'%';
-  document.getElementById('sp-bar-fill').style.background=bc;
-  document.getElementById('sp-pct').textContent=cap>0?pct+'%':'—';
-  document.getElementById('sp-pct').style.color=cap>0?bc:'#9ca3af';
+  document.getElementById('sp-bar-fill').style.width=Math.min(pct,100)+'%';document.getElementById('sp-bar-fill').style.background=bc;
+  document.getElementById('sp-pct').textContent=cap>0?pct+'%':'—';document.getElementById('sp-pct').style.color=cap>0?bc:'#9ca3af';
   document.getElementById('sp-remain-val').textContent=remain.toLocaleString();
-  /* status pill */
-  const si=getStatusInfo(Math.min(pct,100),remain);
-  const spill=document.getElementById('sp-status-pill');
+  const si=getStatusInfo(Math.min(pct,100),remain);const spill=document.getElementById('sp-status-pill');
   spill.className='status-pill '+(over?'pill-danger':si.pillClass);
-  spill.innerHTML=over
-    ?'⚠️ เกินความจุ'
-    :`<svg class="pill-icon" viewBox="0 0 24 24" style="fill:currentColor">${si.icon.replace(/<\/?svg[^>]*>/g,'')}</svg>${si.label}`;
-  /* ปุ่ม save — disable ถ้าเกิน */
-  const saveBtn=document.getElementById('btn-save-one');
-  if(saveBtn){
-    saveBtn.disabled=over;
-    saveBtn.title=over?'รวมน้ำมันเกินความจุ กรุณาแก้ไขก่อน':'';
-  }
+  spill.innerHTML=over?'⚠️ เกินความจุ':`<svg class="pill-icon" viewBox="0 0 24 24" style="fill:currentColor">${si.icon.replace(/<\/?svg[^>]*>/g,'')}</svg>${si.label}`;
+  const saveBtn=document.getElementById('btn-save-one');if(saveBtn){saveBtn.disabled=over;saveBtn.title=over?'รวมน้ำมันเกินความจุ กรุณาแก้ไขก่อน':'';}
 }
-
 function saveCurrentToSheet(){
   if(!currentSid)return;
-  // เก็บค่าที่กรอกไว้ก่อน save
-  FUELS.forEach(f=>{
-    const el=document.getElementById('fci-'+f.key);
-    if(el){DATA[currentSid][f.key]=parseFloat(el.value)||0;el.classList.remove('dirty');el.classList.add('saving');}
-  });
-  const capEl=document.getElementById('sp-cap');
-  if(capEl)DATA[currentSid].cap=parseFloat(capEl.value)||0;
-
-  saveOneStation(currentSid).then(()=>{
-    renderDashboard();
-    // reset ช่องน้ำมันเป็น 0 ทั้งหมดหลัง save สำเร็จ (ความจุคงเดิม)
-    FUELS.forEach(f=>{
-      DATA[currentSid][f.key]=0;
-      const el=document.getElementById('fci-'+f.key);
-      if(el){el.value='';el.classList.remove('dirty','saving');}
-    });
-    persistData();
-    updateCapBar(0, DATA[currentSid].cap||0);
-    showToast('บันทึกสำเร็จ ✓ พร้อมกรอกข้อมูลใหม่');
-  });
+  FUELS.forEach(f=>{const el=document.getElementById('fci-'+f.key);if(el){DATA[currentSid][f.key]=parseFloat(el.value)||0;el.classList.remove('dirty');el.classList.add('saving');}});
+  const capEl=document.getElementById('sp-cap');if(capEl)DATA[currentSid].cap=parseFloat(capEl.value)||0;
+  saveOneStation(currentSid).then(()=>{renderDashboard();FUELS.forEach(f=>{DATA[currentSid][f.key]=0;const el=document.getElementById('fci-'+f.key);if(el){el.value='';el.classList.remove('dirty','saving');}});persistData();updateCapBar(0,DATA[currentSid].cap||0);showToast('บันทึกสำเร็จ ✓ พร้อมกรอกข้อมูลใหม่');});
 }
+function clearCurrentStation(){if(!currentSid)return;if(!confirm('ล้างข้อมูลสถานีนี้?'))return;DATA[currentSid]={cap:0,diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0,updated_at:''};persistData();loadStationPanel();showToast('ล้างข้อมูลแล้ว');}
+function navigateStation(dir){const amphoeId=document.getElementById('inp-amphoe').value;const g=GROUPS.find(x=>x.id===amphoeId);if(!g)return;const stList=g.stations;const idx=stList.findIndex(s=>s.id===currentSid);const newIdx=(idx+dir+stList.length)%stList.length;document.getElementById('inp-station').value=stList[newIdx].id;loadStationPanel();}
+function updateNavInfo(){const amphoeId=document.getElementById('inp-amphoe').value;const g=GROUPS.find(x=>x.id===amphoeId);if(!g){document.getElementById('nav-info').textContent='';return;}const idx=g.stations.findIndex(s=>s.id===currentSid)+1;document.getElementById('nav-info').innerHTML=`<strong>${idx}</strong> / ${g.stations.length} สถานี ใน ${g.amphoe}`;}
 
-function clearCurrentStation(){
-  if(!currentSid)return;
-  if(!confirm('ล้างข้อมูลสถานีนี้?'))return;
-  DATA[currentSid]={cap:0,diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0,updated_at:''};
-  persistData();
-  loadStationPanel();
-  showToast('ล้างข้อมูลแล้ว');
-}
-
-/* Prev / Next station */
-function navigateStation(dir){
-  const amphoeId=document.getElementById('inp-amphoe').value;
-  const g=GROUPS.find(x=>x.id===amphoeId);
-  if(!g)return;
-  const stList=g.stations;
-  const idx=stList.findIndex(s=>s.id===currentSid);
-  const newIdx=(idx+dir+stList.length)%stList.length;
-  document.getElementById('inp-station').value=stList[newIdx].id;
-  loadStationPanel();
-}
-function updateNavInfo(){
-  const amphoeId=document.getElementById('inp-amphoe').value;
-  const g=GROUPS.find(x=>x.id===amphoeId);
-  if(!g){document.getElementById('nav-info').textContent='';return;}
-  const idx=g.stations.findIndex(s=>s.id===currentSid)+1;
-  document.getElementById('nav-info').innerHTML=`<strong>${idx}</strong> / ${g.stations.length} สถานี ใน ${g.amphoe}`;
-}
-
-/* ─────────────────────────────────────────
-   DASHBOARD
-───────────────────────────────────────── */
 let mainChartInst=null,donutChartInst=null;
-
-function buildDashboardSelects(){
-  const sa=document.getElementById('sel-amphoe');
-  sa.innerHTML='<option value="all">ทั้งหมด (6 อำเภอ)</option>';
-  GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;sa.appendChild(o);});
-  buildDashStationSelect('all');
-}
-function buildDashStationSelect(id){
-  const ss=document.getElementById('sel-station');
-  ss.innerHTML='<option value="all">ทุกสถานี</option>';
-  const pool=id==='all'?GROUPS.flatMap(g=>g.stations):GROUPS.find(x=>x.id===id)?.stations||[];
-  pool.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});
-}
+function buildDashboardSelects(){const sa=document.getElementById('sel-amphoe');sa.innerHTML='<option value="all">ทั้งหมด (6 อำเภอ)</option>';GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;sa.appendChild(o);});buildDashStationSelect('all');}
+function buildDashStationSelect(id){const ss=document.getElementById('sel-station');ss.innerHTML='<option value="all">ทุกสถานี</option>';const pool=id==='all'?GROUPS.flatMap(g=>g.stations):GROUPS.find(x=>x.id===id)?.stations||[];pool.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});}
 function onAmphoeChange(){buildDashStationSelect(document.getElementById('sel-amphoe').value);renderDashboard();}
-function getFilteredStations(){
-  const a=document.getElementById('sel-amphoe').value,s=document.getElementById('sel-station').value;
-  const pool=a==='all'?GROUPS.flatMap(g=>g.stations):GROUPS.find(x=>x.id===a)?.stations||[];
-  return s==='all'?pool:pool.filter(x=>x.id===s);
-}
-function renderStatusBar(stations){
-  const counts={ok:0,watch:0,danger:0,none:0};
-  stations.forEach(s=>{const d=getSD(s.id),remain=getRemain(s.id),pct=d.cap>0?Math.round(remain/d.cap*100):0;counts[getStatusInfo(pct,remain).key]++;});
-  const items=[{key:'ok',label:'ปกติ',ssClass:'ss-ok',icon:ICON_OK,count:counts.ok},{key:'watch',label:'เฝ้าระวัง',ssClass:'ss-watch',icon:ICON_WATCH,count:counts.watch},{key:'danger',label:'วิกฤต',ssClass:'ss-danger',icon:ICON_DANGER,count:counts.danger},{key:'none',label:'ไม่มีข้อมูล',ssClass:'ss-none',icon:ICON_NONE,count:counts.none}];
-  document.getElementById('status-bar').innerHTML=items.map(it=>`<div class="status-summary ${it.ssClass}"><div class="status-summary-icon">${it.icon}</div><div><div class="status-summary-label">${it.label}</div><div class="status-summary-count">${it.count} <span style="font-size:12px;font-weight:400">สถานี</span></div></div></div>`).join('');
-}
+function getFilteredStations(){const a=document.getElementById('sel-amphoe').value,s=document.getElementById('sel-station').value;const pool=a==='all'?GROUPS.flatMap(g=>g.stations):GROUPS.find(x=>x.id===a)?.stations||[];return s==='all'?pool:pool.filter(x=>x.id===s);}
+function renderStatusBar(stations){const counts={ok:0,watch:0,danger:0,none:0};stations.forEach(s=>{const d=getSD(s.id),remain=getRemain(s.id),pct=d.cap>0?Math.round(remain/d.cap*100):0;counts[getStatusInfo(pct,remain).key]++;});const items=[{key:'ok',label:'ปกติ',ssClass:'ss-ok',icon:ICON_OK,count:counts.ok},{key:'watch',label:'เฝ้าระวัง',ssClass:'ss-watch',icon:ICON_WATCH,count:counts.watch},{key:'danger',label:'วิกฤต',ssClass:'ss-danger',icon:ICON_DANGER,count:counts.danger},{key:'none',label:'ไม่มีข้อมูล',ssClass:'ss-none',icon:ICON_NONE,count:counts.none}];document.getElementById('status-bar').innerHTML=items.map(it=>`<div class="status-summary ${it.ssClass}"><div class="status-summary-icon">${it.icon}</div><div><div class="status-summary-label">${it.label}</div><div class="status-summary-count">${it.count} <span style="font-size:12px;font-weight:400">สถานี</span></div></div></div>`).join('');}
 function renderKPI(stations){
   const totalCap=stations.reduce((a,s)=>a+(getSD(s.id).cap||0),0),totalRemain=stations.reduce((a,s)=>a+getRemain(s.id),0);
-  const pct=totalCap>0?Math.round(totalRemain/totalCap*100):0,si=getStatusInfo(pct,totalRemain),pc=pct>=50?'kpi-ok':pct>=25?'kpi-warn':'kpi-danger';
+  const pct=totalCap>0?Math.round(totalRemain/totalCap*100):0,si=getStatusInfo(pct,totalRemain);
   document.getElementById('kpi-row').innerHTML=`
     <div style="grid-column:1/-1" class="kpi-section-label"><span class="sl-icon">📋</span><span class="sl-text">ภาพรวมทั้งจังหวัด</span></div>
-    <div class="kpi-card kpi-card-summary">
-      <div class="kpi-icon-wrap">📍</div>
-      <div class="kpi-label">สถานีที่แสดง</div>
-      <div class="kpi-value">${stations.length}</div>
-      <div class="kpi-unit">แห่ง</div>
-    </div>
-    <div class="kpi-card kpi-card-summary">
-      <div class="kpi-icon-wrap">🏭</div>
-      <div class="kpi-label">ความจุรวม</div>
-      <div class="kpi-value">${totalCap.toLocaleString()}</div>
-      <div class="kpi-unit">ลิตร</div>
-    </div>
-    <div class="kpi-card kpi-card-summary">
-      <div class="kpi-icon-wrap">🛢️</div>
-      <div class="kpi-label">น้ำมันคงเหลือรวม</div>
-      <div class="kpi-value">${totalRemain.toLocaleString()}</div>
-      <div class="kpi-unit">ลิตร</div>
-    </div>
-    <div class="kpi-card kpi-card-summary">
-      <div class="kpi-icon-wrap">📊</div>
-      <div class="kpi-label">ร้อยละที่คงเหลือ</div>
-      <div class="kpi-value" style="display:flex;align-items:center;gap:8px">
-        <span style="color:${pct>=50?'#34d399':pct>=25?'#fbbf24':'#f87171'}">${pct}%</span>
-        <span class="status-pill ${si.pillClass}" style="font-size:10px;padding:2px 8px"><svg class="pill-icon" viewBox="0 0 24 24" style="fill:currentColor">${si.icon.replace(/<\/?svg[^>]*>/g,'')}</svg>${si.label}</span>
-      </div>
-      <div class="kpi-unit">จากความจุ</div>
-    </div>
+    <div class="kpi-card kpi-card-summary"><div class="kpi-icon-wrap">📍</div><div class="kpi-label">สถานีที่แสดง</div><div class="kpi-value">${stations.length}</div><div class="kpi-unit">แห่ง</div></div>
+    <div class="kpi-card kpi-card-summary"><div class="kpi-icon-wrap">🏭</div><div class="kpi-label">ความจุรวม</div><div class="kpi-value">${totalCap.toLocaleString()}</div><div class="kpi-unit">ลิตร</div></div>
+    <div class="kpi-card kpi-card-summary"><div class="kpi-icon-wrap">🛢️</div><div class="kpi-label">น้ำมันคงเหลือรวม</div><div class="kpi-value">${totalRemain.toLocaleString()}</div><div class="kpi-unit">ลิตร</div></div>
+    <div class="kpi-card kpi-card-summary"><div class="kpi-icon-wrap">📊</div><div class="kpi-label">ร้อยละที่คงเหลือ</div><div class="kpi-value" style="display:flex;align-items:center;gap:8px"><span style="color:${pct>=50?'#34d399':pct>=25?'#fbbf24':'#f87171'}">${pct}%</span><span class="status-pill ${si.pillClass}" style="font-size:10px;padding:2px 8px"><svg class="pill-icon" viewBox="0 0 24 24" style="fill:currentColor">${si.icon.replace(/<\/?svg[^>]*>/g,'')}</svg>${si.label}</span></div><div class="kpi-unit">จากความจุ</div></div>
     <div style="grid-column:1/-1" class="kpi-section-label"><span class="sl-icon">⛽</span><span class="sl-text">ปริมาณน้ำมันแต่ละประเภท (ลิตร)</span></div>
-    <div class="kpi-card" style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1.5px solid #F59E0B">
-      <div class="kpi-label" style="color:#92400e"><span class="kpi-icon">⛽</span>ดีเซล B7</div>
-      <div class="kpi-value" style="color:#b45309">${sumFuel(stations,'diesel').toLocaleString()}</div>
-      <div class="kpi-unit" style="color:#d97706">ลิตร</div>
-    </div>
-    <div class="kpi-card" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid #3B82F6">
-      <div class="kpi-label" style="color:#1e40af"><span class="kpi-icon">🔵</span>แก๊สโซฮอล์ 91</div>
-      <div class="kpi-value" style="color:#1d4ed8">${sumFuel(stations,'g91').toLocaleString()}</div>
-      <div class="kpi-unit" style="color:#3b82f6">ลิตร</div>
-    </div>
-    <div class="kpi-card" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #10B981">
-      <div class="kpi-label" style="color:#065f46"><span class="kpi-icon">🟢</span>แก๊สโซฮอล์ 95</div>
-      <div class="kpi-value" style="color:#047857">${sumFuel(stations,'g95').toLocaleString()}</div>
-      <div class="kpi-unit" style="color:#059669">ลิตร</div>
-    </div>
-    <div class="kpi-card" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #8B5CF6">
-      <div class="kpi-label" style="color:#4c1d95"><span class="kpi-icon">🟣</span>E20</div>
-      <div class="kpi-value" style="color:#6d28d9">${sumFuel(stations,'e20').toLocaleString()}</div>
-      <div class="kpi-unit" style="color:#7c3aed">ลิตร</div>
-    </div>
-    <div class="kpi-card" style="background:linear-gradient(135deg,#fdf2f8,#fce7f3);border:1.5px solid #EC4899">
-      <div class="kpi-label" style="color:#831843"><span class="kpi-icon">💎</span>95 พรีเมี่ยม</div>
-      <div class="kpi-value" style="color:#be185d">${sumFuel(stations,'g95p').toLocaleString()}</div>
-      <div class="kpi-unit" style="color:#ec4899">ลิตร</div>
-    </div>
-    <div class="kpi-card" style="background:linear-gradient(135deg,#fff1f2,#fee2e2);border:1.5px solid #EF4444">
-      <div class="kpi-label" style="color:#7f1d1d"><span class="kpi-icon">🔴</span>พาวเวอร์ดีเซล</div>
-      <div class="kpi-value" style="color:#b91c1c">${sumFuel(stations,'power').toLocaleString()}</div>
-      <div class="kpi-unit" style="color:#ef4444">ลิตร</div>
-    </div>`;
+    <div class="kpi-card" style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1.5px solid #F59E0B"><div class="kpi-label" style="color:#92400e"><span class="kpi-icon">⛽</span>ดีเซล B7</div><div class="kpi-value" style="color:#b45309">${sumFuel(stations,'diesel').toLocaleString()}</div><div class="kpi-unit" style="color:#d97706">ลิตร</div></div>
+    <div class="kpi-card" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid #3B82F6"><div class="kpi-label" style="color:#1e40af"><span class="kpi-icon">🔵</span>แก๊สโซฮอล์ 91</div><div class="kpi-value" style="color:#1d4ed8">${sumFuel(stations,'g91').toLocaleString()}</div><div class="kpi-unit" style="color:#3b82f6">ลิตร</div></div>
+    <div class="kpi-card" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #10B981"><div class="kpi-label" style="color:#065f46"><span class="kpi-icon">🟢</span>แก๊สโซฮอล์ 95</div><div class="kpi-value" style="color:#047857">${sumFuel(stations,'g95').toLocaleString()}</div><div class="kpi-unit" style="color:#059669">ลิตร</div></div>
+    <div class="kpi-card" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #8B5CF6"><div class="kpi-label" style="color:#4c1d95"><span class="kpi-icon">🟣</span>E20</div><div class="kpi-value" style="color:#6d28d9">${sumFuel(stations,'e20').toLocaleString()}</div><div class="kpi-unit" style="color:#7c3aed">ลิตร</div></div>
+    <div class="kpi-card" style="background:linear-gradient(135deg,#fdf2f8,#fce7f3);border:1.5px solid #EC4899"><div class="kpi-label" style="color:#831843"><span class="kpi-icon">💎</span>95 พรีเมี่ยม</div><div class="kpi-value" style="color:#be185d">${sumFuel(stations,'g95p').toLocaleString()}</div><div class="kpi-unit" style="color:#ec4899">ลิตร</div></div>
+    <div class="kpi-card" style="background:linear-gradient(135deg,#fff1f2,#fee2e2);border:1.5px solid #EF4444"><div class="kpi-label" style="color:#7f1d1d"><span class="kpi-icon">🔴</span>พาวเวอร์ดีเซล</div><div class="kpi-value" style="color:#b91c1c">${sumFuel(stations,'power').toLocaleString()}</div><div class="kpi-unit" style="color:#ef4444">ลิตร</div></div>`;
   renderStatusBar(stations);
 }
-function renderLegend(){document.getElementById('fuel-legend').innerHTML=FUELS.map(f=>`<span><span class="leg-dot" style="background:${f.color}"></span>${f.label}</span>`).join('');}
 function renderMainChart(stations){
-  const wrap=document.getElementById('main-chart-wrap');
-  if(mainChartInst){mainChartInst.destroy();mainChartInst=null;}
+  const wrap=document.getElementById('main-chart-wrap');if(mainChartInst){mainChartInst.destroy();mainChartInst=null;}
   const ct=document.getElementById('sel-chart').value;
   if(ct==='doughnut'){wrap.style.height='260px';wrap.innerHTML='<canvas id="mainChart"></canvas>';const tots=FUELS.map(f=>sumFuel(stations,f.key)),tot=tots.reduce((a,b)=>a+b,0);mainChartInst=new Chart(document.getElementById('mainChart'),{type:'doughnut',data:{labels:FUELS.map(f=>f.label),datasets:[{data:tots,backgroundColor:FUELS.map(f=>f.color),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const v=ctx.parsed;return ` ${v.toLocaleString()} ล. (${tot>0?Math.round(v/tot*100):0}%)`;}}}}}});}
   else if(ct==='horizontalBar'){wrap.style.height=Math.max(240,stations.length*36+60)+'px';wrap.innerHTML='<canvas id="mainChart"></canvas>';mainChartInst=new Chart(document.getElementById('mainChart'),{type:'bar',data:{labels:stations.map(s=>s.name),datasets:FUELS.map(f=>({label:f.label,data:stations.map(s=>getSD(s.id)[f.key]||0),backgroundColor:f.color,borderWidth:0,borderRadius:3}))},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11,family:'Noto Sans Thai'},boxWidth:10,padding:8}}},scales:{x:{stacked:true,title:{display:true,text:'ลิตร',font:{size:11,family:'Noto Sans Thai'},color:'#9ca3af'},ticks:{callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v,font:{size:10,family:'Noto Sans Thai'}},grid:{color:'#f3f4f6'}},y:{stacked:true,ticks:{font:{size:11,family:'Noto Sans Thai'}},grid:{display:false}}}}});}
   else{wrap.style.height='270px';wrap.innerHTML='<canvas id="mainChart"></canvas>';mainChartInst=new Chart(document.getElementById('mainChart'),{type:'bar',data:{labels:stations.map(s=>s.name.length>11?s.name.slice(0,11)+'…':s.name),datasets:FUELS.map(f=>({label:f.label,data:stations.map(s=>getSD(s.id)[f.key]||0),backgroundColor:f.color,borderWidth:0,borderRadius:3}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11,family:'Noto Sans Thai'},boxWidth:10,padding:8}}},scales:{x:{stacked:true,ticks:{font:{size:10,family:'Noto Sans Thai'},maxRotation:45,autoSkip:false},grid:{display:false}},y:{stacked:true,title:{display:true,text:'ลิตร',font:{size:11,family:'Noto Sans Thai'},color:'#9ca3af'},ticks:{callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v,font:{size:10}},grid:{color:'#f3f4f6'}}}}});}
 }
-function renderDonut(stations){
-  if(donutChartInst){donutChartInst.destroy();donutChartInst=null;}
-  const tots=FUELS.map(f=>sumFuel(stations,f.key)),tot=tots.reduce((a,b)=>a+b,0);
-  donutChartInst=new Chart(document.getElementById('donutChart'),{type:'doughnut',data:{labels:FUELS.map(f=>f.label),datasets:[{data:tots,backgroundColor:FUELS.map(f=>f.color),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11,family:'Noto Sans Thai'},boxWidth:10,padding:8}},tooltip:{callbacks:{label:ctx=>{const v=ctx.parsed;return ` ${v.toLocaleString()} ล. (${tot>0?Math.round(v/tot*100):0}%)`;}}}}}});
-}
+function renderDonut(stations){if(donutChartInst){donutChartInst.destroy();donutChartInst=null;}const tots=FUELS.map(f=>sumFuel(stations,f.key)),tot=tots.reduce((a,b)=>a+b,0);donutChartInst=new Chart(document.getElementById('donutChart'),{type:'doughnut',data:{labels:FUELS.map(f=>f.label),datasets:[{data:tots,backgroundColor:FUELS.map(f=>f.color),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11,family:'Noto Sans Thai'},boxWidth:10,padding:8}},tooltip:{callbacks:{label:ctx=>{const v=ctx.parsed;return ` ${v.toLocaleString()} ล. (${tot>0?Math.round(v/tot*100):0}%)`;}}}}}});}
 function renderTable(stations){
-  const fuelClass = {diesel:'td-diesel',g91:'td-g91',g95:'td-g95',e20:'td-e20',g95p:'td-g95p',power:'td-power'};
+  const fuelClass={diesel:'td-diesel',g91:'td-g91',g95:'td-g95',e20:'td-e20',g95p:'td-g95p',power:'td-power'};
   document.getElementById('detail-tbody').innerHTML=stations.map(s=>{
-    const d=getSD(s.id), remain=getRemain(s.id);
-    const cap=d.cap||0, pct=cap>0?Math.round(remain/cap*100):0;
-    const bc=pct>=50?'#059669':pct>=25?'#d97706':'#dc2626';
-    const si=getStatusInfo(pct,remain);
+    const d=getSD(s.id),remain=getRemain(s.id);const cap=d.cap||0,pct=cap>0?Math.round(remain/cap*100):0;
+    const bc=pct>=50?'#059669':pct>=25?'#d97706':'#dc2626';const si=getStatusInfo(pct,remain);
     const pill=`<span class="status-pill ${si.pillClass}"><svg class="pill-icon" viewBox="0 0 24 24" style="fill:currentColor">${si.icon.replace(/<\/?svg[^>]*>/g,'')}</svg>${si.label}</span>`;
-    const fuelCells=FUELS.map(f=>{
-      const v=d[f.key]||0;
-      const cls=fuelClass[f.key];
-      const style=v===0?'opacity:.3':'';
-      return `<td class="${cls}" style="${style}">${v>0?v.toLocaleString():'—'}</td>`;
-    }).join('');
-    const pctCell=`<div class="pct-cell">
-      <div class="pct-bar-wrap"><div class="pct-bar" style="width:${Math.min(pct,100)}%;background:${bc}"></div></div>
-      <span class="pct-num" style="color:${remain>0?bc:'#9ca3af'}">${remain>0?pct+'%':'—'}</span>
-    </div>`;
-    return `<tr>
-      <td style="font-weight:600;color:#1a2235">${s.name}</td>
-      <td><span class="brand brand-${s.brand}">${s.brand}</span></td>
-      ${fuelCells}
-      <td class="td-remain">${remain>0?remain.toLocaleString():'—'}</td>
-      <td class="td-cap">${cap>0?cap.toLocaleString():'—'}</td>
-      <td>${pctCell}</td>
-      <td>${pill}</td>
-      <td style="font-size:10px;color:#9ca3af;white-space:nowrap">${d.updated_at||'—'}</td>
-    </tr>`;
+    const fuelCells=FUELS.map(f=>{const v=d[f.key]||0;return `<td class="${fuelClass[f.key]}" style="${v===0?'opacity:.3':''}">${v>0?v.toLocaleString():'—'}</td>`;}).join('');
+    const pctCell=`<div class="pct-cell"><div class="pct-bar-wrap"><div class="pct-bar" style="width:${Math.min(pct,100)}%;background:${bc}"></div></div><span class="pct-num" style="color:${remain>0?bc:'#9ca3af'}">${remain>0?pct+'%':'—'}</span></div>`;
+    return `<tr><td style="font-weight:600;color:#1a2235">${s.name}</td><td><span class="brand brand-${s.brand}">${s.brand}</span></td>${fuelCells}<td class="td-remain">${remain>0?remain.toLocaleString():'—'}</td><td class="td-cap">${cap>0?cap.toLocaleString():'—'}</td><td>${pctCell}</td><td>${pill}</td><td style="font-size:10px;color:#9ca3af;white-space:nowrap">${d.updated_at||'—'}</td></tr>`;
   }).join('');
 }
 function renderDashboard(){const s=getFilteredStations();renderKPI(s);renderMainChart(s);renderDonut(s);renderTable(s);}
 
+const STATION_COORDS={'s01':[16.9974023,102.3996407],'s02':[17.1872222,102.4336667],'s03':[17.1012977,102.4756776],'s04':[17.219319,102.422869],'s05':[17.1822598,102.4322574],'s06':[17.24449456,102.5281420],'s07':[17.2780322,102.3124381],'s08':[17.0862857,102.3804854],'s09':[17.0419762,102.3431759],'s10':[17.1560278,102.4418333],'s11':[17.3435203,102.3822241],'s12':[17.2356419,102.3966293],'s13':[17.2728804,102.3216934],'s14':[17.2610557,102.5874651],'s15':[17.1972222,102.4151667],'s16':[16.9555031,102.2639628],'s17':[16.8845203,102.2006392],'s18':[16.9795016,102.2911407],'s19':[16.9826233,102.2942222],'s20':[16.9893761,102.5598702],'s21':[16.8747778,102.5718056],'s22':[16.9520187,102.5767978],'s23':[16.8548369,102.5142381],'s24':[16.8816056,102.573864],'s25':[16.8550000,102.5145278],'s26':[17.3086303,102.1828790],'s27':[17.3031553,102.1971977],'s28':[17.2927834,102.2427188],'s29':[17.2169573,102.2283172],'s30':[17.2953594,102.2192290],'s31':[17.3215177,102.1091528],'s32':[17.3214987,102.0048563],'s33':[17.3251667,102.0637274],'s34':[17.5669773,102.2896430],'s35':[17.5705962,102.2940894]};
+const STATUS_COLOR={ok:'#059669',watch:'#d97706',danger:'#dc2626',none:'#9ca3af'};
+const STATUS_BG={ok:'#d1fae5',watch:'#fef3c7',danger:'#fee2e2',none:'#f3f4f6'};
 
-/* ─────────────────────────────────────────
-   MAP — Leaflet + พิกัดสถานีบริการ
-───────────────────────────────────────── */
-const STATION_COORDS = {
-  's01':[16.9974023,102.3996407], 's02':[17.1872222,102.4336667],
-  's03':[17.1012977,102.4756776], 's04':[17.219319,102.422869],
-  's05':[17.1822598,102.4322574], 's06':[17.24449456,102.5281420],
-  's07':[17.2780322,102.3124381], 's08':[17.0862857,102.3804854],
-  's09':[17.0419762,102.3431759], 's10':[17.1560278,102.4418333],
-  's11':[17.3435203,102.3822241], 's12':[17.2356419,102.3966293],
-  's13':[17.2728804,102.3216934], 's14':[17.2610557,102.5874651],
-  's15':[17.1972222,102.4151667],
-  's16':[16.9555031,102.2639628], 's17':[16.8845203,102.2006392],
-  's18':[16.9795016,102.2911407], 's19':[16.9826233,102.2942222],
-  's20':[16.9893761,102.5598702], 's21':[16.8747778,102.5718056],
-  's22':[16.9520187,102.5767978], 's23':[16.8548369,102.5142381],
-  's24':[16.8816056,102.573864],  's25':[16.8550000,102.5145278],
-  's26':[17.3086303,102.1828790], 's27':[17.3031553,102.1971977],
-  's28':[17.2927834,102.2427188], 's29':[17.2169573,102.2283172],
-  's30':[17.2953594,102.2192290],
-  's31':[17.3215177,102.1091528], 's32':[17.3214987,102.0048563],
-  's33':[17.3251667,102.0637274],
-  's34':[17.5669773,102.2896430], 's35':[17.5705962,102.2940894],
-};
-
-const STATUS_COLOR = { ok:'#059669', watch:'#d97706', danger:'#dc2626', none:'#9ca3af' };
-const STATUS_BG    = { ok:'#d1fae5', watch:'#fef3c7', danger:'#fee2e2', none:'#f3f4f6' };
-
-let mapInst = null;
-let sidebarOpen = true;
-function toggleMapSidebar(){
-  sidebarOpen=!sidebarOpen;
-  const sb=document.getElementById('map-sidebar');
-  const fab=document.getElementById('sidebar-open-fab');
-  sb.classList.toggle('collapsed',!sidebarOpen);
-  fab.classList.toggle('show',!sidebarOpen);
-  setTimeout(()=>{if(mapInst)mapInst.invalidateSize();},320);
-}
-let mapMarkers = {};
-let activeMarkerId = null;
-
-function getStationStatus(sid){
-  const d=getSD(sid), remain=getRemain(sid);
-  const pct=d.cap>0?Math.round(remain/d.cap*100):0;
-  return getStatusInfo(pct,remain);
-}
-function getStationPct(sid){
-  const d=getSD(sid), remain=getRemain(sid);
-  return d.cap>0?Math.round(remain/d.cap*100):0;
-}
-
+let mapInst=null,sidebarOpen=true;
+function toggleMapSidebar(){sidebarOpen=!sidebarOpen;const sb=document.getElementById('map-sidebar');const fab=document.getElementById('sidebar-open-fab');sb.classList.toggle('collapsed',!sidebarOpen);fab.classList.toggle('show',!sidebarOpen);setTimeout(()=>{if(mapInst)mapInst.invalidateSize();},320);}
+let mapMarkers={},activeMarkerId=null;
+function getStationStatus(sid){const d=getSD(sid),remain=getRemain(sid);const pct=d.cap>0?Math.round(remain/d.cap*100):0;return getStatusInfo(pct,remain);}
+function getStationPct(sid){const d=getSD(sid),remain=getRemain(sid);return d.cap>0?Math.round(remain/d.cap*100):0;}
 function initMap(){
-  // build amphoe filter
-  const af=document.getElementById('map-amphoe-filter');
-  if(af.options.length===1){
-    GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;af.appendChild(o);});
-  }
-  if(!mapInst){
-    mapInst=L.map('map',{center:[17.1,102.35],zoom:10,zoomControl:false});
-    L.control.zoom({position:'bottomright'}).addTo(mapInst);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-      attribution:'© OpenStreetMap',maxZoom:19
-    }).addTo(mapInst);
-    // สร้าง marker ทุกสถานี
-    ALL_STATIONS.forEach(s=>{
-      if(!STATION_COORDS[s.id])return;
-      const marker=createMarker(s);
-      if(marker)mapMarkers[s.id]=marker;
-    });
-  }
-  updateMapMarkers();
-  renderMapSidebar();
-  setTimeout(()=>mapInst.invalidateSize(),200);
+  const af=document.getElementById('map-amphoe-filter');if(af.options.length===1){GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;af.appendChild(o);});}
+  if(!mapInst){mapInst=L.map('map',{center:[17.1,102.35],zoom:10,zoomControl:false});L.control.zoom({position:'bottomright'}).addTo(mapInst);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19}).addTo(mapInst);ALL_STATIONS.forEach(s=>{if(!STATION_COORDS[s.id])return;const marker=createMarker(s);if(marker)mapMarkers[s.id]=marker;});}
+  updateMapMarkers();renderMapSidebar();setTimeout(()=>mapInst.invalidateSize(),200);
 }
-
-function buildMarkerHtml(si, pct){
-  const cfg = {
-    ok:     { bg:'#059669', ring:'#34d399', shadow:'rgba(5,150,105,.45)', pulse:false, icon:'⛽' },
-    watch:  { bg:'#d97706', ring:'#fbbf24', shadow:'rgba(217,119,6,.45)',  pulse:true,  icon:'⚠️' },
-    danger: { bg:'#dc2626', ring:'#f87171', shadow:'rgba(220,38,38,.55)',  pulse:true,  icon:'🚨' },
-    none:   { bg:'#6b7280', ring:'#d1d5db', shadow:'rgba(0,0,0,.2)',       pulse:false, icon:'—'  },
-  }[si.key];
-
-  const hasData = pct > 0;
-  const label   = hasData ? pct+'%' : '?';
-  const size    = si.key==='danger' ? 48 : si.key==='none' ? 34 : 42;
-  const fontSize= size <= 34 ? 9 : size <= 42 ? 11 : 12;
-  const pulse   = cfg.pulse && hasData ? `
-    <div style="position:absolute;inset:-6px;border-radius:50%;border:3px solid ${cfg.ring};
-      opacity:.6;animation:markerPulse 1.6s ease-out infinite;pointer-events:none"></div>` : '';
-
-  return `<div style="position:relative;width:${size}px;height:${size}px;">
-    ${pulse}
-    <div style="
-      width:${size}px;height:${size}px;border-radius:50%;
-      background:linear-gradient(145deg,${cfg.ring},${cfg.bg});
-      border:3px solid #fff;
-      box-shadow:0 3px 12px ${cfg.shadow},0 1px 4px rgba(0,0,0,.2);
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      font-family:'Kanit',sans-serif;color:#fff;cursor:pointer;gap:0;
-    ">
-      ${si.key!=='none'&&hasData ? `<div style="font-size:${fontSize}px;font-weight:800;line-height:1.1">${label}</div>` : `<div style="font-size:14px;line-height:1">${cfg.icon}</div>`}
-    </div>
-  </div>`;
+function buildMarkerHtml(si,pct){
+  const cfg={ok:{bg:'#059669',ring:'#34d399',shadow:'rgba(5,150,105,.45)',pulse:false,icon:'⛽'},watch:{bg:'#d97706',ring:'#fbbf24',shadow:'rgba(217,119,6,.45)',pulse:true,icon:'⚠️'},danger:{bg:'#dc2626',ring:'#f87171',shadow:'rgba(220,38,38,.55)',pulse:true,icon:'🚨'},none:{bg:'#6b7280',ring:'#d1d5db',shadow:'rgba(0,0,0,.2)',pulse:false,icon:'—'}}[si.key];
+  const hasData=pct>0;const label=hasData?pct+'%':'?';const size=si.key==='danger'?48:si.key==='none'?34:42;const fontSize=size<=34?9:size<=42?11:12;
+  const pulse=cfg.pulse&&hasData?`<div style="position:absolute;inset:-6px;border-radius:50%;border:3px solid ${cfg.ring};opacity:.6;animation:markerPulse 1.6s ease-out infinite;pointer-events:none"></div>`:'';
+  return `<div style="position:relative;width:${size}px;height:${size}px;">${pulse}<div style="width:${size}px;height:${size}px;border-radius:50%;background:linear-gradient(145deg,${cfg.ring},${cfg.bg});border:3px solid #fff;box-shadow:0 3px 12px ${cfg.shadow},0 1px 4px rgba(0,0,0,.2);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Kanit',sans-serif;color:#fff;cursor:pointer;gap:0;">${si.key!=='none'&&hasData?`<div style="font-size:${fontSize}px;font-weight:800;line-height:1.1">${label}</div>`:`<div style="font-size:14px;line-height:1">${cfg.icon}</div>`}</div></div>`;
 }
-
 function createMarker(s){
-  const coords=STATION_COORDS[s.id];
-  if(!coords)return null;
-  const si=getStationStatus(s.id);
-  const pct=getStationPct(s.id);
-  const size = si.key==='danger'?48:si.key==='none'?34:42;
-
-  const icon=L.divIcon({
-    className:'',
-    html: buildMarkerHtml(si, pct),
-    iconSize:[size,size],iconAnchor:[size/2,size/2],popupAnchor:[0,-size/2-4]
-  });
-
-  const marker=L.marker(coords,{icon}).addTo(mapInst);
-  marker.bindPopup(buildPopupHtml(s),{maxWidth:270,className:'fuel-popup'});
-  marker.on('click',()=>highlightSidebarItem(s.id));
-  return marker;
+  const coords=STATION_COORDS[s.id];if(!coords)return null;
+  const si=getStationStatus(s.id);const pct=getStationPct(s.id);const size=si.key==='danger'?48:si.key==='none'?34:42;
+  const icon=L.divIcon({className:'',html:buildMarkerHtml(si,pct),iconSize:[size,size],iconAnchor:[size/2,size/2],popupAnchor:[0,-size/2-4]});
+  const marker=L.marker(coords,{icon}).addTo(mapInst);marker.bindPopup(buildPopupHtml(s),{maxWidth:270,className:'fuel-popup'});marker.on('click',()=>highlightSidebarItem(s.id));return marker;
 }
-
 function buildPopupHtml(s){
-  const d=getSD(s.id), remain=getRemain(s.id);
-  const cap=d.cap||0, pct=cap>0?Math.round(remain/cap*100):0;
-  const si=getStationStatus(s.id);
-  const color=STATUS_COLOR[si.key], bg=STATUS_BG[si.key];
-  const bc=pct>=50?'#059669':pct>=25?'#d97706':'#dc2626';
-  const coords=STATION_COORDS[s.id]||[0,0];
-  return `<div class="map-popup">
-    <div class="map-popup-head" style="background:${bg};border-bottom:1px solid #e5e7eb">
-      <div>
-        <div class="map-popup-name">${s.name}</div>
-        <div style="font-size:11px;color:#6b7280">${s.amphoe} · <span style="color:${color};font-weight:600">${si.label}</span></div>
-      </div>
-      <span style="font-size:10px;padding:2px 8px;border-radius:10px;background:${color};color:#fff;font-weight:600">${s.brand}</span>
-    </div>
-    <div class="map-popup-body">
-      <div class="map-popup-pct" style="color:${remain>0?bc:'#9ca3af'}">${remain>0?pct+'%':'ไม่มีข้อมูล'}</div>
-      <div class="map-popup-bar"><div class="map-popup-bar-fill" style="width:${pct}%;background:${bc}"></div></div>
-      <div class="map-popup-row"><span class="map-popup-label">⛽ น้ำมันคงเหลือ</span><span class="map-popup-val">${remain.toLocaleString()} ล.</span></div>
-      <div class="map-popup-row"><span class="map-popup-label">🏭 ความจุ</span><span class="map-popup-val">${cap.toLocaleString()} ล.</span></div>
-      <div style="border-top:1px solid #f3f4f6;margin-top:6px;padding-top:6px">
-        ${FUELS.map(f=>`<div class="map-popup-row">
-          <span class="map-popup-label"><span style="width:8px;height:8px;border-radius:2px;background:${f.color};display:inline-block"></span>${f.label}</span>
-          <span class="map-popup-val" style="color:${f.color}">${(d[f.key]||0).toLocaleString()} ล.</span>
-        </div>`).join('')}
-      </div>
-      <div style="font-size:10px;color:#9ca3af;margin-top:6px;text-align:right">อัปเดต: ${d.updated_at||'—'}</div>
-      <a class="gmaps-btn" href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}&travelmode=driving" target="_blank">
-        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-        นำทางด้วย Google Maps
-      </a>
-    </div>
-  </div>`;
+  const d=getSD(s.id),remain=getRemain(s.id);const cap=d.cap||0,pct=cap>0?Math.round(remain/cap*100):0;
+  const si=getStationStatus(s.id);const color=STATUS_COLOR[si.key],bg=STATUS_BG[si.key];const bc=pct>=50?'#059669':pct>=25?'#d97706':'#dc2626';const coords=STATION_COORDS[s.id]||[0,0];
+  return `<div class="map-popup"><div class="map-popup-head" style="background:${bg};border-bottom:1px solid #e5e7eb"><div><div class="map-popup-name">${s.name}</div><div style="font-size:11px;color:#6b7280">${s.amphoe} · <span style="color:${color};font-weight:600">${si.label}</span></div></div><span style="font-size:10px;padding:2px 8px;border-radius:10px;background:${color};color:#fff;font-weight:600">${s.brand}</span></div><div class="map-popup-body"><div class="map-popup-pct" style="color:${remain>0?bc:'#9ca3af'}">${remain>0?pct+'%':'ไม่มีข้อมูล'}</div><div class="map-popup-bar"><div class="map-popup-bar-fill" style="width:${pct}%;background:${bc}"></div></div><div class="map-popup-row"><span class="map-popup-label">⛽ น้ำมันคงเหลือ</span><span class="map-popup-val">${remain.toLocaleString()} ล.</span></div><div class="map-popup-row"><span class="map-popup-label">🏭 ความจุ</span><span class="map-popup-val">${cap.toLocaleString()} ล.</span></div><div style="border-top:1px solid #f3f4f6;margin-top:6px;padding-top:6px">${FUELS.map(f=>`<div class="map-popup-row"><span class="map-popup-label"><span style="width:8px;height:8px;border-radius:2px;background:${f.color};display:inline-block"></span>${f.label}</span><span class="map-popup-val" style="color:${f.color}">${(d[f.key]||0).toLocaleString()} ล.</span></div>`).join('')}</div><div style="font-size:10px;color:#9ca3af;margin-top:6px;text-align:right">อัปเดต: ${d.updated_at||'—'}</div><a class="gmaps-btn" href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}&travelmode=driving" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>นำทางด้วย Google Maps</a></div></div>`;
 }
-
-function updateMapMarkers(){
-  ALL_STATIONS.forEach(s=>{
-    if(!mapMarkers[s.id])return;
-    const si=getStationStatus(s.id);
-    const pct=getStationPct(s.id);
-    const size=si.key==='danger'?48:si.key==='none'?34:42;
-    const icon=L.divIcon({
-      className:'',
-      html: buildMarkerHtml(si, pct),
-      iconSize:[size,size],iconAnchor:[size/2,size/2],popupAnchor:[0,-size/2-4]
-    });
-    mapMarkers[s.id].setIcon(icon);
-    mapMarkers[s.id].setPopupContent(buildPopupHtml(s));
-  });
-  renderMapSidebar();
-}
-
-// คำนวณ % ของประเภทน้ำมันที่เลือก เทียบกับความจุ
-function getFuelPct(sid, fuelKey){
-  const d=getSD(sid);
-  const cap=d.cap||0;
-  if(cap===0) return 0;
-  return Math.round((d[fuelKey]||0)/cap*100);
-}
-
-function getActiveFuelKey(){
-  return document.getElementById('map-fuel-filter')?.value||'all';
-}
-
-// override getStationStatus ให้รองรับ fuel filter
-function getEffectiveStatus(sid){
-  const fuelKey=getActiveFuelKey();
-  if(fuelKey==='all') return getStationStatus(sid);
-  const d=getSD(sid);
-  const cap=d.cap||0;
-  const val=d[fuelKey]||0;
-  const remain=val; // ดูเฉพาะประเภทนั้น
-  const pct=cap>0?Math.round(val/cap*100):0;
-  return getStatusInfo(pct, remain);
-}
-
-function getEffectivePct(sid){
-  const fuelKey=getActiveFuelKey();
-  if(fuelKey==='all') return getStationPct(sid);
-  return getFuelPct(sid, fuelKey);
-}
-
+function updateMapMarkers(){ALL_STATIONS.forEach(s=>{if(!mapMarkers[s.id])return;const si=getStationStatus(s.id);const pct=getStationPct(s.id);const size=si.key==='danger'?48:si.key==='none'?34:42;const icon=L.divIcon({className:'',html:buildMarkerHtml(si,pct),iconSize:[size,size],iconAnchor:[size/2,size/2],popupAnchor:[0,-size/2-4]});mapMarkers[s.id].setIcon(icon);mapMarkers[s.id].setPopupContent(buildPopupHtml(s));});renderMapSidebar();}
+function getFuelPct(sid,fuelKey){const d=getSD(sid);const cap=d.cap||0;if(cap===0)return 0;return Math.round((d[fuelKey]||0)/cap*100);}
+function getActiveFuelKey(){return document.getElementById('map-fuel-filter')?.value||'all';}
+function getEffectiveStatus(sid){const fuelKey=getActiveFuelKey();if(fuelKey==='all')return getStationStatus(sid);const d=getSD(sid);const cap=d.cap||0;const val=d[fuelKey]||0;const pct=cap>0?Math.round(val/cap*100):0;return getStatusInfo(pct,val);}
+function getEffectivePct(sid){const fuelKey=getActiveFuelKey();if(fuelKey==='all')return getStationPct(sid);return getFuelPct(sid,fuelKey);}
 function filterMapStations(){
-  const amphoe=document.getElementById('map-amphoe-filter').value;
-  const status=document.getElementById('map-status-filter').value;
-  const fuelKey=getActiveFuelKey();
-  ALL_STATIONS.forEach(s=>{
-    if(!mapMarkers[s.id])return;
-    const si=getEffectiveStatus(s.id);
-    const inAmphoe=amphoe==='all'||GROUPS.find(g=>g.id===amphoe)?.stations.some(x=>x.id===s.id);
-    const inStatus=status==='all'||si.key===status;
-    if(inAmphoe&&inStatus){ mapMarkers[s.id].addTo(mapInst); }
-    else { mapInst.removeLayer(mapMarkers[s.id]); }
-  });
-  // อัปเดต marker icon ตามประเภทที่เลือก
-  ALL_STATIONS.forEach(s=>{
-    if(!mapMarkers[s.id])return;
-    const si=getEffectiveStatus(s.id);
-    const pct=getEffectivePct(s.id);
-    const size=si.key==='danger'?48:si.key==='none'?34:42;
-    const icon=L.divIcon({
-      className:'',
-      html: buildMarkerHtml(si, pct),
-      iconSize:[size,size],iconAnchor:[size/2,size/2],popupAnchor:[0,-size/2-4]
-    });
-    mapMarkers[s.id].setIcon(icon);
-  });
-  renderMapSidebar();
+  const amphoe=document.getElementById('map-amphoe-filter').value;const status=document.getElementById('map-status-filter').value;const fuelKey=getActiveFuelKey();
+  ALL_STATIONS.forEach(s=>{if(!mapMarkers[s.id])return;const si=getEffectiveStatus(s.id);const inAmphoe=amphoe==='all'||GROUPS.find(g=>g.id===amphoe)?.stations.some(x=>x.id===s.id);const inStatus=status==='all'||si.key===status;if(inAmphoe&&inStatus){mapMarkers[s.id].addTo(mapInst);}else{mapInst.removeLayer(mapMarkers[s.id]);}});
+  ALL_STATIONS.forEach(s=>{if(!mapMarkers[s.id])return;const si=getEffectiveStatus(s.id);const pct=getEffectivePct(s.id);const size=si.key==='danger'?48:si.key==='none'?34:42;const icon=L.divIcon({className:'',html:buildMarkerHtml(si,pct),iconSize:[size,size],iconAnchor:[size/2,size/2],popupAnchor:[0,-size/2-4]});mapMarkers[s.id].setIcon(icon);});renderMapSidebar();
 }
-
 function renderMapSidebar(){
-  const amphoe=document.getElementById('map-amphoe-filter').value;
-  const status=document.getElementById('map-status-filter').value;
-  const fuelKey=getActiveFuelKey();
-  const fuelLabel=fuelKey!=='all'?(FUELS.find(f=>f.key===fuelKey)?.label||''):'';
-  const list=document.getElementById('map-station-list');
-  let html='';
-  // header แสดงว่ากรองประเภทไหน
-  if(fuelKey!=='all'){
-    const fuelObj=FUELS.find(f=>f.key===fuelKey);
-    html+=`<div style="padding:6px 1rem;background:#f9fafb;border-bottom:1px solid #e5e7eb;font-size:11px;color:#6b7280;display:flex;align-items:center;gap:5px">
-      <span style="width:8px;height:8px;border-radius:2px;background:${fuelObj?.color||'#999'};display:inline-block"></span>
-      แสดงเฉพาะ: <strong style="color:#1a1a1a">${fuelLabel}</strong>
-    </div>`;
-  }
-  GROUPS.forEach(g=>{
-    if(amphoe!=='all'&&g.id!==amphoe)return;
-    g.stations.forEach(s=>{
-      const si=getEffectiveStatus(s.id);
-      if(status!=='all'&&si.key!==status)return;
-      const pct=getEffectivePct(s.id);
-      const color=STATUS_COLOR[si.key];
-      const d=getSD(s.id);
-      const subVal=fuelKey!=='all'?`<span style="font-size:10px;color:#9ca3af">${(d[fuelKey]||0).toLocaleString()} ล.</span>`:'';
-      html+=`<div class="map-st-item${s.id===activeMarkerId?' active':''}" onclick="focusStation('${s.id}')">
-        <div class="map-st-dot" style="background:${color}"></div>
-        <div class="map-st-name">${s.name}<br><span style="font-size:10px;color:#9ca3af">${g.amphoe}</span>${subVal?'<br>'+subVal:''}</div>
-        <div class="map-st-pct" style="color:${color}">${pct>0?pct+'%':'—'}</div>
-      </div>`;
-    });
-  });
+  const amphoe=document.getElementById('map-amphoe-filter').value;const status=document.getElementById('map-status-filter').value;const fuelKey=getActiveFuelKey();
+  const list=document.getElementById('map-station-list');let html='';
+  if(fuelKey!=='all'){const fuelObj=FUELS.find(f=>f.key===fuelKey);html+=`<div style="padding:6px 1rem;background:#f9fafb;border-bottom:1px solid #e5e7eb;font-size:11px;color:#6b7280;display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:${fuelObj?.color||'#999'};display:inline-block"></span>แสดงเฉพาะ: <strong style="color:#1a1a1a">${fuelObj?.label||''}</strong></div>`;}
+  GROUPS.forEach(g=>{if(amphoe!=='all'&&g.id!==amphoe)return;g.stations.forEach(s=>{const si=getEffectiveStatus(s.id);if(status!=='all'&&si.key!==status)return;const pct=getEffectivePct(s.id);const color=STATUS_COLOR[si.key];const d=getSD(s.id);const subVal=fuelKey!=='all'?`<span style="font-size:10px;color:#9ca3af">${(d[fuelKey]||0).toLocaleString()} ล.</span>`:'';html+=`<div class="map-st-item${s.id===activeMarkerId?' active':''}" onclick="focusStation('${s.id}')"><div class="map-st-dot" style="background:${color}"></div><div class="map-st-name">${s.name}<br><span style="font-size:10px;color:#9ca3af">${g.amphoe}</span>${subVal?'<br>'+subVal:''}</div><div class="map-st-pct" style="color:${color}">${pct>0?pct+'%':'—'}</div></div>`;});});
   list.innerHTML=html||'<div style="padding:1rem;font-size:12px;color:#9ca3af;text-align:center">ไม่มีสถานีที่ตรงเงื่อนไข</div>';
 }
+function focusStation(sid){activeMarkerId=sid;const coords=STATION_COORDS[sid];if(coords&&mapInst){mapInst.setView(coords,14,{animate:true});if(mapMarkers[sid])mapMarkers[sid].openPopup();}renderMapSidebar();}
+function highlightSidebarItem(sid){activeMarkerId=sid;renderMapSidebar();const list=document.getElementById('map-station-list');const active=list.querySelector('.map-st-item.active');if(active)active.scrollIntoView({behavior:'smooth',block:'nearest'});}
 
-function focusStation(sid){
-  activeMarkerId=sid;
-  const coords=STATION_COORDS[sid];
-  if(coords&&mapInst){
-    mapInst.setView(coords,14,{animate:true});
-    if(mapMarkers[sid])mapMarkers[sid].openPopup();
-  }
-  renderMapSidebar();
-}
-
-function highlightSidebarItem(sid){
-  activeMarkerId=sid;
-  renderMapSidebar();
-  // scroll sidebar to item
-  const list=document.getElementById('map-station-list');
-  const active=list.querySelector('.map-st-item.active');
-  if(active)active.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-
-/* ─────────────────────────────────────────
-   TREND — กราฟแนวโน้มรายวัน
-───────────────────────────────────────── */
-let trendData = []; // raw history rows
-let trendChartMain = null;
-let trendChartSubs = {};
-
+let trendData=[],trendChartMain=null,trendChartSubs={};
 function initTrend(){
-  // สร้าง month selector ถ้ายังไม่มี
-  const sel = document.getElementById('trend-month-sel');
-  if(sel.options.length === 0){
-    const now = new Date();
-    const curYear = now.getFullYear();
-    const months = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
-                    'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-    // เดือนปัจจุบัน → ธันวาคม ของปีนี้
-    for(let m = now.getMonth(); m < 12; m++){
-      const val = curYear+'-'+String(m+1).padStart(2,'0');
-      const o = document.createElement('option');
-      o.value = val;
-      o.textContent = months[m]+' '+( curYear+543 );
-      sel.appendChild(o);
-    }
-  }
-  // amphoe filter
-  const af = document.getElementById('trend-amphoe-sel');
-  if(af.options.length === 1){
-    GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;af.appendChild(o);});
-  }
-  af.onchange = ()=>{ buildTrendStationFilter(); renderTrendCharts(); };
-  buildTrendStationFilter();
-  if(trendData.length === 0) loadTrend();
+  const sel=document.getElementById('trend-month-sel');
+  if(sel.options.length===0){const now=new Date();const curYear=now.getFullYear();const months=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];for(let m=now.getMonth();m<12;m++){const val=curYear+'-'+String(m+1).padStart(2,'0');const o=document.createElement('option');o.value=val;o.textContent=months[m]+' '+(curYear+543);sel.appendChild(o);}}
+  const af=document.getElementById('trend-amphoe-sel');if(af.options.length===1){GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;af.appendChild(o);});}
+  af.onchange=()=>{buildTrendStationFilter();renderTrendCharts();};buildTrendStationFilter();if(trendData.length===0)loadTrend();
 }
-
-function buildTrendStationFilter(){
-  const amphoeId = document.getElementById('trend-amphoe-sel').value;
-  const ss = document.getElementById('trend-station-sel');
-  const prev = ss.value;
-  ss.innerHTML = '<option value="all">ทุกสถานี</option>';
-  const pool = amphoeId==='all' ? GROUPS.flatMap(g=>g.stations) : GROUPS.find(g=>g.id===amphoeId)?.stations||[];
-  pool.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});
-  if([...ss.options].some(o=>o.value===prev)) ss.value=prev;
-}
-
+function buildTrendStationFilter(){const amphoeId=document.getElementById('trend-amphoe-sel').value;const ss=document.getElementById('trend-station-sel');const prev=ss.value;ss.innerHTML='<option value="all">ทุกสถานี</option>';const pool=amphoeId==='all'?GROUPS.flatMap(g=>g.stations):GROUPS.find(g=>g.id===amphoeId)?.stations||[];pool.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});if([...ss.options].some(o=>o.value===prev))ss.value=prev;}
 function loadTrend(){
-  if(!GS_URL){ document.getElementById('trend-main-wrap').innerHTML='<div class="trend-empty">กรุณาตั้งค่า Google Sheet URL ก่อน</div>'; return; }
-  const month = document.getElementById('trend-month-sel').value;
-  document.getElementById('trend-main-wrap').innerHTML='<div class="trend-loading">⏳ กำลังโหลดข้อมูล...</div>';
-  gsGet(GS_URL+'?action=history&month='+month)
-    .then(json=>{
-      if(!json.ok) throw new Error(json.message||'error');
-      // รองรับทั้ง array (Code.gs ใหม่) และ object (Code.gs เก่า — fallback แปลงเอง)
-      if(Array.isArray(json.data)){
-        trendData = json.data;
-      } else if(json.data && typeof json.data === 'object'){
-        // Code.gs เก่า ส่ง FuelData มา (object) → แปลงเป็น array รายวันจาก localStorage
-        trendData = buildTrendFromLocal(month);
-      } else {
-        trendData = [];
-      }
-      renderTrendCharts();
-    })
-    .catch(err=>{
-      document.getElementById('trend-main-wrap').innerHTML=`<div class="trend-empty">โหลดไม่สำเร็จ: ${err.message}</div>`;
-    });
+  if(!GS_URL){document.getElementById('trend-main-wrap').innerHTML='<div class="trend-empty">กรุณาตั้งค่า Google Sheet URL ก่อน</div>';return;}
+  const month=document.getElementById('trend-month-sel').value;document.getElementById('trend-main-wrap').innerHTML='<div class="trend-loading">⏳ กำลังโหลดข้อมูล...</div>';
+  gsGet(GS_URL+'?action=history&month='+month).then(json=>{if(!json.ok)throw new Error(json.message||'error');if(Array.isArray(json.data)){trendData=json.data;}else if(json.data&&typeof json.data==='object'){trendData=buildTrendFromLocal(month);}else{trendData=[];}renderTrendCharts();}).catch(err=>{document.getElementById('trend-main-wrap').innerHTML=`<div class="trend-empty">โหลดไม่สำเร็จ: ${err.message}</div>`;});
 }
-
-// fallback: สร้างข้อมูล trend จาก localStorage (กรณี Code.gs ยังไม่มี history)
-function buildTrendFromLocal(month){
-  // ดึง DATA ปัจจุบัน แล้วสร้าง "วันนี้" เป็น 1 จุด
-  const today = new Date();
-  const ymd = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
-  const ym = ymd.substring(0,7);
-  if(month && ym !== month) return [];
-  const rows = [];
-  GROUPS.forEach(g=>{
-    g.stations.forEach(s=>{
-      const d = getSD(s.id);
-      const total = FUELS.reduce((a,f)=>a+(d[f.key]||0),0);
-      if(total===0 && !d.updated_at) return;
-      rows.push({
-        date: ymd, station_id: s.id, station_name: s.name,
-        amphoe: g.amphoe, brand: s.brand, cap: d.cap||0,
-        diesel:d.diesel||0, g91:d.g91||0, g95:d.g95||0,
-        e20:d.e20||0, g95p:d.g95p||0, power:d.power||0,
-        total, pct: d.cap>0?Math.round(total/d.cap*100):0
-      });
-    });
-  });
-  return rows;
-}
-
+function buildTrendFromLocal(month){const today=new Date();const ymd=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');const ym=ymd.substring(0,7);if(month&&ym!==month)return[];const rows=[];GROUPS.forEach(g=>{g.stations.forEach(s=>{const d=getSD(s.id);const total=FUELS.reduce((a,f)=>a+(d[f.key]||0),0);if(total===0&&!d.updated_at)return;rows.push({date:ymd,station_id:s.id,station_name:s.name,amphoe:g.amphoe,brand:s.brand,cap:d.cap||0,diesel:d.diesel||0,g91:d.g91||0,g95:d.g95||0,e20:d.e20||0,g95p:d.g95p||0,power:d.power||0,total,pct:d.cap>0?Math.round(total/d.cap*100):0});});});return rows;}
 function renderTrendCharts(){
-  if(trendData.length===0){
-    document.getElementById('trend-main-wrap').innerHTML='<div class="trend-empty">ยังไม่มีข้อมูลประวัติในเดือนนี้</div>';
-    document.getElementById('trend-sub-cards').innerHTML='';
-    return;
-  }
-
-  const amphoeId = document.getElementById('trend-amphoe-sel').value;
-  const stationId = document.getElementById('trend-station-sel').value;
-
-  // filter
-  let rows = trendData;
-  if(amphoeId!=='all'){
-    const sids = new Set((GROUPS.find(g=>g.id===amphoeId)?.stations||[]).map(s=>s.id));
-    rows = rows.filter(r=>sids.has(r.station_id));
-  }
-  if(stationId!=='all') rows = rows.filter(r=>r.station_id===stationId);
-
-  if(rows.length===0){
-    document.getElementById('trend-main-wrap').innerHTML='<div class="trend-empty">ไม่มีข้อมูลตามเงื่อนไขที่เลือก</div>';
-    document.getElementById('trend-sub-cards').innerHTML='';
-    return;
-  }
-
-  // รวมค่าแต่ละวัน (sum ทุกสถานีที่เลือก)
-  const dayMap = {};
-  rows.forEach(r=>{
-    if(!dayMap[r.date]) dayMap[r.date]={diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0};
-    FUELS.forEach(f=>{ dayMap[r.date][f.key]+=(r[f.key]||0); });
-  });
-
-  const days = Object.keys(dayMap).sort();
-  const dayLabels = days.map(d=>{
-    const parts=d.split('-'); // YYYY-MM-DD
-    return parts[2]+'/'+parts[1]; // DD/MM
-  });
-
-  // ── กราฟรวม ──
-  const wrap = document.getElementById('trend-main-wrap');
-  wrap.innerHTML = '<canvas id="trend-main-chart"></canvas>';
-  wrap.style.height = '360px';
-  if(trendChartMain){ trendChartMain.destroy(); trendChartMain=null; }
-  trendChartMain = new Chart(document.getElementById('trend-main-chart'),{
-    type:'line',
-    data:{
-      labels: dayLabels,
-      datasets: FUELS.map(f=>({
-        label: f.label,
-        data: days.map(d=>dayMap[d][f.key]||0),
-        borderColor: f.color,
-        backgroundColor: f.color+'22',
-        borderWidth: 2.5,
-        pointRadius: days.length>20?2:4,
-        pointHoverRadius: 6,
-        tension: 0.3,
-        fill: false,
-      }))
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      interaction:{mode:'index',intersect:false},
-      plugins:{
-        legend:{display:true,position:'top',labels:{font:{size:11,family:'Noto Sans Thai'},boxWidth:12,padding:10}},
-        tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+ctx.parsed.y.toLocaleString()+' ล.'}}
-      },
-      scales:{
-        x:{ticks:{font:{size:10,family:'Noto Sans Thai'},maxRotation:45},grid:{color:'#f3f4f6'}},
-        y:{ticks:{callback:v=>v.toLocaleString(),font:{size:10}},grid:{color:'#f3f4f6'},beginAtZero:true}
-      }
-    }
-  });
-
-  // ── กราฟย่อยแต่ละประเภท ──
-  const subCards = document.getElementById('trend-sub-cards');
-  subCards.innerHTML = FUELS.map(f=>`
-    <div class="trend-card">
-      <div class="trend-card-title">
-        <div class="trend-card-dot" style="background:${f.color}"></div>${f.label}
-      </div>
-      <div style="position:relative;height:140px"><canvas id="trend-sub-${f.key}"></canvas></div>
-    </div>`).join('');
-
-  // destroy old sub charts
-  Object.values(trendChartSubs).forEach(c=>c.destroy());
-  trendChartSubs = {};
-
-  FUELS.forEach(f=>{
-    const vals = days.map(d=>dayMap[d][f.key]||0);
-    const max = Math.max(...vals);
-    trendChartSubs[f.key] = new Chart(document.getElementById('trend-sub-'+f.key),{
-      type:'line',
-      data:{
-        labels:dayLabels,
-        datasets:[{
-          data: vals,
-          borderColor: f.color,
-          backgroundColor: f.color+'33',
-          borderWidth:2,
-          pointRadius: days.length>20?1:3,
-          tension:0.3,
-          fill:true,
-        }]
-      },
-      options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{display:false},
-          tooltip:{callbacks:{label:ctx=>ctx.parsed.y.toLocaleString()+' ล.'}}
-        },
-        scales:{
-          x:{ticks:{font:{size:9},maxRotation:45,maxTicksLimit:8},grid:{display:false}},
-          y:{ticks:{callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v,font:{size:9}},beginAtZero:true,grid:{color:'#f9fafb'}}
-        }
-      }
-    });
-  });
+  if(trendData.length===0){document.getElementById('trend-main-wrap').innerHTML='<div class="trend-empty">ยังไม่มีข้อมูลประวัติในเดือนนี้</div>';document.getElementById('trend-sub-cards').innerHTML='';return;}
+  const amphoeId=document.getElementById('trend-amphoe-sel').value;const stationId=document.getElementById('trend-station-sel').value;
+  let rows=trendData;if(amphoeId!=='all'){const sids=new Set((GROUPS.find(g=>g.id===amphoeId)?.stations||[]).map(s=>s.id));rows=rows.filter(r=>sids.has(r.station_id));}if(stationId!=='all')rows=rows.filter(r=>r.station_id===stationId);
+  if(rows.length===0){document.getElementById('trend-main-wrap').innerHTML='<div class="trend-empty">ไม่มีข้อมูลตามเงื่อนไขที่เลือก</div>';document.getElementById('trend-sub-cards').innerHTML='';return;}
+  const dayMap={};rows.forEach(r=>{if(!dayMap[r.date])dayMap[r.date]={diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0};FUELS.forEach(f=>{dayMap[r.date][f.key]+=(r[f.key]||0);});});
+  const days=Object.keys(dayMap).sort();const dayLabels=days.map(d=>{const parts=d.split('-');return parts[2]+'/'+parts[1];});
+  const wrap=document.getElementById('trend-main-wrap');wrap.innerHTML='<canvas id="trend-main-chart"></canvas>';wrap.style.height='360px';if(trendChartMain){trendChartMain.destroy();trendChartMain=null;}
+  trendChartMain=new Chart(document.getElementById('trend-main-chart'),{type:'line',data:{labels:dayLabels,datasets:FUELS.map(f=>({label:f.label,data:days.map(d=>dayMap[d][f.key]||0),borderColor:f.color,backgroundColor:f.color+'22',borderWidth:2.5,pointRadius:days.length>20?2:4,pointHoverRadius:6,tension:0.3,fill:false}))},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,position:'top',labels:{font:{size:11,family:'Noto Sans Thai'},boxWidth:12,padding:10}},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+ctx.parsed.y.toLocaleString()+' ล.'}}},scales:{x:{ticks:{font:{size:10,family:'Noto Sans Thai'},maxRotation:45},grid:{color:'#f3f4f6'}},y:{ticks:{callback:v=>v.toLocaleString(),font:{size:10}},grid:{color:'#f3f4f6'},beginAtZero:true}}}});
+  const subCards=document.getElementById('trend-sub-cards');subCards.innerHTML=FUELS.map(f=>`<div class="trend-card"><div class="trend-card-title"><div class="trend-card-dot" style="background:${f.color}"></div>${f.label}</div><div style="position:relative;height:140px"><canvas id="trend-sub-${f.key}"></canvas></div></div>`).join('');
+  Object.values(trendChartSubs).forEach(c=>c.destroy());trendChartSubs={};
+  FUELS.forEach(f=>{const vals=days.map(d=>dayMap[d][f.key]||0);trendChartSubs[f.key]=new Chart(document.getElementById('trend-sub-'+f.key),{type:'line',data:{labels:dayLabels,datasets:[{data:vals,borderColor:f.color,backgroundColor:f.color+'33',borderWidth:2,pointRadius:days.length>20?1:3,tension:0.3,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.parsed.y.toLocaleString()+' ล.'}}},scales:{x:{ticks:{font:{size:9},maxRotation:45,maxTicksLimit:8},grid:{display:false}},y:{ticks:{callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v,font:{size:9}},beginAtZero:true,grid:{color:'#f9fafb'}}}}});});
 }
 
-/* ─────────────────────────────────────────
-   INIT
-───────────────────────────────────────── */
 document.getElementById('header-date').textContent='ข้อมูล ณ '+new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
 if(GS_URL)setSyncBadge('ok','พร้อมซิงค์');
-buildDashboardSelects();
-setMode('view',true);
-renderDashboard();
-startAutoRefresh();
+buildDashboardSelects();setMode('view',true);renderDashboard();startAutoRefresh();
 if(GS_URL)setTimeout(()=>pullFromSheet(),600);
 </script>
 </body>
