@@ -901,6 +901,7 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
   <div class="nav-tab" onclick="switchTab('map')">🗺️ แผนที่</div>
   <div class="nav-tab" onclick="switchTab('trend')" id="nav-tab-trend">📈 แนวโน้ม <span id="trend-lock" style="font-size:9px">🔒</span></div>
   <div class="nav-tab" onclick="switchTab('input')">✏️ กรอกข้อมูล</div>
+  <div class="nav-tab" onclick="switchTab('sales')">🛒 กรอกจำหน่าย</div>
   <div class="nav-tab" id="tab-settings" onclick="switchTab('settings')" style="display:none">⚙️ ตั้งค่า</div>
 </div>
 
@@ -952,17 +953,10 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
 </div>
 </div>
 
-<!-- ===================== TREND ===================== -->
+<!-- ===================== TREND (แสดงทั้ง 2 กราฟ) ===================== -->
 <div class="page" id="page-trend">
 <div class="trend-page">
   <div class="trend-slicer">
-    <div class="slicer-grp">
-      <span class="slicer-label">ประเภทข้อมูล</span>
-      <select id="trend-type-sel" onchange="onTrendTypeChange()">
-        <option value="remain">🛢️ น้ำมันคงเหลือ</option>
-        <option value="sales">🛒 ยอดจำหน่าย</option>
-      </select>
-    </div>
     <div class="slicer-grp">
       <span class="slicer-label">เดือน</span>
       <select id="trend-month-sel" onchange="loadTrend()"></select>
@@ -978,67 +972,75 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
     <button class="btn btn-warn" onclick="loadTrend()" style="margin-left:auto;flex-shrink:0">↓ โหลด</button>
   </div>
   <div class="trend-content">
-    <!-- กราฟหลัก -->
+    <!-- กราฟคงเหลือ -->
     <div class="trend-main-card">
-      <div class="card-title" id="trend-main-title">📈 ปริมาณน้ำมันคงเหลือรายวัน (ลิตร)</div>
+      <div class="card-title">🛢️ ปริมาณน้ำมันคงเหลือรายวัน (ลิตร)</div>
       <div id="trend-main-wrap" style="position:relative;width:100%;height:300px">
         <div class="trend-loading">เลือกเดือนแล้วกด "โหลด"</div>
       </div>
     </div>
     <div class="trend-cards" id="trend-sub-cards"></div>
 
-    <!-- ส่วนกรอกยอดจำหน่าย (แสดงเมื่อเลือก "ยอดจำหน่าย") -->
-    <div id="sales-input-section" style="display:none">
-      <div class="trend-main-card" style="border:2px solid var(--amber);background:linear-gradient(135deg,#fffbeb,#fff)">
-        <div class="card-title" style="color:var(--amber-dark)">🛒 กรอกยอดจำหน่ายรายวัน</div>
-        
-        <!-- PIN gate สำหรับกรอกจำหน่าย -->
-        <div id="sales-pin-gate">
-          <div style="text-align:center;padding:1rem 0">
-            <div style="font-size:28px;margin-bottom:.4rem">🔑</div>
-            <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.2rem">ใส่รหัสเพื่อกรอกยอดจำหน่าย</div>
-            <div style="font-size:11px;color:var(--gray-500);margin-bottom:.75rem">รหัสแอดมิน หรือ รหัสสถานี 7 หลัก</div>
-            <div style="max-width:220px;margin:0 auto">
-              <input class="pin-station-input" type="password" id="sales-pin-input" maxlength="7" placeholder="●●●●●●●" 
-                oninput="this.value=this.value.replace(/[^0-9]/g,'')" 
-                onkeydown="if(event.key==='Enter')checkSalesPin()" style="font-size:18px;margin-bottom:.4rem">
-              <div style="font-size:11px;color:var(--red);min-height:16px;margin-bottom:.5rem" id="sales-pin-hint"></div>
-              <button class="btn btn-primary" onclick="checkSalesPin()" style="width:100%;padding:8px;font-size:12px">เข้าสู่ระบบ</button>
-            </div>
-          </div>
+    <!-- กราฟจำหน่าย -->
+    <div class="trend-main-card" style="border-left:4px solid var(--amber)">
+      <div class="card-title" style="color:var(--amber-dark)">🛒 ยอดจำหน่ายน้ำมันรายวัน (ลิตร)</div>
+      <div id="trend-sales-wrap" style="position:relative;width:100%;height:300px">
+        <div class="trend-loading">กด "โหลด" เพื่อดูข้อมูล</div>
+      </div>
+    </div>
+    <div class="trend-cards" id="trend-sales-sub-cards"></div>
+  </div>
+</div>
+</div>
+
+<!-- ===================== SALES INPUT (กรอกจำหน่าย) ===================== -->
+<div class="page" id="page-sales">
+<div class="trend-page">
+  <div class="trend-main-card" style="border:2px solid var(--amber);background:linear-gradient(135deg,#fffbeb,#fff);margin:.75rem">
+    <div class="card-title" style="color:var(--amber-dark)">🛒 กรอกยอดจำหน่ายรายวัน</div>
+
+    <!-- PIN gate -->
+    <div id="sales-pin-gate">
+      <div style="text-align:center;padding:1rem 0">
+        <div style="font-size:28px;margin-bottom:.4rem">🔑</div>
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.2rem">ใส่รหัสเพื่อกรอกยอดจำหน่าย</div>
+        <div style="font-size:11px;color:var(--gray-500);margin-bottom:.75rem">รหัสแอดมิน หรือ รหัสสถานี 7 หลัก</div>
+        <div style="max-width:220px;margin:0 auto">
+          <input class="pin-station-input" type="password" id="sales-pin-input" maxlength="7" placeholder="●●●●●●●"
+            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+            onkeydown="if(event.key==='Enter')checkSalesPin()" style="font-size:18px;margin-bottom:.4rem">
+          <div style="font-size:11px;color:var(--red);min-height:16px;margin-bottom:.5rem" id="sales-pin-hint"></div>
+          <button class="btn btn-primary" onclick="checkSalesPin()" style="width:100%;padding:8px;font-size:12px">เข้าสู่ระบบ</button>
         </div>
+      </div>
+    </div>
 
-        <!-- ฟอร์มกรอกจำหน่าย (แสดงหลัง login) -->
-        <div id="sales-form" style="display:none">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:.75rem;padding:.5rem .75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200)">
-            <div>
-              <div style="font-size:14px;font-weight:700;color:var(--navy)" id="sales-station-name">—</div>
-              <div style="font-size:10px;color:var(--gray-500)" id="sales-station-amphoe">—</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px">
-              <span class="brand" id="sales-station-brand"></span>
-              <button class="btn btn-danger" onclick="logoutSales()" style="font-size:10px;padding:3px 8px">ออก</button>
-            </div>
-          </div>
-
-          <div style="display:flex;gap:6px;align-items:center;margin-bottom:.65rem;flex-wrap:wrap">
-            <span style="font-size:11px;color:var(--gray-500);font-weight:600">📅 วันที่:</span>
-            <input type="date" id="sales-date" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif">
-            <span style="font-size:11px;color:var(--gray-500);font-weight:600;margin-left:auto" id="sales-amphoe-sel-wrap">
-              อำเภอ: <select id="sales-amphoe-sel" onchange="onSalesAmphoeChange()" style="border:1px solid var(--gray-300);border-radius:5px;padding:3px 6px;font-size:11px;font-family:'Noto Sans Thai',sans-serif;display:none"></select>
-              สถานี: <select id="sales-station-sel" onchange="onSalesStationChange()" style="border:1px solid var(--gray-300);border-radius:5px;padding:3px 6px;font-size:11px;font-family:'Noto Sans Thai',sans-serif;display:none"></select>
-            </span>
-          </div>
-
-          <div class="fuel-grid" id="sales-fuel-grid"></div>
-
-          <div style="display:flex;align-items:center;gap:8px;padding:.6rem 0;flex-wrap:wrap">
-            <span style="font-size:11px;color:var(--gray-400)" id="sales-save-status"></span>
-            <div style="flex:1"></div>
-            <button class="btn" onclick="clearSalesForm()">ล้าง</button>
-            <button class="btn btn-success" onclick="saveSalesToSheet()" id="btn-save-sales">💾 บันทึกยอดจำหน่าย</button>
-          </div>
+    <!-- ฟอร์มกรอกจำหน่าย -->
+    <div id="sales-form" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:.75rem;padding:.5rem .75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200)">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--navy)" id="sales-station-name">—</div>
+          <div style="font-size:10px;color:var(--gray-500)" id="sales-station-amphoe">—</div>
         </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="brand" id="sales-station-brand"></span>
+          <button class="btn btn-danger" onclick="logoutSales()" style="font-size:10px;padding:3px 8px">ออก</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:.65rem;flex-wrap:wrap">
+        <span style="font-size:11px;color:var(--gray-500);font-weight:600">📅 วันที่:</span>
+        <input type="date" id="sales-date" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif">
+        <span style="font-size:11px;color:var(--gray-500);font-weight:600;margin-left:auto" id="sales-amphoe-sel-wrap">
+          อำเภอ: <select id="sales-amphoe-sel" onchange="onSalesAmphoeChange()" style="border:1px solid var(--gray-300);border-radius:5px;padding:3px 6px;font-size:11px;font-family:'Noto Sans Thai',sans-serif;display:none"></select>
+          สถานี: <select id="sales-station-sel" onchange="onSalesStationChange()" style="border:1px solid var(--gray-300);border-radius:5px;padding:3px 6px;font-size:11px;font-family:'Noto Sans Thai',sans-serif;display:none"></select>
+        </span>
+      </div>
+      <div class="fuel-grid" id="sales-fuel-grid"></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:.6rem 0;flex-wrap:wrap">
+        <span style="font-size:11px;color:var(--gray-400)" id="sales-save-status"></span>
+        <div style="flex:1"></div>
+        <button class="btn" onclick="clearSalesForm()">ล้าง</button>
+        <button class="btn btn-success" onclick="saveSalesToSheet()" id="btn-save-sales">💾 บันทึกยอดจำหน่าย</button>
       </div>
     </div>
   </div>
@@ -1378,7 +1380,7 @@ function switchTab(tab){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+tab).classList.add('active');
-  const tabs=['dashboard','map','trend','input','settings'];
+  const tabs=['dashboard','map','trend','input','sales','settings'];
   const idx=tabs.indexOf(tab);
   const navTabs=document.querySelectorAll('.nav-tab');
   if(navTabs[idx])navTabs[idx].classList.add('active');
@@ -1391,6 +1393,7 @@ function switchTab(tab){
     initTrend();
   }
   if(tab==='input'){if(!inputMode){document.getElementById('input-pin-screen').style.display='block';document.getElementById('input-admin-screen').style.display='none';}}
+  if(tab==='sales'){/* sales page มี PIN gate ของตัวเอง */}
 }
 
 function gsGet(url){return fetch(url,{redirect:'follow'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});}
@@ -1750,19 +1753,25 @@ function initTrend(){
   af.onchange=()=>{buildTrendStationFilter();renderTrendCharts();};buildTrendStationFilter();if(trendData.length===0)loadTrend();
 }
 function buildTrendStationFilter(){const amphoeId=document.getElementById('trend-amphoe-sel').value;const ss=document.getElementById('trend-station-sel');const prev=ss.value;ss.innerHTML='<option value="all">ทุกสถานี</option>';const pool=amphoeId==='all'?GROUPS.flatMap(g=>g.stations):GROUPS.find(g=>g.id===amphoeId)?.stations||[];pool.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});if([...ss.options].some(o=>o.value===prev))ss.value=prev;}
+let salesTrendData=[], trendSalesChartMain=null, trendSalesChartSubs={};
+
 function loadTrend(){
   if(!GS_URL){document.getElementById('trend-main-wrap').innerHTML='<div class="trend-empty">กรุณาตั้งค่า Google Sheet URL ก่อน</div>';return;}
   const month=document.getElementById('trend-month-sel').value;
-  const type=getTrendType();
-  document.getElementById('trend-main-wrap').innerHTML='<div class="trend-loading">⏳ กำลังโหลด...</div>';
-  const actionParam=type==='sales'?'sales_history':'history';
-  gsGet(GS_URL+'?action='+actionParam+'&month='+month).then(json=>{
+  document.getElementById('trend-main-wrap').innerHTML='<div class="trend-loading">⏳ กำลังโหลดคงเหลือ...</div>';
+  document.getElementById('trend-sales-wrap').innerHTML='<div class="trend-loading">⏳ กำลังโหลดจำหน่าย...</div>';
+
+  gsGet(GS_URL+'?action=history&month='+month).then(json=>{
     if(!json.ok)throw new Error(json.message||'error');
-    if(Array.isArray(json.data))trendData=json.data;
-    else if(json.data&&typeof json.data==='object'&&type==='remain')trendData=buildTrendFromLocal(month);
-    else trendData=[];
+    trendData=Array.isArray(json.data)?json.data:(json.data&&typeof json.data==='object'?buildTrendFromLocal(month):[]);
     renderTrendCharts();
   }).catch(err=>{document.getElementById('trend-main-wrap').innerHTML=`<div class="trend-empty">โหลดไม่สำเร็จ: ${err.message}</div>`;});
+
+  gsGet(GS_URL+'?action=sales_history&month='+month).then(json=>{
+    if(!json.ok)throw new Error(json.message||'error');
+    salesTrendData=Array.isArray(json.data)?json.data:[];
+    renderSalesTrendCharts();
+  }).catch(err=>{document.getElementById('trend-sales-wrap').innerHTML=`<div class="trend-empty">ยังไม่มีข้อมูลจำหน่าย</div>`;});
 }
 function buildTrendFromLocal(month){const today=new Date();const ymd=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');const ym=ymd.substring(0,7);if(month&&ym!==month)return[];const rows=[];GROUPS.forEach(g=>{g.stations.forEach(s=>{const d=getSD(s.id);const total=FUELS.reduce((a,f)=>a+(d[f.key]||0),0);if(total===0&&!d.updated_at)return;rows.push({date:ymd,station_id:s.id,station_name:s.name,amphoe:g.amphoe,brand:s.brand,cap:d.cap||0,diesel:d.diesel||0,g91:d.g91||0,g95:d.g95||0,e20:d.e20||0,g95p:d.g95p||0,power:d.power||0,total,pct:d.cap>0?Math.round(total/d.cap*100):0});});});return rows;}
 function renderTrendCharts(){
@@ -1778,19 +1787,31 @@ function renderTrendCharts(){
   const subCards=document.getElementById('trend-sub-cards');subCards.innerHTML=FUELS.map(f=>`<div class="trend-card"><div class="trend-card-title"><div class="trend-card-dot" style="background:${f.color}"></div>${f.label}</div><div style="position:relative;height:120px"><canvas id="trend-sub-${f.key}"></canvas></div></div>`).join('');
   Object.values(trendChartSubs).forEach(c=>c.destroy());trendChartSubs={};
   FUELS.forEach(f=>{const vals=days.map(d=>dayMap[d][f.key]||0);trendChartSubs[f.key]=new Chart(document.getElementById('trend-sub-'+f.key),{type:'line',data:{labels:dayLabels,datasets:[{data:vals,borderColor:f.color,backgroundColor:f.color+'33',borderWidth:2,pointRadius:days.length>20?1:2,tension:0.3,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.parsed.y.toLocaleString()+' ล.'}}},scales:{x:{ticks:{font:{size:8},maxRotation:45,maxTicksLimit:7},grid:{display:false}},y:{ticks:{callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v,font:{size:8}},beginAtZero:true,grid:{color:'#f9fafb'}}}}});});
+  // อัปเดตกราฟจำหน่ายด้วย
+  if(salesTrendData.length>0)renderSalesTrendCharts();
 }
 
 // ── SALES (จำหน่ายรายวัน) ──
 let salesMode=null, salesStationId=null, salesData=[];
 
-function onTrendTypeChange(){
-  const type=document.getElementById('trend-type-sel').value;
-  document.getElementById('sales-input-section').style.display=type==='sales'?'block':'none';
-  document.getElementById('trend-main-title').textContent=type==='sales'?'🛒 ยอดจำหน่ายน้ำมันรายวัน (ลิตร)':'📈 ปริมาณน้ำมันคงเหลือรายวัน (ลิตร)';
-  loadTrend();
+// render กราฟจำหน่ายรายวัน
+function renderSalesTrendCharts(){
+  if(salesTrendData.length===0){document.getElementById('trend-sales-wrap').innerHTML='<div class="trend-empty">ยังไม่มีข้อมูลจำหน่าย</div>';document.getElementById('trend-sales-sub-cards').innerHTML='';return;}
+  const amphoeId=document.getElementById('trend-amphoe-sel').value;const stationId=document.getElementById('trend-station-sel').value;
+  let rows=salesTrendData;if(amphoeId!=='all'){const sids=new Set((GROUPS.find(g=>g.id===amphoeId)?.stations||[]).map(s=>s.id));rows=rows.filter(r=>sids.has(r.station_id));}if(stationId!=='all')rows=rows.filter(r=>r.station_id===stationId);
+  if(rows.length===0){document.getElementById('trend-sales-wrap').innerHTML='<div class="trend-empty">ไม่มีข้อมูลจำหน่ายตามเงื่อนไข</div>';document.getElementById('trend-sales-sub-cards').innerHTML='';return;}
+  const dayMap={};rows.forEach(r=>{if(!dayMap[r.date])dayMap[r.date]={diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0};FUELS.forEach(f=>{dayMap[r.date][f.key]+=(r[f.key]||0);});});
+  const days=Object.keys(dayMap).sort();const dayLabels=days.map(d=>{const p=d.split('-');return p[2]+'/'+p[1];});
+  const wrap=document.getElementById('trend-sales-wrap');wrap.innerHTML='<canvas id="trend-sales-chart"></canvas>';wrap.style.height='300px';
+  if(trendSalesChartMain){trendSalesChartMain.destroy();trendSalesChartMain=null;}
+  const isMobile=window.innerWidth<600;
+  trendSalesChartMain=new Chart(document.getElementById('trend-sales-chart'),{type:'bar',data:{labels:dayLabels,datasets:FUELS.map(f=>({label:f.label,data:days.map(d=>dayMap[d][f.key]||0),backgroundColor:f.color,borderWidth:0,borderRadius:2}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:isMobile?9:10,family:'Noto Sans Thai'},boxWidth:10,padding:8}},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+ctx.parsed.y.toLocaleString()+' ล.'}}},scales:{x:{stacked:true,ticks:{font:{size:isMobile?8:9},maxRotation:45},grid:{color:'#f3f4f6'}},y:{stacked:true,ticks:{callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v,font:{size:9}},grid:{color:'#f3f4f6'},beginAtZero:true}}}});
+  // Sub cards
+  const subCards=document.getElementById('trend-sales-sub-cards');
+  subCards.innerHTML=FUELS.map(f=>`<div class="trend-card"><div class="trend-card-title"><div class="trend-card-dot" style="background:${f.color}"></div>${f.label} (จำหน่าย)</div><div style="position:relative;height:120px"><canvas id="trend-sales-sub-${f.key}"></canvas></div></div>`).join('');
+  Object.values(trendSalesChartSubs).forEach(c=>c.destroy());trendSalesChartSubs={};
+  FUELS.forEach(f=>{const vals=days.map(d=>dayMap[d][f.key]||0);trendSalesChartSubs[f.key]=new Chart(document.getElementById('trend-sales-sub-'+f.key),{type:'bar',data:{labels:dayLabels,datasets:[{data:vals,backgroundColor:f.color+'cc',borderWidth:0,borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.parsed.y.toLocaleString()+' ล.'}}},scales:{x:{ticks:{font:{size:8},maxRotation:45,maxTicksLimit:7},grid:{display:false}},y:{ticks:{callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v,font:{size:8}},beginAtZero:true,grid:{color:'#f9fafb'}}}}});});
 }
-
-function getTrendType(){return document.getElementById('trend-type-sel').value;}
 
 function checkSalesPin(){
   const pin=document.getElementById('sales-pin-input').value.trim();
