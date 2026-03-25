@@ -1615,15 +1615,17 @@ function renderStationCards(stations){
     stList.forEach(s=>{
       const d=getSD(s.id),remain=getRemain(s.id),cap=d.cap||0;
       const pct=cap>0?Math.round(remain/cap*100):0;
-      const si=getStatusInfo(pct,remain);
       const coords=STATION_COORDS[s.id];
       const hasCoords=!!coords;
       const logoSrc=BRAND_LOGOS[s.brand]||BRAND_LOGOS['ในพื้นที่'];
 
+      // คำนวณสถานะแต่ละประเภท แล้วเอาสถานะแย่สุดเป็นสถานะรวม
+      const fuelStatuses=[];
       const bubbles=FUELS.map(f=>{
         const v=d[f.key]||0;
         const fpct=cap>0?Math.round(v/cap*100):0;
         const sKey=v===0?'none':fpct>50?'ok':fpct>=5?'watch':'danger';
+        if(v>0)fuelStatuses.push(sKey); // เก็บเฉพาะที่มีข้อมูล
         const st=stBubble[sKey];
         const statusLabel=v===0?'ไม่มีข้อมูล':sKey==='ok'?'ปกติ':sKey==='watch'?'น้อย':'หมด';
         const pctText=v===0?'—':`${fpct}%`;
@@ -1633,6 +1635,13 @@ function renderStationCards(stations){
           <span class="st-chip-status">${statusLabel}</span>
         </div>`;
       }).join('');
+
+      // สถานะรวม = สถานะแย่สุด (danger > watch > ok > none)
+      let overallSi;
+      if(fuelStatuses.length===0){overallSi=getStatusInfo(0,0);}
+      else if(fuelStatuses.includes('danger')){overallSi={key:'danger',label:'หมด',pillClass:'pill-danger'};}
+      else if(fuelStatuses.includes('watch')){overallSi={key:'watch',label:'น้อย',pillClass:'pill-watch'};}
+      else{overallSi={key:'ok',label:'ปกติ',pillClass:'pill-ok'};}
 
       const updatedText=d.updated_at?`🕐 ${d.updated_at}`:'ยังไม่มีข้อมูล';
       const mapBtn=hasCoords?`<a class="st-card-btn btn-map" href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}&travelmode=driving" target="_blank" style="text-decoration:none">📍 แผนที่</a>`:`<span class="st-card-btn" style="opacity:.4;cursor:default">📍 ไม่มีพิกัด</span>`;
@@ -1645,7 +1654,7 @@ function renderStationCards(stations){
             <div class="st-card-name">${s.name}</div>
             <div class="st-card-meta">${updatedText}</div>
           </div>
-          <span class="status-pill ${si.pillClass}" style="font-size:9px;padding:2px 6px;flex-shrink:0">${si.label}</span>
+          <span class="status-pill ${overallSi.pillClass}" style="font-size:9px;padding:2px 6px;flex-shrink:0">${overallSi.label}</span>
         </div>
         <div class="st-card-fuels">${bubbles}</div>
         <div class="st-card-actions">${mapBtn}${inputBtn}</div>
