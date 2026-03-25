@@ -849,6 +849,13 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
 <div class="trend-page">
   <div class="trend-slicer">
     <div class="slicer-grp">
+      <span class="slicer-label">ประเภทข้อมูล</span>
+      <select id="trend-type-sel" onchange="onTrendTypeChange()">
+        <option value="remain">🛢️ น้ำมันคงเหลือ</option>
+        <option value="sales">🛒 ยอดจำหน่าย</option>
+      </select>
+    </div>
+    <div class="slicer-grp">
       <span class="slicer-label">เดือน</span>
       <select id="trend-month-sel" onchange="loadTrend()"></select>
     </div>
@@ -863,13 +870,69 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
     <button class="btn btn-warn" onclick="loadTrend()" style="margin-left:auto;flex-shrink:0">↓ โหลด</button>
   </div>
   <div class="trend-content">
+    <!-- กราฟหลัก -->
     <div class="trend-main-card">
-      <div class="card-title">📈 ปริมาณน้ำมันคงเหลือรายวัน (ลิตร)</div>
+      <div class="card-title" id="trend-main-title">📈 ปริมาณน้ำมันคงเหลือรายวัน (ลิตร)</div>
       <div id="trend-main-wrap" style="position:relative;width:100%;height:300px">
         <div class="trend-loading">เลือกเดือนแล้วกด "โหลด"</div>
       </div>
     </div>
     <div class="trend-cards" id="trend-sub-cards"></div>
+
+    <!-- ส่วนกรอกยอดจำหน่าย (แสดงเมื่อเลือก "ยอดจำหน่าย") -->
+    <div id="sales-input-section" style="display:none">
+      <div class="trend-main-card" style="border:2px solid var(--amber);background:linear-gradient(135deg,#fffbeb,#fff)">
+        <div class="card-title" style="color:var(--amber-dark)">🛒 กรอกยอดจำหน่ายรายวัน</div>
+        
+        <!-- PIN gate สำหรับกรอกจำหน่าย -->
+        <div id="sales-pin-gate">
+          <div style="text-align:center;padding:1rem 0">
+            <div style="font-size:28px;margin-bottom:.4rem">🔑</div>
+            <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:.2rem">ใส่รหัสเพื่อกรอกยอดจำหน่าย</div>
+            <div style="font-size:11px;color:var(--gray-500);margin-bottom:.75rem">รหัสแอดมิน หรือ รหัสสถานี 7 หลัก</div>
+            <div style="max-width:220px;margin:0 auto">
+              <input class="pin-station-input" type="password" id="sales-pin-input" maxlength="7" placeholder="●●●●●●●" 
+                oninput="this.value=this.value.replace(/[^0-9]/g,'')" 
+                onkeydown="if(event.key==='Enter')checkSalesPin()" style="font-size:18px;margin-bottom:.4rem">
+              <div style="font-size:11px;color:var(--red);min-height:16px;margin-bottom:.5rem" id="sales-pin-hint"></div>
+              <button class="btn btn-primary" onclick="checkSalesPin()" style="width:100%;padding:8px;font-size:12px">เข้าสู่ระบบ</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ฟอร์มกรอกจำหน่าย (แสดงหลัง login) -->
+        <div id="sales-form" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:.75rem;padding:.5rem .75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200)">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--navy)" id="sales-station-name">—</div>
+              <div style="font-size:10px;color:var(--gray-500)" id="sales-station-amphoe">—</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span class="brand" id="sales-station-brand"></span>
+              <button class="btn btn-danger" onclick="logoutSales()" style="font-size:10px;padding:3px 8px">ออก</button>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:6px;align-items:center;margin-bottom:.65rem;flex-wrap:wrap">
+            <span style="font-size:11px;color:var(--gray-500);font-weight:600">📅 วันที่:</span>
+            <input type="date" id="sales-date" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif">
+            <span style="font-size:11px;color:var(--gray-500);font-weight:600;margin-left:auto" id="sales-amphoe-sel-wrap">
+              อำเภอ: <select id="sales-amphoe-sel" onchange="onSalesAmphoeChange()" style="border:1px solid var(--gray-300);border-radius:5px;padding:3px 6px;font-size:11px;font-family:'Noto Sans Thai',sans-serif;display:none"></select>
+              สถานี: <select id="sales-station-sel" onchange="onSalesStationChange()" style="border:1px solid var(--gray-300);border-radius:5px;padding:3px 6px;font-size:11px;font-family:'Noto Sans Thai',sans-serif;display:none"></select>
+            </span>
+          </div>
+
+          <div class="fuel-grid" id="sales-fuel-grid"></div>
+
+          <div style="display:flex;align-items:center;gap:8px;padding:.6rem 0;flex-wrap:wrap">
+            <span style="font-size:11px;color:var(--gray-400)" id="sales-save-status"></span>
+            <div style="flex:1"></div>
+            <button class="btn" onclick="clearSalesForm()">ล้าง</button>
+            <button class="btn btn-success" onclick="saveSalesToSheet()" id="btn-save-sales">💾 บันทึกยอดจำหน่าย</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 </div>
@@ -1411,8 +1474,17 @@ function initTrend(){
 function buildTrendStationFilter(){const amphoeId=document.getElementById('trend-amphoe-sel').value;const ss=document.getElementById('trend-station-sel');const prev=ss.value;ss.innerHTML='<option value="all">ทุกสถานี</option>';const pool=amphoeId==='all'?GROUPS.flatMap(g=>g.stations):GROUPS.find(g=>g.id===amphoeId)?.stations||[];pool.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});if([...ss.options].some(o=>o.value===prev))ss.value=prev;}
 function loadTrend(){
   if(!GS_URL){document.getElementById('trend-main-wrap').innerHTML='<div class="trend-empty">กรุณาตั้งค่า Google Sheet URL ก่อน</div>';return;}
-  const month=document.getElementById('trend-month-sel').value;document.getElementById('trend-main-wrap').innerHTML='<div class="trend-loading">⏳ กำลังโหลด...</div>';
-  gsGet(GS_URL+'?action=history&month='+month).then(json=>{if(!json.ok)throw new Error(json.message||'error');if(Array.isArray(json.data))trendData=json.data;else if(json.data&&typeof json.data==='object')trendData=buildTrendFromLocal(month);else trendData=[];renderTrendCharts();}).catch(err=>{document.getElementById('trend-main-wrap').innerHTML=`<div class="trend-empty">โหลดไม่สำเร็จ: ${err.message}</div>`;});
+  const month=document.getElementById('trend-month-sel').value;
+  const type=getTrendType();
+  document.getElementById('trend-main-wrap').innerHTML='<div class="trend-loading">⏳ กำลังโหลด...</div>';
+  const actionParam=type==='sales'?'sales_history':'history';
+  gsGet(GS_URL+'?action='+actionParam+'&month='+month).then(json=>{
+    if(!json.ok)throw new Error(json.message||'error');
+    if(Array.isArray(json.data))trendData=json.data;
+    else if(json.data&&typeof json.data==='object'&&type==='remain')trendData=buildTrendFromLocal(month);
+    else trendData=[];
+    renderTrendCharts();
+  }).catch(err=>{document.getElementById('trend-main-wrap').innerHTML=`<div class="trend-empty">โหลดไม่สำเร็จ: ${err.message}</div>`;});
 }
 function buildTrendFromLocal(month){const today=new Date();const ymd=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');const ym=ymd.substring(0,7);if(month&&ym!==month)return[];const rows=[];GROUPS.forEach(g=>{g.stations.forEach(s=>{const d=getSD(s.id);const total=FUELS.reduce((a,f)=>a+(d[f.key]||0),0);if(total===0&&!d.updated_at)return;rows.push({date:ymd,station_id:s.id,station_name:s.name,amphoe:g.amphoe,brand:s.brand,cap:d.cap||0,diesel:d.diesel||0,g91:d.g91||0,g95:d.g95||0,e20:d.e20||0,g95p:d.g95p||0,power:d.power||0,total,pct:d.cap>0?Math.round(total/d.cap*100):0});});});return rows;}
 function renderTrendCharts(){
@@ -1428,6 +1500,123 @@ function renderTrendCharts(){
   const subCards=document.getElementById('trend-sub-cards');subCards.innerHTML=FUELS.map(f=>`<div class="trend-card"><div class="trend-card-title"><div class="trend-card-dot" style="background:${f.color}"></div>${f.label}</div><div style="position:relative;height:120px"><canvas id="trend-sub-${f.key}"></canvas></div></div>`).join('');
   Object.values(trendChartSubs).forEach(c=>c.destroy());trendChartSubs={};
   FUELS.forEach(f=>{const vals=days.map(d=>dayMap[d][f.key]||0);trendChartSubs[f.key]=new Chart(document.getElementById('trend-sub-'+f.key),{type:'line',data:{labels:dayLabels,datasets:[{data:vals,borderColor:f.color,backgroundColor:f.color+'33',borderWidth:2,pointRadius:days.length>20?1:2,tension:0.3,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.parsed.y.toLocaleString()+' ล.'}}},scales:{x:{ticks:{font:{size:8},maxRotation:45,maxTicksLimit:7},grid:{display:false}},y:{ticks:{callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v,font:{size:8}},beginAtZero:true,grid:{color:'#f9fafb'}}}}});});
+}
+
+// ── SALES (จำหน่ายรายวัน) ──
+let salesMode=null, salesStationId=null, salesData=[];
+
+function onTrendTypeChange(){
+  const type=document.getElementById('trend-type-sel').value;
+  document.getElementById('sales-input-section').style.display=type==='sales'?'block':'none';
+  document.getElementById('trend-main-title').textContent=type==='sales'?'🛒 ยอดจำหน่ายน้ำมันรายวัน (ลิตร)':'📈 ปริมาณน้ำมันคงเหลือรายวัน (ลิตร)';
+  loadTrend();
+}
+
+function getTrendType(){return document.getElementById('trend-type-sel').value;}
+
+function checkSalesPin(){
+  const pin=document.getElementById('sales-pin-input').value.trim();
+  const hint=document.getElementById('sales-pin-hint');
+  if(pin.length<7){hint.textContent='กรุณากรอกรหัส 7 หลัก';return;}
+  if(pin===ADMIN_PIN){
+    salesMode='admin';salesStationId=null;
+    showSalesForm(true);return;
+  }
+  const sid=Object.keys(STATION_PINS).find(k=>STATION_PINS[k]===pin);
+  if(sid){salesMode='station';salesStationId=sid;showSalesForm(false);return;}
+  hint.textContent='รหัสไม่ถูกต้อง';document.getElementById('sales-pin-input').value='';
+}
+
+function showSalesForm(isAdmin){
+  document.getElementById('sales-pin-gate').style.display='none';
+  document.getElementById('sales-form').style.display='block';
+  // ตั้งวันที่เป็นวันนี้
+  const today=new Date();document.getElementById('sales-date').value=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  // Admin เห็น slicer เลือกอำเภอ/สถานี
+  const amphoeSel=document.getElementById('sales-amphoe-sel');
+  const stationSel=document.getElementById('sales-station-sel');
+  const wrap=document.getElementById('sales-amphoe-sel-wrap');
+  if(isAdmin){
+    amphoeSel.style.display='inline';stationSel.style.display='inline';
+    amphoeSel.innerHTML='';GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;amphoeSel.appendChild(o);});
+    onSalesAmphoeChange();
+  } else {
+    amphoeSel.style.display='none';stationSel.style.display='none';
+    const st=ALL_STATIONS.find(s=>s.id===salesStationId);
+    if(st){
+      document.getElementById('sales-station-name').textContent=st.name;
+      document.getElementById('sales-station-amphoe').textContent=st.amphoe;
+      const b=document.getElementById('sales-station-brand');b.textContent=st.brand;b.className='brand brand-'+st.brand;
+    }
+    buildSalesFuelGrid();
+  }
+}
+
+function onSalesAmphoeChange(){
+  const gid=document.getElementById('sales-amphoe-sel').value;
+  const ss=document.getElementById('sales-station-sel');
+  ss.innerHTML='';const g=GROUPS.find(x=>x.id===gid);
+  if(g)g.stations.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});
+  onSalesStationChange();
+}
+
+function onSalesStationChange(){
+  const sid=document.getElementById('sales-station-sel').value;
+  if(!sid)return;salesStationId=sid;
+  const st=ALL_STATIONS.find(s=>s.id===sid);
+  if(st){
+    document.getElementById('sales-station-name').textContent=st.name;
+    document.getElementById('sales-station-amphoe').textContent=st.amphoe;
+    const b=document.getElementById('sales-station-brand');b.textContent=st.brand;b.className='brand brand-'+st.brand;
+  }
+  buildSalesFuelGrid();
+}
+
+function buildSalesFuelGrid(){
+  const grid=document.getElementById('sales-fuel-grid');
+  grid.innerHTML=FUELS.map(f=>`<div class="fuel-cell"><div class="fuel-cell-label"><span class="fuel-dot" style="background:${f.color}"></span>${f.label}</div><input class="fuel-cell-input" type="number" id="sci-${f.key}" min="0" step="100" value="" placeholder="0" inputmode="numeric"><div class="fuel-cell-unit">ลิตร (จำหน่าย)</div></div>`).join('');
+}
+
+function clearSalesForm(){
+  FUELS.forEach(f=>{const el=document.getElementById('sci-'+f.key);if(el)el.value='';});
+  document.getElementById('sales-save-status').textContent='';
+}
+
+function saveSalesToSheet(){
+  if(!salesStationId){showToast('กรุณาเลือกสถานี',2500,true);return;}
+  if(!GS_URL){showToast('ยังไม่ได้ตั้งค่า URL',2500,true);return;}
+  const date=document.getElementById('sales-date').value;
+  if(!date){showToast('กรุณาเลือกวันที่',2500,true);return;}
+  const stInfo=ALL_STATIONS.find(s=>s.id===salesStationId)||{};
+  const payload={date,station_name:stInfo.name||'',amphoe:stInfo.amphoe||'',brand:stInfo.brand||''};
+  let total=0;
+  FUELS.forEach(f=>{const el=document.getElementById('sci-'+f.key);const v=parseFloat(el?.value)||0;payload[f.key]=v;total+=v;});
+  payload.total=total;
+  if(total===0){showToast('กรุณากรอกยอดจำหน่ายอย่างน้อย 1 ประเภท',2500,true);return;}
+
+  document.getElementById('btn-save-sales').disabled=true;
+  document.getElementById('sales-save-status').textContent='กำลังบันทึก...';
+
+  gsPost(GS_URL,{action:'save_sales',station_id:salesStationId,data:payload}).then(()=>{
+    const now=new Date().toLocaleTimeString('th-TH');
+    document.getElementById('sales-save-status').textContent='✅ บันทึกแล้ว '+now;
+    showToast('บันทึกยอดจำหน่ายสำเร็จ ✓');
+    // เคลียร์ฟอร์ม
+    FUELS.forEach(f=>{const el=document.getElementById('sci-'+f.key);if(el)el.value='';});
+    // รีโหลดกราฟ
+    setTimeout(()=>loadTrend(),500);
+  }).catch(err=>{
+    document.getElementById('sales-save-status').textContent='❌ บันทึกไม่สำเร็จ';
+    showToast('Error: '+err.message,3000,true);
+  }).finally(()=>{document.getElementById('btn-save-sales').disabled=false;});
+}
+
+function logoutSales(){
+  salesMode=null;salesStationId=null;
+  document.getElementById('sales-pin-gate').style.display='block';
+  document.getElementById('sales-form').style.display='none';
+  document.getElementById('sales-pin-input').value='';
+  document.getElementById('sales-pin-hint').textContent='';
 }
 
 // ── INIT ──
