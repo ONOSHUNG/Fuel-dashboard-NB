@@ -755,67 +755,77 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
 
 /* ── STATION CARDS GRID ── */
 .st-cards-grid {
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:10px; margin-top:.5rem;
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:10px; margin-top:.5rem;
 }
 @media(max-width:600px){ .st-cards-grid { grid-template-columns:1fr; gap:8px; } }
 .st-card {
-  background:#fff; border-radius:var(--radius); border:1px solid var(--gray-200);
-  padding:0; overflow:hidden; box-shadow:var(--shadow-sm); transition:transform .15s,box-shadow .15s;
+  background:#fff; border-radius:14px; overflow:hidden;
+  box-shadow:0 1px 4px rgba(0,0,0,.06); transition:transform .15s,box-shadow .15s;
+  border:none; position:relative;
 }
-.st-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
+.st-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.1); }
+.st-card-stripe {
+  position:absolute; left:0; top:0; bottom:0; width:5px;
+}
+.st-card-inner { padding-left:5px; }
 .st-card-head {
-  display:flex; align-items:center; gap:10px; padding:.7rem .85rem;
-  background:var(--gray-50); border-bottom:1px solid var(--gray-200);
+  display:flex; align-items:center; gap:10px; padding:.65rem .85rem .4rem;
 }
 .st-card-logo {
-  width:40px; height:40px; border-radius:50%; object-fit:contain;
+  width:36px; height:36px; border-radius:50%; object-fit:contain;
   flex-shrink:0; background:#fff; border:2px solid var(--gray-200);
-  box-shadow:0 1px 4px rgba(0,0,0,.1);
-}
-.st-card-brand-icon {
-  width:42px; height:42px; border-radius:50%; display:flex;
-  align-items:center; justify-content:center;
-  flex-shrink:0; object-fit:cover;
-  border:2px solid var(--gray-200);
-  box-shadow:0 2px 6px rgba(0,0,0,.1);
-  background:#fff;
-}
-.st-card-brand-img {
-  width:40px; height:40px; border-radius:50%; object-fit:cover;
-  flex-shrink:0; border:2px solid var(--gray-200);
-  box-shadow:0 1px 4px rgba(0,0,0,.1);
+  box-shadow:0 1px 3px rgba(0,0,0,.08);
 }
 .st-card-info { flex:1; min-width:0; }
-.st-card-name { font-family:'Kanit',sans-serif; font-size:13px; font-weight:600; color:var(--navy); line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.st-card-meta { font-size:10px; color:var(--gray-400); display:flex; align-items:center; gap:4px; margin-top:2px; }
-.st-card-fuels {
-  display:flex; align-items:stretch; gap:4px; padding:.5rem .6rem;
-  flex-wrap:wrap; justify-content:center;
+.st-card-name {
+  font-family:'Kanit',sans-serif; font-size:14px; font-weight:600;
+  color:var(--navy); line-height:1.2; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis;
 }
-.st-fuel-chip {
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  border-radius:10px; padding:6px 8px; min-width:52px; flex:1;
-  font-family:'Kanit',sans-serif; text-align:center; gap:1px;
+.st-card-meta {
+  font-size:9px; color:var(--gray-400); display:flex;
+  align-items:center; gap:4px; margin-top:1px;
 }
-.st-chip-label { font-size:10px; font-weight:700; line-height:1.1; opacity:.9; }
-.st-chip-pct { font-size:14px; font-weight:800; line-height:1.2; }
-.st-chip-status { font-size:8px; font-weight:500; opacity:.85; line-height:1.1; }
-@media(max-width:360px){
-  .st-fuel-chip { min-width:44px; padding:4px 5px; }
-  .st-chip-pct { font-size:12px; }
-  .st-chip-label { font-size:9px; }
+.st-card-status-badge {
+  padding:3px 10px; border-radius:20px; font-size:10px;
+  font-weight:700; flex-shrink:0; display:flex; align-items:center; gap:3px;
 }
+/* Fuel rows */
+.st-fuel-rows { padding:0 .85rem .4rem; }
+.st-fuel-row {
+  display:flex; align-items:center; gap:6px; padding:3px 0;
+  border-bottom:1px solid #f8f9fa;
+}
+.st-fuel-row:last-child { border-bottom:none; }
+.st-fuel-row-label {
+  font-size:11px; font-weight:600; color:var(--gray-700);
+  min-width:58px; font-family:'Kanit',sans-serif;
+}
+.st-fuel-row-bar {
+  flex:1; height:8px; background:#f3f4f6; border-radius:4px; overflow:hidden;
+  min-width:40px;
+}
+.st-fuel-row-bar-fill { height:100%; border-radius:4px; transition:width .4s; }
+.st-fuel-row-pct {
+  font-family:'Kanit',sans-serif; font-size:13px; font-weight:700;
+  min-width:38px; text-align:right;
+}
+.st-fuel-row-status {
+  font-size:9px; font-weight:600; min-width:32px; text-align:center;
+  padding:1px 4px; border-radius:4px;
+}
+/* Actions */
 .st-card-actions {
-  display:flex; border-top:1px solid var(--gray-100); 
+  display:flex; border-top:1px solid #f3f4f6;
 }
 .st-card-btn {
-  flex:1; padding:8px; font-size:11px; font-family:'Noto Sans Thai',sans-serif;
+  flex:1; padding:9px; font-size:11px; font-family:'Noto Sans Thai',sans-serif;
   font-weight:600; cursor:pointer; border:none; background:transparent;
   color:var(--gray-500); transition:background .12s,color .12s;
   display:flex; align-items:center; justify-content:center; gap:4px;
 }
 .st-card-btn:hover { background:var(--gray-50); }
-.st-card-btn:first-child { border-right:1px solid var(--gray-100); }
+.st-card-btn:first-child { border-right:1px solid #f3f4f6; }
 .st-card-btn.btn-map { color:#3b82f6; }
 .st-card-btn.btn-map:hover { background:#eff6ff; }
 .st-card-btn.btn-input { color:var(--amber-dark); }
@@ -1536,11 +1546,14 @@ function renderKPI(stations){
 
   const fuelCard=(icon,label,key,bgFrom,bgTo,border,labelCol,valCol,unitCol)=>{
     const st=fs(key);
+    const pillBg=st.label==='ปกติ'?'#d1fae5':st.label==='น้อย'?'#ffedd5':st.label==='หมด'?'#fee2e2':'#f3f4f6';
+    const pillBorder=st.label==='ปกติ'?'#059669':st.label==='น้อย'?'#ea580c':st.label==='หมด'?'#dc2626':'#d1d5db';
+    const pillText=st.label==='ปกติ'?'#065f46':st.label==='น้อย'?'#9a3412':st.label==='หมด'?'#991b1b':'#9ca3af';
     return `<div class="kpi-card" style="background:linear-gradient(135deg,${bgFrom},${bgTo});border:1.5px solid ${border}">
       <div class="kpi-label" style="color:${labelCol}"><span class="kpi-icon">${icon}</span>${label}</div>
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
         <div class="kpi-value" style="color:${valCol}">${fv(key)}</div>
-        <span style="font-size:10px;font-weight:700;color:${st.color}">${st.badge} ${st.label}</span>
+        <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:${pillBg};color:${pillText};border:1.5px solid ${pillBorder};display:inline-flex;align-items:center;gap:3px">${st.badge} ${st.label}</span>
       </div>
       <div class="kpi-unit" style="color:${unitCol}">${fu}</div>
     </div>`;
@@ -1592,14 +1605,12 @@ function renderMainChart(stations){
 }
 function renderDonut(stations){if(donutChartInst){donutChartInst.destroy();donutChartInst=null;}const isMobile=window.innerWidth<600;const pub=isPublicView();const tots=FUELS.map(f=>sumFuel(stations,f.key)),tot=tots.reduce((a,b)=>a+b,0);const chartData=pub?tots.map(v=>tot>0?Math.round(v/tot*100):0):tots;donutChartInst=new Chart(document.getElementById('donutChart'),{type:'doughnut',data:{labels:FUELS.map(f=>f.label),datasets:[{data:chartData,backgroundColor:FUELS.map(f=>f.color),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:isMobile?9:10,family:'Noto Sans Thai'},boxWidth:8,padding:6}},tooltip:{callbacks:{label:ctx=>{const v=ctx.parsed;return pub?` ${v}%`:` ${v.toLocaleString()} ล. (${tot>0?Math.round(v/tot*100):0}%)`;}}}}}});}
 function renderStationCards(stations){
-  const fuelShortLabel={diesel:'B7',g91:'91',g95:'95',e20:'E20',g95p:'พรีเมี่ยม',power:'พาวเวอร์'};
-  // สีพื้น bubble ตามสถานะ — contrast สูง แยกชัด
-  const stBubble={
-    ok:   {bg:'#059669',text:'#fff',border:'#047857'},   // เขียวเข้ม
-    watch:{bg:'#ea580c',text:'#fff',border:'#c2410c'},   // ส้มเข้ม (แทนเหลือง)
-    danger:{bg:'#dc2626',text:'#fff',border:'#b91c1c'},  // แดง
-    none: {bg:'#e5e7eb',text:'#9ca3af',border:'#d1d5db'} // เทาอ่อน
-  };
+  const fuelLabel={diesel:'ดีเซล B7',g91:'แก๊ส 91',g95:'แก๊ส 95',e20:'E20',g95p:'พรีเมี่ยม',power:'พาวเวอร์'};
+  const fuelColor={diesel:'#F59E0B',g91:'#3B82F6',g95:'#10B981',e20:'#8B5CF6',g95p:'#EC4899',power:'#EF4444'};
+  const stColor={ok:'#059669',watch:'#ea580c',danger:'#dc2626',none:'#d1d5db'};
+  const stBg={ok:'#d1fae5',watch:'#ffedd5',danger:'#fee2e2',none:'#f3f4f6'};
+  const stText={ok:'#065f46',watch:'#9a3412',danger:'#991b1b',none:'#9ca3af'};
+  const stLabel={ok:'ปกติ',watch:'น้อย',danger:'หมด',none:'—'};
 
   const grouped=[];
   const stSet=new Set(stations.map(s=>s.id));
@@ -1614,50 +1625,51 @@ function renderStationCards(stations){
     html+=`<div class="st-cards-grid">`;
     stList.forEach(s=>{
       const d=getSD(s.id),remain=getRemain(s.id),cap=d.cap||0;
-      const pct=cap>0?Math.round(remain/cap*100):0;
       const coords=STATION_COORDS[s.id];
       const hasCoords=!!coords;
       const logoSrc=BRAND_LOGOS[s.brand]||BRAND_LOGOS['ในพื้นที่'];
 
-      // คำนวณสถานะแต่ละประเภท แล้วเอาสถานะแย่สุดเป็นสถานะรวม
       const fuelStatuses=[];
-      const bubbles=FUELS.map(f=>{
+      const fuelRows=FUELS.map(f=>{
         const v=d[f.key]||0;
         const fpct=cap>0?Math.round(v/cap*100):0;
         const sKey=v===0?'none':fpct>50?'ok':fpct>=5?'watch':'danger';
-        if(v>0)fuelStatuses.push(sKey); // เก็บเฉพาะที่มีข้อมูล
-        const st=stBubble[sKey];
-        const statusLabel=v===0?'ไม่มีข้อมูล':sKey==='ok'?'ปกติ':sKey==='watch'?'น้อย':'หมด';
-        const pctText=v===0?'—':`${fpct}%`;
-        return `<div class="st-fuel-chip" style="background:${st.bg};color:${st.text};border:2px solid ${st.border}">
-          <span class="st-chip-label">${fuelShortLabel[f.key]}</span>
-          <span class="st-chip-pct">${pctText}</span>
-          <span class="st-chip-status">${statusLabel}</span>
+        if(v>0)fuelStatuses.push(sKey);
+        const barW=Math.min(fpct,100);
+        const barColor=sKey==='none'?'#e5e7eb':stColor[sKey];
+        const pctDisplay=v===0?'—':fpct+'%';
+        return `<div class="st-fuel-row">
+          <span class="st-fuel-row-label">${fuelLabel[f.key]}</span>
+          <div class="st-fuel-row-bar"><div class="st-fuel-row-bar-fill" style="width:${barW}%;background:${barColor}"></div></div>
+          <span class="st-fuel-row-pct" style="color:${v===0?'#d1d5db':stColor[sKey]}">${pctDisplay}</span>
+          <span class="st-fuel-row-status" style="background:${stBg[sKey]};color:${stText[sKey]}">${stLabel[sKey]}</span>
         </div>`;
       }).join('');
 
-      // สถานะรวม = สถานะแย่สุด (danger > watch > ok > none)
-      let overallSi;
-      if(fuelStatuses.length===0){overallSi=getStatusInfo(0,0);}
-      else if(fuelStatuses.includes('danger')){overallSi={key:'danger',label:'หมด',pillClass:'pill-danger'};}
-      else if(fuelStatuses.includes('watch')){overallSi={key:'watch',label:'น้อย',pillClass:'pill-watch'};}
-      else{overallSi={key:'ok',label:'ปกติ',pillClass:'pill-ok'};}
+      let overallKey;
+      if(fuelStatuses.length===0)overallKey='none';
+      else if(fuelStatuses.includes('danger'))overallKey='danger';
+      else if(fuelStatuses.includes('watch'))overallKey='watch';
+      else overallKey='ok';
 
       const updatedText=d.updated_at?`🕐 ${d.updated_at}`:'ยังไม่มีข้อมูล';
       const mapBtn=hasCoords?`<a class="st-card-btn btn-map" href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}&travelmode=driving" target="_blank" style="text-decoration:none">📍 แผนที่</a>`:`<span class="st-card-btn" style="opacity:.4;cursor:default">📍 ไม่มีพิกัด</span>`;
       const inputBtn=`<button class="st-card-btn btn-input" onclick="goToStationInput('${s.id}')">✏️ กรอกข้อมูล</button>`;
 
       html+=`<div class="st-card">
-        <div class="st-card-head">
-          <img src="${logoSrc}" class="st-card-logo" alt="${s.brand}">
-          <div class="st-card-info">
-            <div class="st-card-name">${s.name}</div>
-            <div class="st-card-meta">${updatedText}</div>
+        <div class="st-card-stripe" style="background:${stColor[overallKey]}"></div>
+        <div class="st-card-inner">
+          <div class="st-card-head">
+            <img src="${logoSrc}" class="st-card-logo" alt="${s.brand}">
+            <div class="st-card-info">
+              <div class="st-card-name">${s.name}</div>
+              <div class="st-card-meta">${updatedText}</div>
+            </div>
+            <span class="st-card-status-badge" style="background:${stBg[overallKey]};color:${stText[overallKey]};border:1.5px solid ${stColor[overallKey]}">${stLabel[overallKey]}</span>
           </div>
-          <span class="status-pill ${overallSi.pillClass}" style="font-size:9px;padding:2px 6px;flex-shrink:0">${overallSi.label}</span>
+          <div class="st-fuel-rows">${fuelRows}</div>
+          <div class="st-card-actions">${mapBtn}${inputBtn}</div>
         </div>
-        <div class="st-card-fuels">${bubbles}</div>
-        <div class="st-card-actions">${mapBtn}${inputBtn}</div>
       </div>`;
     });
     html+=`</div>`;
