@@ -839,13 +839,18 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
       <button class="sidebar-collapse-btn" onclick="toggleMapSidebar()" title="พับ">✕</button>
     </div>
     <div class="map-filter">
+      <select id="map-pump-filter" onchange="filterMapStations()">
+        <option value="all">🏪 ทุกปั้ม (50 สถานี)</option>
+        <option value="brand">⛽ แบรนด์ (35 สถานี)</option>
+        <option value="local">📍 ในพื้นที่ (15 สถานี)</option>
+      </select>
       <select id="map-amphoe-filter" onchange="filterMapStations()"><option value="all">ทุกอำเภอ</option></select>
       <select id="map-status-filter" onchange="filterMapStations()">
         <option value="all">ทุกสถานะ</option>
-        <option value="ok">ปกติ (≥50%)</option>
-        <option value="watch">เฝ้าระวัง (25-49%)</option>
-        <option value="danger">วิกฤต (&lt;25%)</option>
-        <option value="none">ไม่มีข้อมูล</option>
+        <option value="ok">✅ ปกติ (มากกว่า 50%)</option>
+        <option value="watch">⚠️ น้อย (5-50%)</option>
+        <option value="danger">🔴 หมด (ต่ำกว่า 5%)</option>
+        <option value="none">— ไม่มีข้อมูล</option>
       </select>
       <select id="map-fuel-filter" onchange="filterMapStations()">
         <option value="all">ทุกประเภทน้ำมัน</option>
@@ -859,8 +864,8 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
     </div>
     <div class="map-legend">
       <div class="map-leg-item"><div class="map-leg-dot" style="background:#059669"></div>ปกติ</div>
-      <div class="map-leg-item"><div class="map-leg-dot" style="background:#d97706"></div>เฝ้าระวัง</div>
-      <div class="map-leg-item"><div class="map-leg-dot" style="background:#dc2626"></div>วิกฤต</div>
+      <div class="map-leg-item"><div class="map-leg-dot" style="background:#d97706"></div>น้อย</div>
+      <div class="map-leg-item"><div class="map-leg-dot" style="background:#dc2626"></div>หมด</div>
       <div class="map-leg-item"><div class="map-leg-dot" style="background:#9ca3af"></div>ไม่มีข้อมูล</div>
     </div>
     <div class="map-station-list" id="map-station-list"></div>
@@ -1035,6 +1040,7 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
       <span class="public-banner-icon">ℹ️</span>
       <div class="public-banner-text">
         <strong>ข้อมูลสถานการณ์น้ำมัน</strong> จังหวัดหนองบัวลำภู · แสดงเป็นร้อยละ (%) ของความจุ · ครอบคลุม 6 อำเภอ 50 สถานี
+        <br><span style="font-size:10px;opacity:.75" id="banner-last-update">🕐 อัปเดตล่าสุด: —</span>
       </div>
     </div>
     <div class="kpi-row" id="kpi-row"></div>
@@ -1264,7 +1270,11 @@ function sumFuel(stations,key){return stations.reduce((a,s)=>a+(getSD(s.id)[key]
 // ── โหมดสาธารณะ vs Admin ──
 let isAdminView=false;
 function isPublicView(){return !isAdminView;}
-function setAdminView(on){isAdminView=on;renderDashboard();document.getElementById('admin-view-badge').style.display=on?'inline-flex':'none';document.getElementById('trend-lock').textContent=on?'':'🔒';document.getElementById('public-banner').innerHTML=on?'<span class="public-banner-icon">🔓</span><div class="public-banner-text"><strong>โหมดผู้ดูแลระบบ</strong> แสดงตัวเลขลิตรจริง</div>':'<span class="public-banner-icon">ℹ️</span><div class="public-banner-text"><strong>ข้อมูลสถานการณ์น้ำมัน</strong> จังหวัดหนองบัวลำภู · แสดงเป็นร้อยละ (%) ของความจุ · ครอบคลุม 6 อำเภอ 50 สถานี</div>';
+let lastSyncTime='—';
+function updateBannerTime(time){lastSyncTime=time;const el=document.getElementById('banner-last-update');if(el)el.textContent='🕐 อัปเดตล่าสุด: '+time;}
+function setAdminView(on){isAdminView=on;renderDashboard();document.getElementById('admin-view-badge').style.display=on?'inline-flex':'none';document.getElementById('trend-lock').textContent=on?'':'🔒';
+  const timeSpan=`<br><span style="font-size:10px;opacity:.75" id="banner-last-update">🕐 อัปเดตล่าสุด: ${lastSyncTime}</span>`;
+  document.getElementById('public-banner').innerHTML=on?'<span class="public-banner-icon">🔓</span><div class="public-banner-text"><strong>โหมดผู้ดูแลระบบ</strong> แสดงตัวเลขลิตรจริง'+timeSpan+'</div>':'<span class="public-banner-icon">ℹ️</span><div class="public-banner-text"><strong>ข้อมูลสถานการณ์น้ำมัน</strong> จังหวัดหนองบัวลำภู · แสดงเป็นร้อยละ (%) ของความจุ · ครอบคลุม 6 อำเภอ 50 สถานี'+timeSpan+'</div>';
   document.getElementById('chart-title-main').textContent=on?'ปริมาณน้ำมันแยกประเภท (ลิตร)':'สัดส่วนน้ำมันแยกประเภท (%)';
   if(mapInst)updateMapMarkers();
 }
@@ -1354,7 +1364,7 @@ function pullFromSheet(){
     if(!json.ok)throw new Error(json.message||'Sheet error');
     const onInputPage=document.getElementById('page-input').classList.contains('active');
     Object.keys(json.data).forEach(sid=>{if(DATA[sid]===undefined)return;if(onInputPage&&sid===currentSid)return;DATA[sid]={...DATA[sid],...json.data[sid]};});
-    persistData();const now=new Date().toLocaleTimeString('th-TH');setSyncBadge('ok','ซิงค์แล้ว '+now);
+    persistData();const now=new Date().toLocaleTimeString('th-TH');setSyncBadge('ok','ซิงค์แล้ว '+now);updateBannerTime(now);
     if(!onInputPage)showToast('ดึงข้อมูลสำเร็จ ✓');renderDashboard();if(mapInst)updateMapMarkers();
   }).catch(err=>{setSyncBadge('err','ดึงไม่สำเร็จ');showToast('Error: '+err.message,3000,true);}).finally(()=>setButtons(false));
 }
@@ -1600,16 +1610,18 @@ function getFuelPct(sid,fuelKey){const d=getSD(sid);const cap=d.cap||0;if(cap===
 function getActiveFuelKey(){return document.getElementById('map-fuel-filter')?.value||'all';}
 function getEffectiveStatus(sid){const fuelKey=getActiveFuelKey();if(fuelKey==='all')return getStationStatus(sid);const d=getSD(sid);const cap=d.cap||0;const val=d[fuelKey]||0;const pct=cap>0?Math.round(val/cap*100):0;return getStatusInfo(pct,val);}
 function getEffectivePct(sid){const fuelKey=getActiveFuelKey();if(fuelKey==='all')return getStationPct(sid);return getFuelPct(sid,fuelKey);}
+function getMapPumpFilter(){return document.getElementById('map-pump-filter')?.value||'all';}
+function isMapPumpMatch(s){const pt=getMapPumpFilter();if(pt==='all')return true;if(pt==='brand')return isPumpBrand(s);if(pt==='local')return isPumpLocal(s);return true;}
 function filterMapStations(){
   const amphoe=document.getElementById('map-amphoe-filter').value;const status=document.getElementById('map-status-filter').value;
-  ALL_STATIONS.forEach(s=>{if(!mapMarkers[s.id])return;const si=getEffectiveStatus(s.id);const inAmphoe=amphoe==='all'||GROUPS.find(g=>g.id===amphoe)?.stations.some(x=>x.id===s.id);const inStatus=status==='all'||si.key===status;if(inAmphoe&&inStatus)mapMarkers[s.id].addTo(mapInst);else mapInst.removeLayer(mapMarkers[s.id]);});
+  ALL_STATIONS.forEach(s=>{if(!mapMarkers[s.id])return;const si=getEffectiveStatus(s.id);const inAmphoe=amphoe==='all'||GROUPS.find(g=>g.id===amphoe)?.stations.some(x=>x.id===s.id);const inStatus=status==='all'||si.key===status;const inPump=isMapPumpMatch(s);if(inAmphoe&&inStatus&&inPump)mapMarkers[s.id].addTo(mapInst);else mapInst.removeLayer(mapMarkers[s.id]);});
   ALL_STATIONS.forEach(s=>{if(!mapMarkers[s.id])return;const si=getEffectiveStatus(s.id);const pct=getEffectivePct(s.id);const size=si.key==='danger'?44:si.key==='none'?30:38;const icon=L.divIcon({className:'',html:buildMarkerHtml(si,pct),iconSize:[size,size],iconAnchor:[size/2,size/2],popupAnchor:[0,-size/2-4]});mapMarkers[s.id].setIcon(icon);});renderMapSidebar();
 }
 function renderMapSidebar(){
   const amphoe=document.getElementById('map-amphoe-filter').value;const status=document.getElementById('map-status-filter').value;const fuelKey=getActiveFuelKey();
   const list=document.getElementById('map-station-list');let html='';
   if(fuelKey!=='all'){const fuelObj=FUELS.find(f=>f.key===fuelKey);html+=`<div style="padding:5px .75rem;background:#f9fafb;border-bottom:1px solid #e5e7eb;font-size:10px;color:#6b7280;display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:2px;background:${fuelObj?.color||'#999'};display:inline-block"></span>เฉพาะ: <strong style="color:#1a1a1a">${fuelObj?.label||''}</strong></div>`;}
-  GROUPS.forEach(g=>{if(amphoe!=='all'&&g.id!==amphoe)return;g.stations.forEach(s=>{const si=getEffectiveStatus(s.id);if(status!=='all'&&si.key!==status)return;const pct=getEffectivePct(s.id);const color=STATUS_COLOR[si.key];const d=getSD(s.id);const subVal=fuelKey!=='all'?`<br><span style="font-size:9px;color:#9ca3af">${(d[fuelKey]||0).toLocaleString()} ล.</span>`:'';html+=`<div class="map-st-item${s.id===activeMarkerId?' active':''}" onclick="focusStation('${s.id}')"><div class="map-st-dot" style="background:${color}"></div><div class="map-st-name">${s.name}<br><span style="font-size:9px;color:#9ca3af">${g.amphoe}</span>${subVal}</div><div class="map-st-pct" style="color:${color}">${pct>0?pct+'%':'—'}</div></div>`;});});
+  GROUPS.forEach(g=>{if(amphoe!=='all'&&g.id!==amphoe)return;g.stations.forEach(s=>{if(!isMapPumpMatch(s))return;const si=getEffectiveStatus(s.id);if(status!=='all'&&si.key!==status)return;const pct=getEffectivePct(s.id);const color=STATUS_COLOR[si.key];const d=getSD(s.id);const subVal=fuelKey!=='all'?`<br><span style="font-size:9px;color:#9ca3af">${(d[fuelKey]||0).toLocaleString()} ล.</span>`:'';html+=`<div class="map-st-item${s.id===activeMarkerId?' active':''}" onclick="focusStation('${s.id}')"><div class="map-st-dot" style="background:${color}"></div><div class="map-st-name">${s.name}<br><span style="font-size:9px;color:#9ca3af">${g.amphoe}</span>${subVal}</div><div class="map-st-pct" style="color:${color}">${pct>0?pct+'%':'—'}</div></div>`;});});
   list.innerHTML=html||'<div style="padding:1rem;font-size:11px;color:#9ca3af;text-align:center">ไม่มีสถานีตรงเงื่อนไข</div>';
 }
 function focusStation(sid){activeMarkerId=sid;const coords=STATION_COORDS[sid];if(coords&&mapInst){mapInst.setView(coords,14,{animate:true});if(mapMarkers[sid])mapMarkers[sid].openPopup();}renderMapSidebar();if(window.innerWidth<700)toggleMapSidebar();}
