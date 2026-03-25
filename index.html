@@ -555,6 +555,10 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
   padding:.6rem .85rem; background:#f8fafc; border-top:1px solid var(--gray-200);
   display:flex; align-items:center; gap:8px; flex-wrap:wrap;
 }
+.sp-delivery-bar {
+  padding:.55rem .85rem; background:linear-gradient(135deg,#fffbeb,#fef3c7);
+  border-top:1px solid #fde68a; border-bottom:1px solid #fde68a;
+}
 .sp-actions .spacer { flex:1; }
 .sp-sync-time { font-size:10px; color:var(--gray-400); }
 .sp-rt-badge { display:flex; align-items:center; gap:4px; font-size:10px; font-weight:600; padding:3px 8px; border-radius:20px; background:#d1fae5; color:#065f46; }
@@ -815,6 +819,12 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
   padding:1px 4px; border-radius:4px;
 }
 /* Actions */
+.st-card-delivery {
+  padding:6px .85rem; background:linear-gradient(135deg,#fffbeb,#fef3c7);
+  border-top:1px solid #fde68a; font-size:10px; color:#92400e;
+  display:flex; align-items:center; gap:4px; flex-wrap:wrap;
+}
+.st-card-delivery strong { font-family:'Kanit',sans-serif; font-weight:700; }
 .st-card-actions {
   display:flex; border-top:1px solid #f3f4f6;
 }
@@ -1177,6 +1187,13 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
           <span class="sp-remain">คงเหลือ: <strong id="sp-remain-val">0</strong> ล.</span>
         </div>
         <div class="fuel-grid" id="fuel-grid"></div>
+        <div class="sp-delivery-bar">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:12px;font-weight:600;color:var(--navy)">🚛 น้ำมันเข้าปั้ม</span>
+            <input type="date" id="sp-delivery-date" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;min-height:34px">
+            <input type="text" id="sp-delivery-note" placeholder="หมายเหตุ (ถ้ามี)" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;flex:1;min-width:120px;min-height:34px">
+          </div>
+        </div>
         <div class="sp-actions">
           <div class="sp-rt-badge off" id="rt-badge"><span class="rt-dot"></span>Realtime</div>
           <span class="sp-sync-time" id="sp-sync-time"></span>
@@ -1468,6 +1485,9 @@ function loadStationPanel(){
   const grid=document.getElementById('fuel-grid');
   grid.innerHTML=FUELS.map(f=>`<div class="fuel-cell"><div class="fuel-cell-label"><span class="fuel-dot" style="background:${f.color}"></span>${f.label}</div><input class="fuel-cell-input" type="number" id="fci-${f.key}" min="0" step="100" value="" placeholder="0" oninput="onFuelCellInput('${f.key}',this)" inputmode="numeric"><div class="fuel-cell-unit">ลิตร</div></div>`).join('');
   document.getElementById('sp-sync-time').textContent=d.updated_at?'บันทึกล่าสุด '+d.updated_at:'';setRtBadge(false);
+  // Delivery date
+  document.getElementById('sp-delivery-date').value=d.delivery_date||'';
+  document.getElementById('sp-delivery-note').value=d.delivery_note||'';
 }
 function onFuelCellInput(fkey,el){
   if(!currentSid)return;const val=parseFloat(el.value)||0;const cap=DATA[currentSid].cap||0;
@@ -1493,9 +1513,12 @@ function saveCurrentToSheet(){
   if(!currentSid)return;
   FUELS.forEach(f=>{const el=document.getElementById('fci-'+f.key);if(el){DATA[currentSid][f.key]=parseFloat(el.value)||0;el.classList.remove('dirty');el.classList.add('saving');}});
   const capEl=document.getElementById('sp-cap');if(capEl)DATA[currentSid].cap=parseFloat(capEl.value)||0;
-  saveOneStation(currentSid).then(()=>{renderDashboard();FUELS.forEach(f=>{DATA[currentSid][f.key]=0;const el=document.getElementById('fci-'+f.key);if(el){el.value='';el.classList.remove('dirty','saving');}});persistData();updateCapBar(0,DATA[currentSid].cap||0);showToast('บันทึกสำเร็จ ✓');});
+  // บันทึก delivery
+  DATA[currentSid].delivery_date=document.getElementById('sp-delivery-date').value||'';
+  DATA[currentSid].delivery_note=document.getElementById('sp-delivery-note').value||'';
+  saveOneStation(currentSid).then(()=>{renderDashboard();FUELS.forEach(f=>{DATA[currentSid][f.key]=0;const el=document.getElementById('fci-'+f.key);if(el){el.value='';el.classList.remove('dirty','saving');}});document.getElementById('sp-delivery-date').value='';document.getElementById('sp-delivery-note').value='';persistData();updateCapBar(0,DATA[currentSid].cap||0);showToast('บันทึกสำเร็จ ✓');});
 }
-function clearCurrentStation(){if(!currentSid)return;if(!confirm('ล้างข้อมูลสถานีนี้?'))return;DATA[currentSid]={cap:0,diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0,updated_at:''};persistData();loadStationPanel();showToast('ล้างข้อมูลแล้ว');}
+function clearCurrentStation(){if(!currentSid)return;if(!confirm('ล้างข้อมูลสถานีนี้?'))return;DATA[currentSid]={cap:0,diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0,updated_at:'',delivery_date:'',delivery_note:''};persistData();loadStationPanel();showToast('ล้างข้อมูลแล้ว');}
 
 
 let mainChartInst=null,donutChartInst=null;
@@ -1656,6 +1679,7 @@ function renderStationCards(stations){
       else overallKey='ok';
 
       const updatedText=d.updated_at?`🕐 ${d.updated_at}`:'ยังไม่มีข้อมูล';
+      const deliveryHtml=d.delivery_date?`<div class="st-card-delivery"><span>🚛 น้ำมันเข้า: <strong>${d.delivery_date}</strong></span>${d.delivery_note?`<span style="opacity:.7"> · ${d.delivery_note}</span>`:''}</div>`:'';
       const mapBtn=hasCoords?`<a class="st-card-btn btn-map" href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}&travelmode=driving" target="_blank" style="text-decoration:none">📍 แผนที่</a>`:`<span class="st-card-btn" style="opacity:.4;cursor:default">📍 ไม่มีพิกัด</span>`;
       const inputBtn=`<button class="st-card-btn btn-input" onclick="goToStationInput('${s.id}')">✏️ กรอกข้อมูล</button>`;
 
@@ -1671,6 +1695,7 @@ function renderStationCards(stations){
             <span class="st-card-status-badge" style="background:${stBg[overallKey]};color:${stText[overallKey]};border:1.5px solid ${stColor[overallKey]}">${stLabel[overallKey]}</span>
           </div>
           <div class="st-fuel-rows">${fuelRows}</div>
+          ${deliveryHtml}
           <div class="st-card-actions">${mapBtn}${inputBtn}</div>
         </div>
       </div>`;
