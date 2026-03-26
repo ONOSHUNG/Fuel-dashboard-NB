@@ -1849,8 +1849,13 @@ function loadTrend(){
   gsGet(GS_URL+'?action=sales_history&month='+month).then(json=>{
     if(!json.ok)throw new Error(json.message||'error');
     salesTrendData=Array.isArray(json.data)?json.data:[];
+    if(salesTrendData.length===0){const local=loadSalesLocal().filter(r=>r.date&&r.date.substring(0,7)===month);if(local.length>0)salesTrendData=local;}
     renderSalesTrendCharts();
-  }).catch(err=>{document.getElementById('trend-sales-wrap').innerHTML=`<div class="trend-empty">ยังไม่มีข้อมูลจำหน่าย</div>`;});
+  }).catch(err=>{
+    const local=loadSalesLocal().filter(r=>r.date&&r.date.substring(0,7)===month);
+    salesTrendData=local;
+    renderSalesTrendCharts();
+  });
 }
 function buildTrendFromLocal(month){const today=new Date();const ymd=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');const ym=ymd.substring(0,7);if(month&&ym!==month)return[];const rows=[];GROUPS.forEach(g=>{g.stations.forEach(s=>{const d=getSD(s.id);const total=FUELS.reduce((a,f)=>a+(d[f.key]||0),0);if(total===0&&!d.updated_at)return;rows.push({date:ymd,station_id:s.id,station_name:s.name,amphoe:g.amphoe,brand:s.brand,cap:d.cap||0,diesel:d.diesel||0,g91:d.g91||0,g95:d.g95||0,e20:d.e20||0,g95p:d.g95p||0,power:d.power||0,total,pct:d.cap>0?Math.round(total/d.cap*100):0});});});return rows;}
 function renderTrendCharts(){
@@ -1960,32 +1965,44 @@ function clearSalesForm(){
   document.getElementById('sales-save-status').textContent='';
 }
 
+const LS_SALES='nbl_fuel_sales_v1';
+function loadSalesLocal(){try{return JSON.parse(localStorage.getItem(LS_SALES))||[];}catch(e){return [];}}
+function saveSalesLocal(entry){const arr=loadSalesLocal();const idx=arr.findIndex(r=>r.date===entry.date&&r.station_id===entry.station_id);if(idx>=0)arr[idx]=entry;else arr.push(entry);localStorage.setItem(LS_SALES,JSON.stringify(arr));}
+
 function saveSalesToSheet(){
   if(!salesStationId){showToast('กรุณาเลือกสถานี',2500,true);return;}
-  if(!GS_URL){showToast('ยังไม่ได้ตั้งค่า URL',2500,true);return;}
   const date=document.getElementById('sales-date').value;
   if(!date){showToast('กรุณาเลือกวันที่',2500,true);return;}
   const stInfo=ALL_STATIONS.find(s=>s.id===salesStationId)||{};
-  const payload={date,station_name:stInfo.name||'',amphoe:stInfo.amphoe||'',brand:stInfo.brand||''};
+  const payload={date,station_id:salesStationId,station_name:stInfo.name||'',amphoe:stInfo.amphoe||'',brand:stInfo.brand||''};
   let total=0;
   FUELS.forEach(f=>{const el=document.getElementById('sci-'+f.key);const v=parseFloat(el?.value)||0;payload[f.key]=v;total+=v;});
   payload.total=total;
   if(total===0){showToast('กรุณากรอกยอดจำหน่ายอย่างน้อย 1 ประเภท',2500,true);return;}
 
+  // บันทึก localStorage เสมอ
+  saveSalesLocal(payload);
+
   document.getElementById('btn-save-sales').disabled=true;
   document.getElementById('sales-save-status').textContent='กำลังบันทึก...';
+
+  if(!GS_URL){
+    document.getElementById('sales-save-status').textContent='✅ บันทึกในเครื่องแล้ว';
+    showToast('บันทึกในเครื่องสำเร็จ ✓ (ยังไม่ได้ตั้งค่า URL)');
+    FUELS.forEach(f=>{const el=document.getElementById('sci-'+f.key);if(el)el.value='';});
+    document.getElementById('btn-save-sales').disabled=false;
+    return;
+  }
 
   gsPost(GS_URL,{action:'save_sales',station_id:salesStationId,data:payload}).then(()=>{
     const now=new Date().toLocaleTimeString('th-TH');
     document.getElementById('sales-save-status').textContent='✅ บันทึกแล้ว '+now;
     showToast('บันทึกยอดจำหน่ายสำเร็จ ✓');
-    // เคลียร์ฟอร์ม
     FUELS.forEach(f=>{const el=document.getElementById('sci-'+f.key);if(el)el.value='';});
-    // รีโหลดกราฟ
     setTimeout(()=>loadTrend(),500);
   }).catch(err=>{
-    document.getElementById('sales-save-status').textContent='❌ บันทึกไม่สำเร็จ';
-    showToast('Error: '+err.message,3000,true);
+    document.getElementById('sales-save-status').textContent='⚠️ บันทึก Sheet ไม่สำเร็จ (แต่บันทึกในเครื่องแล้ว)';
+    showToast('บันทึกในเครื่องแล้ว แต่ Sheet error: '+err.message,3000,true);
   }).finally(()=>{document.getElementById('btn-save-sales').disabled=false;});
 }
 
