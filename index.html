@@ -1247,6 +1247,16 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
             <span class="status-pill pill-none" id="sp-status-pill">ไม่มีข้อมูล</span>
           </div>
         </div>
+        <!-- สถานะเปิด/ปิดบริการ -->
+        <div class="sp-service-bar" id="sp-service-bar">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span style="font-size:12px;font-weight:600;color:var(--navy)">🏪 สถานะให้บริการ</span>
+            <button class="sp-service-btn sp-svc-open active" id="svc-open" onclick="setServiceStatus('open')">🟢 เปิดให้บริการ</button>
+            <button class="sp-service-btn sp-svc-closed" id="svc-closed" onclick="setServiceStatus('closed')">🔴 ปิดให้บริการ</button>
+            <button class="btn btn-primary" onclick="saveServiceStatus()" style="font-size:11px;padding:5px 14px;margin-left:auto">💾 บันทึกสถานะ</button>
+          </div>
+          <input type="hidden" id="sp-service-status" value="open">
+        </div>
         <div class="sp-time-slot-bar">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%">
             <span style="font-size:11px;font-weight:600;color:var(--navy)">📅 วันที่</span>
@@ -1271,16 +1281,6 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
           <div class="sp-bar-track"><div class="sp-bar-fill" id="sp-bar-fill" style="width:0%;background:#e5e7eb"></div></div>
           <span class="sp-pct-text" id="sp-pct">—</span>
           <span class="sp-remain">คงเหลือ: <strong id="sp-remain-val">0</strong> ล.</span>
-        </div>
-        <!-- สถานะเปิด/ปิดบริการ -->
-        <div class="sp-service-bar" id="sp-service-bar">
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-            <span style="font-size:12px;font-weight:600;color:var(--navy)">🏪 สถานะให้บริการ</span>
-            <button class="sp-service-btn sp-svc-open active" id="svc-open" onclick="setServiceStatus('open')">🟢 เปิดให้บริการ</button>
-            <button class="sp-service-btn sp-svc-closed" id="svc-closed" onclick="setServiceStatus('closed')">🔴 ปิดให้บริการ</button>
-            <button class="btn btn-primary" onclick="saveServiceStatus()" style="font-size:11px;padding:5px 14px;margin-left:auto">💾 บันทึกสถานะ</button>
-          </div>
-          <input type="hidden" id="sp-service-status" value="open">
         </div>
         <div class="fuel-grid" id="fuel-grid"></div>
         <div class="sp-delivery-bar">
