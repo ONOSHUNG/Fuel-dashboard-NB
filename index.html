@@ -858,6 +858,37 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
   font-size:9px; font-weight:600; min-width:32px; text-align:center;
   padding:1px 4px; border-radius:4px;
 }
+/* Service status bar on card */
+.st-svc-bar {
+  padding:5px .85rem; font-size:10px; font-weight:700;
+  display:flex; align-items:center; gap:6px;
+  font-family:'Noto Sans Thai',sans-serif; letter-spacing:.02em;
+}
+.st-svc-open {
+  background:linear-gradient(90deg,#059669,#10b981);
+  color:#fff;
+}
+.st-svc-closed {
+  background:linear-gradient(90deg,#dc2626,#ef4444);
+  color:#fff;
+}
+.st-svc-dot {
+  width:8px; height:8px; border-radius:50%; background:#fff;
+  display:inline-block; position:relative;
+}
+.st-svc-dot-pulse {
+  width:8px; height:8px; border-radius:50%; background:#fff;
+  display:inline-block; position:relative;
+  animation:svcPulse 1.5s ease-in-out infinite;
+}
+@keyframes svcPulse {
+  0%,100% { box-shadow:0 0 0 0 rgba(255,255,255,.6); }
+  50% { box-shadow:0 0 0 5px rgba(255,255,255,0); }
+}
+.st-svc-dot-off {
+  width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.5);
+  display:inline-block;
+}
 /* Actions */
 .st-card-delivery {
   padding:6px .85rem; background:linear-gradient(135deg,#fffbeb,#fef3c7);
@@ -1791,15 +1822,19 @@ function renderStationCards(stations){
       const inputBtn=`<button class="st-card-btn btn-input" onclick="goToStationInput('${s.id}')">✏️ กรอกข้อมูล</button>`;
 
       const svcStatus=d.service_status||'open';
-      const svcBadge=svcStatus==='closed'?'<span style="font-size:9px;padding:2px 8px;border-radius:10px;background:#fee2e2;color:#991b1b;border:1px solid #dc2626;font-weight:700;white-space:nowrap">🔴 ปิดบริการ</span>':'';
+      const isOpen=svcStatus!=='closed';
+      const svcHtml=isOpen
+        ?`<div class="st-svc-bar st-svc-open"><span class="st-svc-dot st-svc-dot-pulse"></span>เปิดให้บริการ</div>`
+        :`<div class="st-svc-bar st-svc-closed"><span class="st-svc-dot-off"></span>ปิดให้บริการ</div>`;
 
-      html+=`<div class="st-card" ${svcStatus==='closed'?'style="opacity:.6"':''}>
-        <div class="st-card-stripe" style="background:${svcStatus==='closed'?'#dc2626':stColor[overallKey]}"></div>
+      html+=`<div class="st-card" ${!isOpen?'style="opacity:.55"':''}>
+        <div class="st-card-stripe" style="background:${!isOpen?'#dc2626':stColor[overallKey]}"></div>
         <div class="st-card-inner">
+          ${svcHtml}
           <div class="st-card-head">
             <img src="${logoSrc}" class="st-card-logo" alt="${s.brand}">
             <div class="st-card-info">
-              <div class="st-card-name">${s.name} ${svcBadge}</div>
+              <div class="st-card-name">${s.name}</div>
               <div class="st-card-meta">${updatedText}</div>
             </div>
             <span class="st-card-status-badge" style="background:${stBg[overallKey]};color:${stText[overallKey]};border:1.5px solid ${stColor[overallKey]}">${stLabel[overallKey]}</span>
