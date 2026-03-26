@@ -563,6 +563,25 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
   padding:.55rem .85rem; background:#f0f9ff; border-bottom:1px solid #bae6fd;
   display:flex; align-items:center; gap:10px; flex-wrap:wrap;
 }
+.sp-service-bar {
+  padding:.6rem .85rem; background:#f8fafc; border-bottom:1px solid var(--gray-200);
+}
+.sp-service-btn {
+  padding:7px 16px; border-radius:24px; font-size:12px;
+  font-family:'Noto Sans Thai',sans-serif; cursor:pointer;
+  border:2px solid var(--gray-300); background:#fff;
+  color:var(--gray-500); font-weight:700; transition:all .15s;
+  white-space:nowrap; min-height:36px;
+}
+.sp-service-btn:hover { opacity:.85; }
+.sp-svc-open.active {
+  background:#059669; color:#fff; border-color:#047857;
+  box-shadow:0 2px 8px rgba(5,150,105,.3);
+}
+.sp-svc-closed.active {
+  background:#dc2626; color:#fff; border-color:#b91c1c;
+  box-shadow:0 2px 8px rgba(220,38,38,.3);
+}
 .sp-time-slots { display:flex; gap:5px; }
 .sp-time-btn {
   padding:6px 14px; border-radius:20px; font-size:12px;
@@ -1222,6 +1241,16 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
           <span class="sp-pct-text" id="sp-pct">—</span>
           <span class="sp-remain">คงเหลือ: <strong id="sp-remain-val">0</strong> ล.</span>
         </div>
+        <!-- สถานะเปิด/ปิดบริการ -->
+        <div class="sp-service-bar" id="sp-service-bar">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span style="font-size:12px;font-weight:600;color:var(--navy)">🏪 สถานะให้บริการ</span>
+            <button class="sp-service-btn sp-svc-open active" id="svc-open" onclick="setServiceStatus('open')">🟢 เปิดให้บริการ</button>
+            <button class="sp-service-btn sp-svc-closed" id="svc-closed" onclick="setServiceStatus('closed')">🔴 ปิดให้บริการ</button>
+            <button class="btn btn-primary" onclick="saveServiceStatus()" style="font-size:11px;padding:5px 14px;margin-left:auto">💾 บันทึกสถานะ</button>
+          </div>
+          <input type="hidden" id="sp-service-status" value="open">
+        </div>
         <div class="fuel-grid" id="fuel-grid"></div>
         <div class="sp-delivery-bar">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -1530,6 +1559,7 @@ function loadStationPanel(){
   const grid=document.getElementById('fuel-grid');
   grid.innerHTML=stFuels.map(f=>{const fc=caps[f.key]||0;const capLbl=fc>0?`<span style="font-size:9px;color:#9ca3af;margin-left:auto">ความจุ ${fc.toLocaleString()} ล.</span>`:'';return `<div class="fuel-cell"><div class="fuel-cell-label"><span class="fuel-dot" style="background:${f.color}"></span>${f.label}${capLbl}</div><input class="fuel-cell-input" type="number" id="fci-${f.key}" min="0" max="${fc>0?fc:''}" step="100" value="" placeholder="0" oninput="onFuelCellInput('${f.key}',this)" inputmode="numeric"><div class="fuel-cell-unit">ลิตร</div></div>`;}).join('');
   document.getElementById('sp-sync-time').textContent=d.updated_at?'บันทึกล่าสุด '+d.updated_at:'';setRtBadge(false);
+  setServiceStatus(d.service_status||'open');
   document.getElementById('sp-delivery-date').value=d.delivery_date||'';
   document.getElementById('sp-delivery-note').value=d.delivery_note||'';
   const today=new Date();
@@ -1544,6 +1574,19 @@ window.setTimeSlot=function(time){
   const el=document.getElementById(id);
   if(el)el.classList.add('active');
 };
+window.setServiceStatus=function(status){
+  document.getElementById('sp-service-status').value=status;
+  document.querySelectorAll('.sp-service-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(status==='open'?'svc-open':'svc-closed').classList.add('active');
+};
+function saveServiceStatus(){
+  if(!currentSid){showToast('กรุณาเลือกสถานีก่อน',2500,true);return;}
+  const status=document.getElementById('sp-service-status').value;
+  DATA[currentSid].service_status=status;
+  persistData();
+  if(GS_URL){saveOneStation(currentSid).then(()=>{showToast(status==='open'?'✅ บันทึกสถานะ: เปิดให้บริการ':'🔴 บันทึกสถานะ: ปิดให้บริการ');renderDashboard();});}
+  else{showToast(status==='open'?'✅ บันทึก: เปิดให้บริการ':'🔴 บันทึก: ปิดให้บริการ');renderDashboard();}
+}
 function onFuelCellInput(fkey,el){
   if(!currentSid)return;const val=parseFloat(el.value)||0;const cap=DATA[currentSid].cap||0;
   const otherSum=FUELS.filter(f=>f.key!==fkey).reduce((a,f)=>a+(DATA[currentSid][f.key]||0),0);const newTotal=otherSum+val;
@@ -1747,13 +1790,16 @@ function renderStationCards(stations){
       const mapBtn=hasCoords?`<a class="st-card-btn btn-map" href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}&travelmode=driving" target="_blank" style="text-decoration:none">📍 แผนที่</a>`:`<span class="st-card-btn" style="opacity:.4;cursor:default">📍 ไม่มีพิกัด</span>`;
       const inputBtn=`<button class="st-card-btn btn-input" onclick="goToStationInput('${s.id}')">✏️ กรอกข้อมูล</button>`;
 
-      html+=`<div class="st-card">
-        <div class="st-card-stripe" style="background:${stColor[overallKey]}"></div>
+      const svcStatus=d.service_status||'open';
+      const svcBadge=svcStatus==='closed'?'<span style="font-size:9px;padding:2px 8px;border-radius:10px;background:#fee2e2;color:#991b1b;border:1px solid #dc2626;font-weight:700;white-space:nowrap">🔴 ปิดบริการ</span>':'';
+
+      html+=`<div class="st-card" ${svcStatus==='closed'?'style="opacity:.6"':''}>
+        <div class="st-card-stripe" style="background:${svcStatus==='closed'?'#dc2626':stColor[overallKey]}"></div>
         <div class="st-card-inner">
           <div class="st-card-head">
             <img src="${logoSrc}" class="st-card-logo" alt="${s.brand}">
             <div class="st-card-info">
-              <div class="st-card-name">${s.name}</div>
+              <div class="st-card-name">${s.name} ${svcBadge}</div>
               <div class="st-card-meta">${updatedText}</div>
             </div>
             <span class="st-card-status-badge" style="background:${stBg[overallKey]};color:${stText[overallKey]};border:1.5px solid ${stColor[overallKey]}">${stLabel[overallKey]}</span>
