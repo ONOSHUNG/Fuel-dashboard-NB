@@ -365,9 +365,11 @@ body {
 .status-summary {
   display: flex; align-items: center; gap: 8px; border-radius: var(--radius);
   padding: .6rem .7rem; box-shadow: var(--shadow-sm); border: none;
-  transition: transform .15s;
+  transition: transform .15s, box-shadow .15s;
+  user-select: none;
 }
-.status-summary:hover { transform: translateY(-1px); }
+.status-summary:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.status-summary:active { transform: scale(.96); }
 .status-summary-icon {
   width: 32px; height: 32px; border-radius: 9px; display: flex;
   align-items: center; justify-content: center; flex-shrink: 0;
@@ -643,7 +645,110 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
   .settings-label { min-width:auto; }
 }
 
-/* ── TOAST ── */
+/* ── THAI CALENDAR BUTTON & POPUP ── */
+.thai-cal-btn {
+  border: 1.5px solid var(--gray-300); border-radius: 8px;
+  padding: 5px 12px; font-size: 12px;
+  font-family: 'Noto Sans Thai', sans-serif;
+  background: #fff; color: var(--navy); cursor: pointer;
+  min-height: 34px; display: inline-flex; align-items: center; gap: 5px;
+  transition: border-color .15s, background .15s;
+  white-space: nowrap;
+}
+.thai-cal-btn:hover { border-color: #3b82f6; background: #eff6ff; }
+.thai-cal-btn.has-date { border-color: #10b981; background: #f0fdf4; color: #065f46; font-weight: 600; }
+
+.thai-cal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  z-index: 9000; display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+}
+.thai-cal-popup {
+  background: #fff; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,.2);
+  width: 100%; max-width: 320px; overflow: hidden;
+  font-family: 'Noto Sans Thai', sans-serif;
+}
+.thai-cal-head {
+  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  color: #fff; padding: .65rem .85rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.thai-cal-head-title { font-family: 'Kanit', sans-serif; font-size: 14px; font-weight: 600; }
+.thai-cal-nav { display: flex; align-items: center; gap: 4px; }
+.thai-cal-nav button {
+  width: 28px; height: 28px; border-radius: 6px;
+  border: 1.5px solid rgba(255,255,255,.3); background: rgba(255,255,255,.12);
+  color: #fff; cursor: pointer; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.thai-cal-nav button:hover { background: rgba(255,255,255,.25); }
+.thai-cal-month-year {
+  font-family: 'Kanit', sans-serif; font-size: 13px; font-weight: 600;
+  min-width: 120px; text-align: center; cursor: pointer;
+}
+.thai-cal-month-year:hover { opacity: .8; }
+.thai-cal-grid {
+  padding: .5rem .65rem .65rem;
+}
+.thai-cal-dow {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 2px; margin-bottom: 4px;
+}
+.thai-cal-dow span {
+  text-align: center; font-size: 10px; font-weight: 700;
+  color: var(--gray-400); padding: 3px 0;
+}
+.thai-cal-dow span:first-child { color: #dc2626; }
+.thai-cal-dow span:last-child  { color: #2563eb; }
+.thai-cal-days {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+}
+.thai-cal-day {
+  text-align: center; border-radius: 6px; padding: 5px 2px;
+  font-size: 12px; cursor: pointer; border: 1.5px solid transparent;
+  transition: background .1s, color .1s;
+  min-height: 30px; display: flex; align-items: center; justify-content: center;
+}
+.thai-cal-day:hover { background: #eff6ff; border-color: #93c5fd; }
+.thai-cal-day.today { border-color: var(--amber); color: var(--amber-dark); font-weight: 700; }
+.thai-cal-day.selected { background: var(--navy); color: #fff; border-color: var(--navy); font-weight: 700; }
+.thai-cal-day.other-month { color: var(--gray-300); }
+.thai-cal-day.sun { color: #dc2626; }
+.thai-cal-day.sun.selected { color: #fff; }
+.thai-cal-day.sat { color: #2563eb; }
+.thai-cal-day.sat.selected { color: #fff; }
+.thai-cal-footer {
+  padding: .5rem .65rem .65rem;
+  display: flex; gap: 6px; justify-content: flex-end; border-top: 1px solid var(--gray-100);
+}
+
+/* ── THAI DATE/TIME WIDGET ── */
+.thai-date-wrap {
+  display: flex; align-items: center; gap: 4px; flex-wrap: nowrap;
+}
+.thai-sel {
+  border: 1.5px solid var(--gray-300); border-radius: 6px;
+  padding: 5px 4px; font-size: 12px;
+  font-family: 'Noto Sans Thai', sans-serif;
+  background: #fff; color: var(--gray-900);
+  min-height: 34px; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+  text-align: center;
+  transition: border-color .15s;
+}
+.thai-sel:focus { outline: none; border-color: #3b82f6; background: #eff6ff; }
+.thai-sel.s-day   { width: 56px; }
+.thai-sel.s-month { width: 88px; }
+.thai-sel.s-year  { width: 78px; }
+.thai-sel.s-hour  { width: 60px; }
+.thai-sel.s-min   { width: 60px; }
+@media(max-width:600px){
+  .thai-sel.s-month { width: 80px; }
+  .thai-sel.s-year  { width: 70px; }
+}
+
+
 .toast {
   position:fixed; bottom:calc(1rem + var(--safe-bottom)); left:50%;
   transform:translateX(-50%); z-index:9999;
@@ -1197,6 +1302,8 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
         <br><span style="font-size:10px;opacity:.75" id="banner-last-update">📅 ข้อมูล ณ วันที่: —</span>
       </div>
     </div>
+    <!-- ข้อ 4: danger quick banner -->
+    <div id="danger-quick-banner" style="display:none;align-items:center;gap:10px;background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border-radius:10px;padding:.6rem .85rem;margin-bottom:.5rem;flex-wrap:wrap"></div>
     <div class="kpi-row" id="kpi-row"></div>
     <div class="status-bar" id="status-bar"></div>
     <div id="station-cards-grid"></div>
@@ -1258,6 +1365,49 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
           </div>
           <input type="hidden" id="sp-service-status" value="open">
         </div>
+        <!-- 🚛 น้ำมันเข้าปั้ม + 🔴 น้ำมันหมด (ใต้สถานะให้บริการ) -->
+        <div class="sp-delivery-bar">
+          <!-- 🚛 น้ำมันเข้าปั้ม -->
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+            <span style="font-size:12px;font-weight:700;color:var(--navy)">🚛 น้ำมันเข้าปั้ม</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+            <span style="font-size:11px;color:var(--gray-500);font-weight:600;white-space:nowrap">📅 วันที่เข้า</span>
+            <button type="button" class="thai-cal-btn" id="btn-cal-delivery" onclick="openThaiCal('delivery')">
+              <span id="cal-delivery-display">เลือกวันที่</span> 📅
+            </button>
+            <input type="hidden" id="sp-delivery-date">
+            <span style="font-size:11px;color:var(--gray-500);font-weight:600;white-space:nowrap">⏰ เวลา</span>
+            <div class="thai-date-wrap">
+              <select class="thai-sel s-hour" id="sp-delivery-hour" onchange="syncThaiTime('delivery')"><option value="">ชม.</option></select>
+              <span style="font-size:11px;color:var(--gray-400)">:</span>
+              <select class="thai-sel s-min" id="sp-delivery-min" onchange="syncThaiTime('delivery')"><option value="">นาที</option></select>
+              <input type="hidden" id="sp-delivery-time">
+            </div>
+            <input type="text" id="sp-delivery-note" placeholder="หมายเหตุ (ถ้ามี)" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;flex:1;min-width:100px;min-height:34px">
+          </div>
+          <!-- 🔴 น้ำมันหมด -->
+          <div style="border-top:1px solid #fde68a;margin-top:8px;padding-top:8px">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+              <span style="font-size:12px;font-weight:700;color:var(--red)">🔴 น้ำมันหมด</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span style="font-size:11px;color:var(--gray-500);font-weight:600;white-space:nowrap">📅 วันที่หมด</span>
+              <button type="button" class="thai-cal-btn" id="btn-cal-empty" onclick="openThaiCal('empty')">
+                <span id="cal-empty-display">เลือกวันที่</span> 📅
+              </button>
+              <input type="hidden" id="sp-empty-date">
+              <span style="font-size:11px;color:var(--gray-500);font-weight:600;white-space:nowrap">⏰ เวลา</span>
+              <div class="thai-date-wrap">
+                <select class="thai-sel s-hour" id="sp-empty-hour" onchange="syncThaiTime('empty')"><option value="">ชม.</option></select>
+                <span style="font-size:11px;color:var(--gray-400)">:</span>
+                <select class="thai-sel s-min" id="sp-empty-min" onchange="syncThaiTime('empty')"><option value="">นาที</option></select>
+                <input type="hidden" id="sp-empty-time">
+              </div>
+              <input type="text" id="sp-empty-note" placeholder="หมายเหตุ (ถ้ามี)" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;flex:1;min-width:100px;min-height:34px">
+            </div>
+          </div>
+        </div>
         <div class="sp-time-slot-bar">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%">
             <span style="font-size:11px;font-weight:600;color:var(--navy)">📅 วันที่รายงาน</span>
@@ -1281,30 +1431,7 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
           <span class="sp-remain">คงเหลือ: <strong id="sp-remain-val">0</strong> ล.</span>
         </div>
         <div class="fuel-grid" id="fuel-grid"></div>
-        <div class="sp-delivery-bar">
-          <!-- 🚛 น้ำมันเข้าปั้ม -->
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">
-            <span style="font-size:12px;font-weight:700;color:var(--navy)">🚛 น้ำมันเข้าปั้ม</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="font-size:11px;color:var(--gray-500);font-weight:600;white-space:nowrap">📅 วันที่เข้า</span>
-            <input type="date" id="sp-delivery-date" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;min-height:34px">
-            <span style="font-size:11px;color:var(--gray-500);font-weight:600;white-space:nowrap">⏰ เวลา</span>
-            <input type="time" id="sp-delivery-time" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;min-height:34px">
-            <input type="text" id="sp-delivery-note" placeholder="หมายเหตุ (ถ้ามี)" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;flex:1;min-width:100px;min-height:34px">
-          </div>
-          <!-- 🔴 น้ำมันหมด -->
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px;margin-bottom:6px">
-            <span style="font-size:12px;font-weight:700;color:var(--red)">🔴 น้ำมันหมด</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="font-size:11px;color:var(--gray-500);font-weight:600;white-space:nowrap">📅 วันที่หมด</span>
-            <input type="date" id="sp-empty-date" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;min-height:34px">
-            <span style="font-size:11px;color:var(--gray-500);font-weight:600;white-space:nowrap">⏰ เวลา</span>
-            <input type="time" id="sp-empty-time" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;min-height:34px">
-            <input type="text" id="sp-empty-note" placeholder="ประเภทน้ำมันที่หมด (ถ้ามี)" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;flex:1;min-width:100px;min-height:34px">
-          </div>
-        </div>
+
         <div class="sp-actions">
           <div class="sp-rt-badge off" id="rt-badge"><span class="rt-dot"></span>Realtime</div>
           <span class="sp-sync-time" id="sp-sync-time"></span>
@@ -1322,6 +1449,34 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
   สำนักงานสถิติจังหวัดหนองบัวลำภู · NSO Nong Bua Lam Phu<br>
   ข้อมูลซิงค์กับ Google Sheet · อัปเดตอัตโนมัติ
 </div>
+<!-- THAI CALENDAR POPUP -->
+<div class="thai-cal-overlay" id="thai-cal-overlay" style="display:none" onclick="closeThaiCalOnOverlay(event)">
+  <div class="thai-cal-popup" id="thai-cal-popup">
+    <div class="thai-cal-head">
+      <div class="thai-cal-nav">
+        <button onclick="thaiCalChangeYear(-1)" title="ปีก่อน">«</button>
+        <button onclick="thaiCalChangeMonth(-1)" title="เดือนก่อน">‹</button>
+      </div>
+      <div class="thai-cal-month-year" id="thai-cal-month-year">—</div>
+      <div class="thai-cal-nav">
+        <button onclick="thaiCalChangeMonth(1)" title="เดือนถัดไป">›</button>
+        <button onclick="thaiCalChangeYear(1)" title="ปีถัดไป">»</button>
+      </div>
+    </div>
+    <div class="thai-cal-grid">
+      <div class="thai-cal-dow">
+        <span>อา</span><span>จ</span><span>อ</span><span>พ</span><span>พฤ</span><span>ศ</span><span>ส</span>
+      </div>
+      <div class="thai-cal-days" id="thai-cal-days"></div>
+    </div>
+    <div class="thai-cal-footer">
+      <button class="btn" onclick="clearThaiCalDate()" style="font-size:11px;padding:4px 10px">ล้าง</button>
+      <button class="btn" onclick="closeThaiCal()" style="font-size:11px;padding:4px 10px">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="confirmThaiCal()" style="font-size:11px;padding:4px 14px">✓ ตกลง</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- AUTO LOGOUT overlay -->
@@ -1438,6 +1593,31 @@ let GS_URL=localStorage.getItem(LS_URL)||DEFAULT_GS_URL;
 let AUTO_INTERVAL=parseInt(localStorage.getItem(LS_INTERVAL)||'60');
 let refreshTimer=null;
 let CURRENT_MODE=localStorage.getItem(LS_MODE)||'view';
+
+// แปลง timestamp/ISO string → ภาษาไทย
+function formatThaiDateTime(raw){
+  if(!raw||raw==='—'||raw==='')return '';
+  const thaiM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  // กรณี ISO เช่น 2026-03-26T04:06:20.000Z หรือ 2026-03-26T11:06:20+07:00
+  if(raw.includes('T')||(/^\d{4}-\d{2}-\d{2}/.test(raw)&&raw.length>10)){
+    try{
+      const d=new Date(raw);
+      if(isNaN(d.getTime()))return raw;
+      const day=d.getDate();
+      const mon=thaiM[d.getMonth()];
+      const year=d.getFullYear()+543;
+      const hh=String(d.getHours()).padStart(2,'0');
+      const mm=String(d.getMinutes()).padStart(2,'0');
+      return `${day} ${mon} ${year} · ${hh}:${mm} น.`;
+    }catch(e){return raw;}
+  }
+  // กรณีเวลาเปล่า HH:MM:SS หรือ HH:MM (บันทึกโดย Apps Script)
+  if(/^\d{1,2}:\d{2}/.test(raw)){
+    const parts=raw.split(':');
+    return `${String(parts[0]).padStart(2,'0')}:${parts[1]} น.`;
+  }
+  return raw;
+}
 
 function getSD(sid){return DATA[sid]||{cap:0,diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0,updated_at:''};}
 function getRemain(sid){const d=getSD(sid);return FUELS.reduce((a,f)=>a+(d[f.key]||0),0);}
@@ -1557,7 +1737,7 @@ function saveOneStation(sid){
   const stInfo=ALL_STATIONS.find(s=>s.id===sid)||{};
   const payload={...DATA[sid],station_name:stInfo.name||sid,amphoe:stInfo.amphoe||'',brand:stInfo.brand||''};
   return gsPost(GS_URL,{action:'save_one',station_id:sid,data:payload}).then(()=>{
-    const now=new Date().toLocaleTimeString('th-TH');DATA[sid].updated_at=now;persistData();
+    const now=new Date().toLocaleTimeString('th-TH');DATA[sid].updated_at=new Date().toISOString();persistData();
     setSyncBadge('ok','บันทึกแล้ว '+now);const el=document.getElementById('sp-sync-time');if(el)el.textContent='บันทึกแล้ว '+now;
     setRtBadge(true);showToast('บันทึกสำเร็จ ✓');
   }).catch(err=>showToast('บันทึกไม่สำเร็จ: '+err.message,3000,true));
@@ -1618,16 +1798,16 @@ function loadStationPanel(){
     const statusColor=pct>50?'#059669':pct>=25?'#d97706':pct>0?'#dc2626':'#e5e7eb';
     const capBar=fc>0?`<div style="height:4px;background:#f3f4f6;border-radius:2px;margin-top:3px;overflow:hidden"><div style="height:100%;width:${Math.min(pct,100)}%;background:${statusColor};border-radius:2px;transition:width .3s"></div></div>`:'';
     const capLbl=fc>0?`<span style="font-size:9px;color:#9ca3af;margin-left:auto">max ${fc.toLocaleString()} ล.</span>`:'';
-    return `<div class="fuel-cell"><div class="fuel-cell-label"><span class="fuel-dot" style="background:${f.color}"></span>${f.label}${capLbl}</div><input class="fuel-cell-input" type="number" id="fci-${f.key}" min="0" max="${fc>0?fc:''}" step="100" value="" placeholder="0" oninput="onFuelCellInput('${f.key}',this)" inputmode="numeric"><div class="fuel-cell-unit">ลิตร</div>${capBar}</div>`;
+    return `<div class="fuel-cell"><div class="fuel-cell-label"><span class="fuel-dot" style="background:${f.color}"></span>${f.label}${capLbl}</div><input class="fuel-cell-input" type="number" id="fci-${f.key}" min="0" max="${fc>0?fc:''}" step="100" value="" placeholder="0" oninput="onFuelCellInput('${f.key}',this)" onblur="onFuelCellInput('${f.key}',this)" inputmode="numeric"><div class="fuel-cell-unit">ลิตร</div>${capBar}</div>`;
   }).join('');
-  document.getElementById('sp-sync-time').textContent=d.updated_at?'บันทึกล่าสุด '+d.updated_at:'';setRtBadge(false);
+  document.getElementById('sp-sync-time').textContent=d.updated_at?'บันทึกล่าสุด '+formatThaiDateTime(d.updated_at):'';setRtBadge(false);
   setServiceStatus(d.service_status||'open');
-  document.getElementById('sp-delivery-date').value=d.delivery_date||'';
-  document.getElementById('sp-delivery-time').value=d.delivery_time||'';
   document.getElementById('sp-delivery-note').value=d.delivery_note||'';
-  document.getElementById('sp-empty-date').value=d.empty_date||'';
-  document.getElementById('sp-empty-time').value=d.empty_time||'';
+  setThaiDateValue('delivery', d.delivery_date||'');
+  setThaiTimeValue('delivery', d.delivery_time||'');
   document.getElementById('sp-empty-note').value=d.empty_note||'';
+  setThaiDateValue('empty', d.empty_date||'');
+  setThaiTimeValue('empty', d.empty_time||'');
   // วันที่รายงาน = วันปัจจุบันเสมอ (read-only)
   const today=new Date();
   const todayStr=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
@@ -1636,6 +1816,13 @@ function loadStationPanel(){
   document.getElementById('sp-report-date-display').textContent='📅 '+todayTH;
   // ตั้ง time-slot อัตโนมัติตามเวลาปัจจุบัน + แสดงเวลากรอก
   const h=today.getHours(),m=today.getMinutes();
+  // ครั้งที่กรอก: รีเซ็ตทุกเที่ยงคืน (เก็บวันที่ล่าสุดที่รีไว้ใน _fill_date)
+  const todayKey=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  if(DATA[sid]._fill_date!==todayKey){
+    DATA[sid]._fill_count=0;
+    DATA[sid]._fill_date=todayKey;
+    persistData();
+  }
   const fillCount=DATA[sid]._fill_count||0;
   const fillCountNext=fillCount+1;
   const nowTimeStr=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+' น.';
@@ -1664,13 +1851,42 @@ function saveServiceStatus(){
   else{showToast(status==='open'?'✅ บันทึก: เปิดให้บริการ':'🔴 บันทึก: ปิดให้บริการ');renderDashboard();}
 }
 function onFuelCellInput(fkey,el){
-  if(!currentSid)return;const val=parseFloat(el.value)||0;const cap=DATA[currentSid].cap||0;
+  if(!currentSid)return;
+  let val=parseFloat(el.value)||0;
+  const cap=DATA[currentSid].cap||0;
   const fc=(FUEL_CAPS[currentSid]||{})[fkey]||0;
-  const otherSum=FUELS.filter(f=>f.key!==fkey).reduce((a,f)=>a+(DATA[currentSid][f.key]||0),0);const newTotal=otherSum+val;
-  if(cap>0&&newTotal>cap){const maxAllowed=Math.max(0,cap-otherSum);el.value=maxAllowed;DATA[currentSid][fkey]=maxAllowed;el.classList.add('over-cap');showCapWarn(fkey,cap,newTotal);setTimeout(()=>el.classList.remove('over-cap'),1500);}
-  else{DATA[currentSid][fkey]=val;el.classList.remove('over-cap');el.classList.add('dirty');}
+
+  // ✅ ล็อค 1: ไม่เกินความจุรายประเภท (fc)
+  if(fc>0&&val>fc){
+    val=fc; el.value=fc;
+    el.classList.add('over-cap');
+    const fuelName=FUELS.find(f=>f.key===fkey)?.label||fkey;
+    showToast(`⚠️ ${fuelName}: ล็อคที่ความจุสูงสุด ${fc.toLocaleString()} ล.`,2200,true);
+    setTimeout(()=>el.classList.remove('over-cap'),1500);
+  }
+
+  // ✅ ล็อค 2: รวมทุกประเภทไม่เกิน total cap
+  const otherSum=FUELS.filter(f=>f.key!==fkey).reduce((a,f)=>a+(DATA[currentSid][f.key]||0),0);
+  const newTotal=otherSum+val;
+  if(cap>0&&newTotal>cap){
+    val=Math.max(0,cap-otherSum);
+    el.value=val;
+    el.classList.add('over-cap');
+    showToast(`⚠️ รวมน้ำมันเกินความจุคลัง ${cap.toLocaleString()} ล.`,2200,true);
+    setTimeout(()=>el.classList.remove('over-cap'),1500);
+  }
+
+  DATA[currentSid][fkey]=val;
+  el.classList.remove('over-cap');
+  el.classList.add('dirty');
+
   // อัปเดต color bar ใน fuel cell
-  if(fc>0){const pct=Math.min(Math.round((DATA[currentSid][fkey]||0)/fc*100),100);const sc=pct>50?'#059669':pct>=25?'#d97706':pct>0?'#dc2626':'#e5e7eb';const bar=el.parentElement.querySelector('div[style*="height:4px"]>div');if(bar){bar.style.width=pct+'%';bar.style.background=sc;}}
+  if(fc>0){
+    const pct=Math.min(Math.round(val/fc*100),100);
+    const sc=pct>50?'#059669':pct>=25?'#d97706':pct>0?'#dc2626':'#e5e7eb';
+    const bar=el.parentElement.querySelector('div[style*="height:4px"]>div');
+    if(bar){bar.style.width=pct+'%';bar.style.background=sc;}
+  }
   const remain=getRemain(currentSid);updateCapBar(remain,cap);
 }
 function showCapWarn(fkey,cap,tried){const fuelName=FUELS.find(f=>f.key===fkey)?.label||fkey;showToast(`⚠️ ${fuelName}: เกินความจุ`,2500,true);}
@@ -1706,9 +1922,9 @@ function saveCurrentToSheet(){
   // อัปเดต banner วันที่กรอก
   const todayTH=new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
   updateBannerTime(todayTH);
-  saveOneStation(currentSid).then(()=>{renderDashboard();FUELS.forEach(f=>{DATA[currentSid][f.key]=0;const el=document.getElementById('fci-'+f.key);if(el){el.value='';el.classList.remove('dirty','saving');}});document.getElementById('sp-delivery-date').value='';document.getElementById('sp-delivery-time').value='';document.getElementById('sp-delivery-note').value='';document.getElementById('sp-empty-date').value='';document.getElementById('sp-empty-time').value='';document.getElementById('sp-empty-note').value='';persistData();updateCapBar(0,DATA[currentSid].cap||0);
-    // อัปเดต fill-time display
-    const now=new Date();const h=now.getHours(),m=now.getMinutes();const nowStr=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+' น.';const fc=DATA[currentSid]._fill_count||1;document.getElementById('sp-fill-time-display').textContent=`ครั้งที่ ${fc+1} · ${nowStr}`;
+  saveOneStation(currentSid).then(()=>{renderDashboard();FUELS.forEach(f=>{DATA[currentSid][f.key]=0;const el=document.getElementById('fci-'+f.key);if(el){el.value='';el.classList.remove('dirty','saving');}});document.getElementById('sp-delivery-note').value='';clearThaiDate('delivery');clearThaiTime('delivery');document.getElementById('sp-empty-note').value='';clearThaiDate('empty');clearThaiTime('empty');persistData();updateCapBar(0,DATA[currentSid].cap||0);
+    // อัปเดต fill-time display (ครั้งถัดไป)
+    const now=new Date();const h=now.getHours(),m=now.getMinutes();const nowStr=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+' น.';const nextCount=(DATA[currentSid]._fill_count||0)+1;document.getElementById('sp-fill-time-display').textContent=`ครั้งที่ ${nextCount} · ${nowStr}`;
     showToast('บันทึกสำเร็จ ✓');});
 }
 function clearCurrentStation(){if(!currentSid)return;if(!confirm('ล้างข้อมูลสถานีนี้?'))return;DATA[currentSid]={cap:0,diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0,updated_at:'',delivery_date:'',delivery_time:'',delivery_note:'',empty_date:'',empty_time:'',empty_note:''};persistData();loadStationPanel();showToast('ล้างข้อมูลแล้ว');}
@@ -1751,7 +1967,19 @@ function getFilteredStations(){
   else if(pumpType==='local')pool=pool.filter(isPumpLocal);
   return s==='all'?pool:pool.filter(x=>x.id===s);
 }
-function renderStatusBar(stations){const counts={ok:0,watch:0,danger:0,none:0};stations.forEach(s=>{const d=getSD(s.id),remain=getRemain(s.id),pct=d.cap>0?Math.round(remain/d.cap*100):0;counts[getStatusInfo(pct,remain).key]++;});const items=[{key:'ok',label:'ปกติ',ssClass:'ss-ok',icon:ICON_OK,count:counts.ok},{key:'watch',label:'น้อย',ssClass:'ss-watch',icon:ICON_WATCH,count:counts.watch},{key:'danger',label:'หมด',ssClass:'ss-danger',icon:ICON_DANGER,count:counts.danger},{key:'none',label:'ไม่มีข้อมูล',ssClass:'ss-none',icon:ICON_NONE,count:counts.none}];document.getElementById('status-bar').innerHTML=items.map(it=>`<div class="status-summary ${it.ssClass}"><div class="status-summary-icon">${it.icon}</div><div><div class="status-summary-label">${it.label}</div><div class="status-summary-count">${it.count} <span style="font-size:11px;font-weight:400">สถานี</span></div></div></div>`).join('');}
+function renderStatusBar(stations){const counts={ok:0,watch:0,danger:0,none:0};stations.forEach(s=>{const d=getSD(s.id),remain=getRemain(s.id),pct=d.cap>0?Math.round(remain/d.cap*100):0;counts[getStatusInfo(pct,remain).key]++;});const items=[{key:'ok',label:'ปกติ',ssClass:'ss-ok',icon:ICON_OK,count:counts.ok},{key:'watch',label:'น้อย',ssClass:'ss-watch',icon:ICON_WATCH,count:counts.watch},{key:'danger',label:'หมด',ssClass:'ss-danger',icon:ICON_DANGER,count:counts.danger},{key:'none',label:'ไม่มีข้อมูล',ssClass:'ss-none',icon:ICON_NONE,count:counts.none}];document.getElementById('status-bar').innerHTML=items.map(it=>`<div class="status-summary ${it.ssClass}" style="cursor:pointer" onclick="quickFilterByStatus('${it.key}')" title="กดเพื่อกรองสถานี${it.label}"><div class="status-summary-icon">${it.icon}</div><div><div class="status-summary-label">${it.label}</div><div class="status-summary-count">${it.count} <span style="font-size:11px;font-weight:400">สถานี</span></div></div><div style="font-size:9px;opacity:.6;margin-top:1px">กดกรอง</div></div>`).join('');
+  // วิกฤต banner
+  const dangerSts=stations.filter(s=>{const d=getSD(s.id),r=getRemain(s.id),p=d.cap>0?Math.round(r/d.cap*100):0;return getStatusInfo(p,r).key==='danger';});
+  const dangerBanner=document.getElementById('danger-quick-banner');
+  if(dangerBanner){
+    if(dangerSts.length>0){
+      dangerBanner.style.display='flex';
+      dangerBanner.innerHTML=`<span style="font-size:13px">🔴</span><div style="flex:1"><strong style="font-size:12px">พบ ${dangerSts.length} สถานีน้ำมันวิกฤต!</strong><br><span style="font-size:11px;opacity:.85">${dangerSts.map(s=>s.name).join(' · ')}</span></div><button onclick="quickFilterByStatus('danger')" style="border:none;background:rgba(255,255,255,.25);color:#fff;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:'Noto Sans Thai',sans-serif;white-space:nowrap">ดูทั้งหมด</button>`;
+    } else {
+      dangerBanner.style.display='none';
+    }
+  }
+}
 
 function renderKPI(stations){
   const totalCap=stations.reduce((a,s)=>a+(getSD(s.id).cap||0),0),totalRemain=stations.reduce((a,s)=>a+getRemain(s.id),0);
@@ -1873,12 +2101,29 @@ function renderStationCards(stations){
       else if(fuelStatuses.includes('watch'))overallKey='watch';
       else overallKey='ok';
 
-      const timeSlotLabel=d.time_slot?` ⏰ ${d.time_slot} น.`:'';
-      const reportDateLabel=d.report_date?`📅 ${d.report_date}`:'';
-      const updatedText=reportDateLabel||d.updated_at?`${reportDateLabel}${timeSlotLabel}${d.updated_at?' · 🕐 '+d.updated_at:''}`:'ยังไม่มีข้อมูล';
+      const timeSlotLabel=d.time_slot?` · ⏰ ${d.time_slot} น.`:'';
+      let updatedText='ยังไม่มีข้อมูล';
+      if(d.report_date){
+        const rp=d.report_date.split('-');
+        const thaiM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+        const thaiDate=`${parseInt(rp[2])} ${thaiM[parseInt(rp[1])-1]} ${parseInt(rp[0])+543}`;
+        updatedText=`อัปเดต ${thaiDate}${timeSlotLabel}`;
+      } else if(d.updated_at){
+        updatedText=`อัปเดต ${formatThaiDateTime(d.updated_at)}`;
+      }
+      // ข้อ 2: ตรวจสอบความเก่าของข้อมูล
+      let staleHtml='';
+      if(d.report_date){
+        const reportMs=new Date(d.report_date).getTime();
+        const diffDays=Math.floor((Date.now()-reportMs)/(1000*60*60*24));
+        if(diffDays>=3&&diffDays<7){staleHtml=`<div style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#92400e;background:#fef3c7;border:1px solid #fde68a;border-radius:6px;padding:2px 7px;margin-top:3px">⚠️ ข้อมูลเมื่อ ${diffDays} วันที่แล้ว</div>`;}
+        else if(diffDays>=7){staleHtml=`<div style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#991b1b;background:#fee2e2;border:1px solid #fecaca;border-radius:6px;padding:2px 7px;margin-top:3px">🔴 ข้อมูลเมื่อ ${diffDays} วันที่แล้ว — อาจไม่เป็นปัจจุบัน</div>`;}
+      } else if(!d.updated_at){
+        staleHtml=`<div style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#6b7280;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:6px;padding:2px 7px;margin-top:3px">— ยังไม่มีการรายงาน</div>`;
+      }
       const deliveryHtml=d.delivery_date?`<div class="st-card-delivery"><span>🚛 น้ำมันเข้า: <strong>${d.delivery_date}</strong></span>${d.delivery_note?`<span style="opacity:.7"> · ${d.delivery_note}</span>`:''}</div>`:'';
       const mapBtn=hasCoords?`<a class="st-card-btn btn-map" href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}&travelmode=driving" target="_blank" style="text-decoration:none">📍 แผนที่</a>`:`<span class="st-card-btn" style="opacity:.4;cursor:default">📍 ไม่มีพิกัด</span>`;
-      const inputBtn=`<button class="st-card-btn btn-input" onclick="goToStationInput('${s.id}')">✏️ กรอกข้อมูล</button>`;
+      const inputBtn=(isAdminView||inputMode)?`<button class="st-card-btn btn-input" onclick="goToStationInput('${s.id}')">✏️ กรอกข้อมูล</button>`:'';
 
       const svcStatus=d.service_status||'open';
       const isOpen=svcStatus!=='closed';
@@ -1895,10 +2140,14 @@ function renderStationCards(stations){
             <div class="st-card-info">
               <div class="st-card-name">${s.name}</div>
               <div class="st-card-meta">${updatedText}</div>
+              ${staleHtml}
             </div>
             <span class="st-card-status-badge" style="background:${stBg[overallKey]};color:${stText[overallKey]};border:1.5px solid ${stColor[overallKey]}">${stLabel[overallKey]}</span>
           </div>
-          <div class="st-fuel-rows">${fuelRows}</div>
+          <div class="st-fuel-rows" style="${!isOpen?'opacity:.35;pointer-events:none;filter:grayscale(1)':''}">
+            ${!isOpen?'<div style="text-align:center;padding:.5rem 0;font-size:11px;color:#dc2626;font-weight:600;letter-spacing:.02em">🚫 ปัจจุบันปิดให้บริการ ไม่สามารถเติมน้ำมันได้</div>':''}
+            ${fuelRows}
+          </div>
           ${deliveryHtml}
           <div class="st-card-actions">${mapBtn}${inputBtn}</div>
         </div>
@@ -1913,6 +2162,36 @@ function renderStationCards(stations){
 function goToStationInput(sid){
   switchTab('input');
   // ถ้ายังไม่ login จะเห็นหน้า PIN
+}
+
+// ข้อ 4: กรองด่วนตาม status จาก status bar
+function quickFilterByStatus(statusKey){
+  if(statusKey==='none'||statusKey==='all'){
+    // reset filter
+    document.getElementById('sel-amphoe').value='all';
+    document.getElementById('sel-station').value='all';
+    renderDashboard();
+    if(statusKey==='none')showToast('แสดงทุกสถานี');
+    return;
+  }
+  // scroll to cards
+  const grid=document.getElementById('station-cards-grid');
+  if(grid)grid.scrollIntoView({behavior:'smooth',block:'start'});
+  // highlight cards ตาม status
+  setTimeout(()=>{
+    document.querySelectorAll('.st-card').forEach(card=>{
+      const badge=card.querySelector('.st-card-status-badge');
+      const statusMap={ok:'ปกติ',watch:'น้อย',danger:'หมด',none:'ไม่มีข้อมูล'};
+      if(badge&&badge.textContent.trim()===statusMap[statusKey]){
+        card.style.outline='2.5px solid '+(statusKey==='danger'?'#dc2626':statusKey==='watch'?'#d97706':'#059669');
+        card.style.outlineOffset='2px';
+        setTimeout(()=>{card.style.outline='';card.style.outlineOffset='';},2500);
+      }
+    });
+    const count=document.querySelectorAll('.st-card').length;
+    const statusTH={ok:'ปกติ',watch:'น้อย',danger:'วิกฤต/หมด',none:'ไม่มีข้อมูล'};
+    showToast(`🔍 ไฮไลต์สถานีที่ ${statusTH[statusKey]}`);
+  },300);
 }
 
 function renderDashboard(){const s=getFilteredStations();renderKPI(s);renderStationCards(s);}
@@ -2170,10 +2449,152 @@ function logoutSales(){
   document.getElementById('sales-pin-hint').textContent='';
 }
 
+// ── THAI DATE/TIME WIDGET ──
+const THAI_MONTHS=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const THAI_MONTHS_SHORT=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+
+// ── THAI CALENDAR (popup) ──
+let _calPrefix='', _calYear=0, _calMonth=0, _calSelectedDay=0;
+
+function openThaiCal(prefix){
+  _calPrefix=prefix;
+  const existing=document.getElementById('sp-'+prefix+'-date').value;
+  const now=new Date();
+  if(existing){const p=existing.split('-');_calYear=parseInt(p[0]);_calMonth=parseInt(p[1])-1;_calSelectedDay=parseInt(p[2]);}
+  else{_calYear=now.getFullYear();_calMonth=now.getMonth();_calSelectedDay=0;}
+  renderThaiCal();
+  document.getElementById('thai-cal-overlay').style.display='flex';
+}
+
+function closeThaiCal(){ document.getElementById('thai-cal-overlay').style.display='none'; }
+function closeThaiCalOnOverlay(e){ if(e.target===document.getElementById('thai-cal-overlay'))closeThaiCal(); }
+
+function thaiCalChangeMonth(d){
+  _calMonth+=d;
+  if(_calMonth<0){_calMonth=11;_calYear--;}
+  if(_calMonth>11){_calMonth=0;_calYear++;}
+  renderThaiCal();
+}
+function thaiCalChangeYear(d){ _calYear+=d; renderThaiCal(); }
+
+function renderThaiCal(){
+  const yearTH=_calYear+543;
+  document.getElementById('thai-cal-month-year').textContent=THAI_MONTHS[_calMonth]+' '+yearTH;
+  const firstDay=new Date(_calYear,_calMonth,1).getDay(); // 0=อา
+  const daysInMonth=new Date(_calYear,_calMonth+1,0).getDate();
+  const daysInPrev=new Date(_calYear,_calMonth,0).getDate();
+  const today=new Date();
+  const isToday=(d)=>today.getFullYear()===_calYear&&today.getMonth()===_calMonth&&today.getDate()===d;
+  let html='';
+  // เติมวันจากเดือนก่อน
+  for(let i=0;i<firstDay;i++){
+    const d=daysInPrev-firstDay+1+i;
+    html+=`<div class="thai-cal-day other-month${(i===0)?' sun':i===6?' sat':''}">${d}</div>`;
+  }
+  // วันในเดือนนี้
+  for(let d=1;d<=daysInMonth;d++){
+    const dow=(firstDay+d-1)%7;
+    let cls='thai-cal-day';
+    if(dow===0)cls+=' sun';
+    if(dow===6)cls+=' sat';
+    if(d===_calSelectedDay)cls+=' selected';
+    if(isToday(d))cls+=' today';
+    html+=`<div class="${cls}" onclick="thaiCalSelectDay(${d})">${d}</div>`;
+  }
+  // เติมวันถัดไป
+  const totalCells=Math.ceil((firstDay+daysInMonth)/7)*7;
+  for(let i=1;i<=totalCells-firstDay-daysInMonth;i++){
+    const dow=(firstDay+daysInMonth+i-1)%7;
+    html+=`<div class="thai-cal-day other-month${dow===0?' sun':dow===6?' sat':''}">${i}</div>`;
+  }
+  document.getElementById('thai-cal-days').innerHTML=html;
+}
+
+function thaiCalSelectDay(d){
+  _calSelectedDay=d;
+  document.querySelectorAll('.thai-cal-day').forEach(el=>el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+function confirmThaiCal(){
+  if(!_calSelectedDay){closeThaiCal();return;}
+  const isoDate=_calYear+'-'+String(_calMonth+1).padStart(2,'0')+'-'+String(_calSelectedDay).padStart(2,'0');
+  document.getElementById('sp-'+_calPrefix+'-date').value=isoDate;
+  // แสดงในปุ่ม (พ.ศ.)
+  const displayStr=_calSelectedDay+' '+THAI_MONTHS_SHORT[_calMonth]+' '+(_calYear+543);
+  const dispEl=document.getElementById('cal-'+_calPrefix+'-display');
+  if(dispEl)dispEl.textContent=displayStr;
+  const btnEl=document.getElementById('btn-cal-'+_calPrefix);
+  if(btnEl)btnEl.classList.add('has-date');
+  closeThaiCal();
+}
+
+function clearThaiCalDate(){
+  document.getElementById('sp-'+_calPrefix+'-date').value='';
+  const dispEl=document.getElementById('cal-'+_calPrefix+'-display');
+  if(dispEl)dispEl.textContent='เลือกวันที่';
+  const btnEl=document.getElementById('btn-cal-'+_calPrefix);
+  if(btnEl)btnEl.classList.remove('has-date');
+  _calSelectedDay=0;
+  closeThaiCal();
+}
+
+function initThaiDateSelects(){
+  ['delivery','empty'].forEach(prefix=>{
+    const hrEl=document.getElementById('sp-'+prefix+'-hour');
+    const mnEl=document.getElementById('sp-'+prefix+'-min');
+    if(!hrEl)return;
+    for(let h=0;h<=23;h++){const o=document.createElement('option');o.value=String(h).padStart(2,'0');o.textContent=String(h).padStart(2,'0')+' น.';hrEl.appendChild(o);}
+    for(let m=0;m<=59;m++){const o=document.createElement('option');o.value=String(m).padStart(2,'0');o.textContent=String(m).padStart(2,'0');mnEl.appendChild(o);}
+  });
+}
+
+function syncThaiDate(prefix){ /* ไม่ใช้แล้ว — calendar จัดการเอง */ }
+
+function syncThaiTime(prefix){
+  const h=document.getElementById('sp-'+prefix+'-hour').value;
+  const m=document.getElementById('sp-'+prefix+'-min').value;
+  if(h&&m)document.getElementById('sp-'+prefix+'-time').value=h+':'+m;
+  else document.getElementById('sp-'+prefix+'-time').value='';
+}
+
+function setThaiDateValue(prefix, isoDate){
+  if(!isoDate)return;
+  const p=isoDate.split('-');if(p.length<3)return;
+  document.getElementById('sp-'+prefix+'-date').value=isoDate;
+  const d=parseInt(p[2]),m=parseInt(p[1])-1,y=parseInt(p[0]);
+  const dispEl=document.getElementById('cal-'+prefix+'-display');
+  if(dispEl)dispEl.textContent=d+' '+THAI_MONTHS_SHORT[m]+' '+(y+543);
+  const btnEl=document.getElementById('btn-cal-'+prefix);
+  if(btnEl)btnEl.classList.add('has-date');
+}
+
+function setThaiTimeValue(prefix, timeStr){
+  if(!timeStr)return;
+  const parts=timeStr.split(':');if(parts.length<2)return;
+  const el_h=document.getElementById('sp-'+prefix+'-hour');
+  const el_m=document.getElementById('sp-'+prefix+'-min');
+  if(el_h)el_h.value=parts[0];
+  if(el_m)el_m.value=parts[1];
+}
+
+function clearThaiDate(prefix){
+  document.getElementById('sp-'+prefix+'-date').value='';
+  const dispEl=document.getElementById('cal-'+prefix+'-display');
+  if(dispEl)dispEl.textContent='เลือกวันที่';
+  const btnEl=document.getElementById('btn-cal-'+prefix);
+  if(btnEl)btnEl.classList.remove('has-date');
+}
+function clearThaiTime(prefix){
+  ['hour','min'].forEach(f=>{const el=document.getElementById('sp-'+prefix+'-'+f);if(el)el.value='';});
+  const hid=document.getElementById('sp-'+prefix+'-time');if(hid)hid.value='';
+}
+
+
 // ── INIT ──
 document.getElementById('header-date').textContent='ข้อมูล ณ '+new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
 if(GS_URL)setSyncBadge('ok','พร้อมซิงค์');
-buildDashboardSelects();setMode('view',true);renderDashboard();startAutoRefresh();
+buildDashboardSelects();setMode('view',true);renderDashboard();startAutoRefresh();initThaiDateSelects();
 if(GS_URL)setTimeout(()=>pullFromSheet(),600);
 
 // Auto close map sidebar on mobile
