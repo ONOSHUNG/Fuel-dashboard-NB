@@ -971,7 +971,7 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
   <span class="mode-label">โหมด:</span>
   <button class="mode-btn active" id="mode-btn-view" onclick="setMode('view',true)">👁 ดูข้อมูล</button>
   <button class="mode-btn" id="mode-btn-map" onclick="switchTab('map')">🗺️ แผนที่</button>
-  <button class="mode-btn" id="mode-btn-edit" onclick="switchTab('input')">✏️ กรอกข้อมูล</button>
+  <button class="mode-btn" id="mode-btn-edit" onclick="switchTab('input')">✏️ กรอกข้อมูลน้ำมันคงเหลือ</button>
   <button class="mode-btn" id="mode-btn-settings" onclick="requestSettings()">⚙️ ตั้งค่า</button>
   <span class="mode-hint" id="mode-hint">โหมดดูข้อมูล</span>
 </div>
@@ -981,7 +981,7 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
   <div class="nav-tab active" onclick="switchTab('dashboard')">📊 แดชบอร์ด</div>
   <div class="nav-tab" onclick="switchTab('map')">🗺️ แผนที่</div>
   <div class="nav-tab" onclick="switchTab('trend')" id="nav-tab-trend">📈 แนวโน้ม <span id="trend-lock" style="font-size:9px">🔒</span></div>
-  <div class="nav-tab" onclick="switchTab('input')">✏️ กรอกข้อมูล</div>
+  <div class="nav-tab" onclick="switchTab('input')">✏️ กรอกข้อมูลน้ำมันคงเหลือ</div>
   <div class="nav-tab" onclick="switchTab('sales')">🛒 กรอกจำหน่าย</div>
   <div class="nav-tab" id="tab-settings" onclick="switchTab('settings')" style="display:none">⚙️ ตั้งค่า</div>
 </div>
@@ -1078,7 +1078,7 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
 <div class="page" id="page-sales">
 <div class="trend-page">
   <div class="trend-main-card" style="border:2px solid var(--amber);background:linear-gradient(135deg,#fffbeb,#fff);margin:.75rem">
-    <div class="card-title" style="color:var(--amber-dark)">🛒 กรอกยอดจำหน่ายรายวัน</div>
+    <div class="card-title" style="color:var(--amber-dark)">🛒 กรอกปริมาณน้ำมันจำหน่ายรายวัน</div>
 
     <!-- PIN gate -->
     <div id="sales-pin-gate">
@@ -1110,7 +1110,8 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
       </div>
       <div style="display:flex;gap:6px;align-items:center;margin-bottom:.65rem;flex-wrap:wrap">
         <span style="font-size:11px;color:var(--gray-500);font-weight:600">📅 วันที่:</span>
-        <input type="date" id="sales-date" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif">
+        <span id="sales-date-display" style="font-size:12px;font-weight:700;color:var(--navy);background:#f0fdf4;border:1.5px solid #86efac;border-radius:6px;padding:4px 10px;display:inline-flex;align-items:center">—</span>
+        <input type="hidden" id="sales-date">
         <span style="font-size:11px;color:var(--gray-500);font-weight:600;margin-left:auto" id="sales-amphoe-sel-wrap">
           อำเภอ: <select id="sales-amphoe-sel" onchange="onSalesAmphoeChange()" style="border:1px solid var(--gray-300);border-radius:5px;padding:3px 6px;font-size:11px;font-family:'Noto Sans Thai',sans-serif;display:none"></select>
           สถานี: <select id="sales-station-sel" onchange="onSalesStationChange()" style="border:1px solid var(--gray-300);border-radius:5px;padding:3px 6px;font-size:11px;font-family:'Noto Sans Thai',sans-serif;display:none"></select>
@@ -1193,7 +1194,7 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
       <span class="public-banner-icon">ℹ️</span>
       <div class="public-banner-text">
         <strong>ข้อมูลสถานการณ์น้ำมัน</strong> จังหวัดหนองบัวลำภู · แสดงเป็นร้อยละ (%) ของความจุ · ครอบคลุม 6 อำเภอ 51 สถานี
-        <br><span style="font-size:10px;opacity:.75" id="banner-last-update">🕐 อัปเดตล่าสุด: —</span>
+        <br><span style="font-size:10px;opacity:.75" id="banner-last-update">📅 ข้อมูล ณ วันที่: —</span>
       </div>
     </div>
     <div class="kpi-row" id="kpi-row"></div>
@@ -1259,20 +1260,17 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
         </div>
         <div class="sp-time-slot-bar">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%">
-            <span style="font-size:11px;font-weight:600;color:var(--navy)">📅 วันที่</span>
-            <input type="date" id="sp-report-date" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;min-height:34px">
+            <span style="font-size:11px;font-weight:600;color:var(--navy)">📅 วันที่รายงาน</span>
+            <span id="sp-report-date-display" style="font-size:12px;font-weight:700;color:var(--navy);background:#f0fdf4;border:1.5px solid #86efac;border-radius:6px;padding:4px 10px;min-height:34px;display:inline-flex;align-items:center">—</span>
+            <input type="hidden" id="sp-report-date">
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%;margin-top:6px">
-            <span style="font-size:11px;font-weight:600;color:var(--navy)">⏰ ช่วงเวลา</span>
-            <div class="sp-time-slots">
-              <button class="sp-time-btn" id="ts-0800" onclick="setTimeSlot('08:00')">🌅 08:00 น.</button>
-              <button class="sp-time-btn" id="ts-1200" onclick="setTimeSlot('12:00')">☀️ 12:00 น.</button>
-              <button class="sp-time-btn" id="ts-1600" onclick="setTimeSlot('16:00')">🌇 16:00 น.</button>
-            </div>
+            <span style="font-size:11px;font-weight:600;color:var(--navy)">🕐 กรอกครั้งที่</span>
+            <span id="sp-fill-time-display" style="font-size:11px;color:var(--gray-500);background:#f8fafc;border:1.5px solid var(--gray-200);border-radius:6px;padding:4px 10px;min-height:34px;display:inline-flex;align-items:center">—</span>
           </div>
           <input type="hidden" id="sp-time-slot" value="">
         </div>
-        <div class="sp-cap-bar">
+        <div class="sp-cap-bar" style="display:none">
           <span class="sp-cap-label">ความจุคลัง (ลิตร)</span>
           <div class="cap-input-wrap">
             <input type="number" id="sp-cap" min="0" step="1000" placeholder="0" oninput="onCapChange()">
@@ -1284,10 +1282,27 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
         </div>
         <div class="fuel-grid" id="fuel-grid"></div>
         <div class="sp-delivery-bar">
+          <!-- 🚛 น้ำมันเข้าปั้ม -->
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+            <span style="font-size:12px;font-weight:700;color:var(--navy)">🚛 น้ำมันเข้าปั้ม</span>
+          </div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="font-size:12px;font-weight:600;color:var(--navy)">🚛 น้ำมันเข้าปั้ม</span>
+            <span style="font-size:11px;color:var(--gray-500);font-weight:600;white-space:nowrap">📅 วันที่เข้า</span>
             <input type="date" id="sp-delivery-date" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;min-height:34px">
-            <input type="text" id="sp-delivery-note" placeholder="หมายเหตุ (ถ้ามี)" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;flex:1;min-width:120px;min-height:34px">
+            <span style="font-size:11px;color:var(--gray-500);font-weight:600;white-space:nowrap">⏰ เวลา</span>
+            <input type="time" id="sp-delivery-time" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;min-height:34px">
+            <input type="text" id="sp-delivery-note" placeholder="หมายเหตุ (ถ้ามี)" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;flex:1;min-width:100px;min-height:34px">
+          </div>
+          <!-- 🔴 น้ำมันหมด -->
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px;margin-bottom:6px">
+            <span style="font-size:12px;font-weight:700;color:var(--red)">🔴 น้ำมันหมด</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:11px;color:var(--gray-500);font-weight:600;white-space:nowrap">📅 วันที่หมด</span>
+            <input type="date" id="sp-empty-date" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;min-height:34px">
+            <span style="font-size:11px;color:var(--gray-500);font-weight:600;white-space:nowrap">⏰ เวลา</span>
+            <input type="time" id="sp-empty-time" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;min-height:34px">
+            <input type="text" id="sp-empty-note" placeholder="ประเภทน้ำมันที่หมด (ถ้ามี)" style="border:1.5px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;flex:1;min-width:100px;min-height:34px">
           </div>
         </div>
         <div class="sp-actions">
@@ -1408,7 +1423,7 @@ const FUELS = [
   {key:'power',label:'พาวเวอร์ดีเซล',color:'#EF4444'},
 ];
 
-const FUEL_CAPS={"s01":{"diesel":20000,"g91":9000,"g95":0,"e20":0,"g95p":0,"power":0},"s02":{"diesel":20000,"g91":20000,"g95":10000,"e20":10000,"g95p":0,"power":0},"s03":{"diesel":20000,"g91":20000,"g95":0,"e20":0,"g95p":20000,"power":20000},"s04":{"diesel":20000,"g91":20000,"g95":0,"e20":20000,"g95p":0,"power":0},"s05":{"diesel":20000,"g91":20000,"g95":0,"e20":0,"g95p":20000,"power":20000},"s06":{"diesel":20000,"g91":10000,"g95":10000,"e20":0,"g95p":0,"power":0},"s07":{"diesel":15000,"g91":15000,"g95":15000,"e20":0,"g95p":0,"power":0},"s08":{"diesel":20000,"g91":10000,"g95":10000,"e20":0,"g95p":0,"power":0},"s09":{"diesel":20000,"g91":20000,"g95":20000,"e20":0,"g95p":0,"power":0},"s10":{"diesel":45000,"g91":15000,"g95":15000,"e20":15000,"g95p":0,"power":30000},"s11":{"diesel":26200,"g91":0,"g95":13600,"e20":0,"g95p":0,"power":0},"s12":{"diesel":90000,"g91":15000,"g95":15000,"e20":15000,"g95p":0,"power":30000},"s13":{"diesel":30000,"g91":20000,"g95":10000,"e20":20000,"g95p":0,"power":10000},"s14":{"diesel":60000,"g91":10000,"g95":30000,"e20":10000,"g95p":15000,"power":15000},"s15":{"diesel":30000,"g91":9000,"g95":12000,"e20":9000,"g95p":0,"power":0},"s16":{"diesel":45000,"g91":15000,"g95":15000,"e20":15000,"g95p":15000,"power":15000},"s17":{"diesel":20000,"g91":10000,"g95":15000,"e20":0,"g95p":0,"power":0},"s18":{"diesel":20000,"g91":15000,"g95":15000,"e20":0,"g95p":0,"power":0},"s19":{"diesel":60000,"g91":15000,"g95":15000,"e20":15000,"g95p":15000,"power":60000},"s20":{"diesel":15000,"g91":9000,"g95":9000,"e20":0,"g95p":0,"power":0},"s21":{"diesel":20000,"g91":9000,"g95":10000,"e20":10000,"g95p":0,"power":0},"s22":{"diesel":20000,"g91":10000,"g95":10000,"e20":10000,"g95p":0,"power":0},"s23":{"diesel":20000,"g91":10000,"g95":10000,"e20":0,"g95p":0,"power":0},"s24":{"diesel":30000,"g91":15000,"g95":15000,"e20":15000,"g95p":0,"power":0},"s25":{"diesel":20000,"g91":10000,"g95":10000,"e20":0,"g95p":0,"power":0},"s26":{"diesel":20000,"g91":9000,"g95":10000,"e20":10000,"g95p":0,"power":0},"s27":{"diesel":48000,"g91":7000,"g95":14000,"e20":0,"g95p":0,"power":0},"s28":{"diesel":20000,"g91":20000,"g95":20000,"e20":20000,"g95p":0,"power":60000},"s29":{"diesel":30000,"g91":10000,"g95":10000,"e20":0,"g95p":0,"power":0},"s30":{"diesel":-1,"g91":-1,"g95":-1,"e20":-1,"g95p":-1,"power":-1},"s31":{"diesel":18000,"g91":18000,"g95":9000,"e20":9000,"g95p":0,"power":0},"s32":{"diesel":20000,"g91":0,"g95":20000,"e20":0,"g95p":0,"power":0},"s33":{"diesel":40000,"g91":10000,"g95":20000,"e20":10000,"g95p":0,"power":0},"s34":{"diesel":30000,"g91":10000,"g95":10000,"e20":10000,"g95p":0,"power":0},"s35":{"diesel":4000,"g91":15000,"g95":15000,"e20":15000,"g95p":0,"power":15000},"s36":{"diesel":24000,"g91":15000,"g95":9000,"e20":0,"g95p":0,"power":0},"s37":{"diesel":24000,"g91":9000,"g95":9000,"e20":0,"g95p":0,"power":0},"s38":{"diesel":26000,"g91":16000,"g95":10000,"e20":0,"g95p":0,"power":0},"s39":{"diesel":20000,"g91":13000,"g95":7000,"e20":0,"g95p":0,"power":0},"s40":{"diesel":10000,"g91":7000,"g95":10000,"e20":0,"g95p":0,"power":0},"s41":{"diesel":10000,"g91":10000,"g95":10000,"e20":10000,"g95p":0,"power":0},"s42":{"diesel":15000,"g91":9000,"g95":15000,"e20":0,"g95p":0,"power":0},"s43":{"diesel":20000,"g91":0,"g95":20000,"e20":0,"g95p":0,"power":0},"s44":{"diesel":20000,"g91":14000,"g95":6000,"e20":0,"g95p":0,"power":0},"s45":{"diesel":20000,"g91":0,"g95":0,"e20":0,"g95p":0,"power":0},"s46":{"diesel":9000,"g91":9000,"g95":9000,"e20":0,"g95p":0,"power":0},"s47":{"diesel":10000,"g91":5000,"g95":5000,"e20":0,"g95p":0,"power":0},"s48":{"diesel":14000,"g91":6000,"g95":14000,"e20":6000,"g95p":0,"power":0},"s49":{"diesel":20000,"g91":20000,"g95":20000,"e20":0,"g95p":0,"power":0},"s50":{"diesel":20000,"g91":10000,"g95":10000,"e20":0,"g95p":0,"power":0},"s51":{"diesel":40000,"g91":0,"g95":5000,"e20":0,"g95p":0,"power":0},"s52":{"diesel":10000,"g91":0,"g95":10000,"e20":0,"g95p":0,"power":0}};
+const FUEL_CAPS={"s01":{"diesel":20000,"g91":9000,"g95":0,"e20":0,"g95p":0,"power":0},"s02":{"diesel":20000,"g91":20000,"g95":10000,"e20":10000,"g95p":0,"power":0},"s03":{"diesel":20000,"g91":20000,"g95":0,"e20":0,"g95p":20000,"power":20000},"s04":{"diesel":20000,"g91":20000,"g95":0,"e20":20000,"g95p":0,"power":0},"s05":{"diesel":20000,"g91":20000,"g95":0,"e20":0,"g95p":20000,"power":20000},"s06":{"diesel":20000,"g91":10000,"g95":10000,"e20":0,"g95p":0,"power":0},"s07":{"diesel":15000,"g91":15000,"g95":15000,"e20":0,"g95p":0,"power":0},"s08":{"diesel":20000,"g91":10000,"g95":10000,"e20":0,"g95p":0,"power":0},"s09":{"diesel":20000,"g91":20000,"g95":20000,"e20":0,"g95p":0,"power":0},"s10":{"diesel":45000,"g91":15000,"g95":15000,"e20":15000,"g95p":0,"power":30000},"s11":{"diesel":26200,"g91":0,"g95":13600,"e20":0,"g95p":0,"power":0},"s12":{"diesel":90000,"g91":15000,"g95":15000,"e20":15000,"g95p":0,"power":30000},"s13":{"diesel":30000,"g91":20000,"g95":10000,"e20":20000,"g95p":0,"power":10000},"s14":{"diesel":60000,"g91":15000,"g95":15000,"e20":15000,"g95p":15000,"power":15000},"s15":{"diesel":30000,"g91":9000,"g95":12000,"e20":9000,"g95p":0,"power":0},"s16":{"diesel":45000,"g91":15000,"g95":15000,"e20":15000,"g95p":15000,"power":15000},"s17":{"diesel":20000,"g91":10000,"g95":15000,"e20":0,"g95p":0,"power":0},"s18":{"diesel":20000,"g91":15000,"g95":15000,"e20":0,"g95p":0,"power":0},"s19":{"diesel":60000,"g91":15000,"g95":15000,"e20":15000,"g95p":15000,"power":60000},"s20":{"diesel":15000,"g91":9000,"g95":9000,"e20":0,"g95p":0,"power":0},"s21":{"diesel":20000,"g91":9000,"g95":10000,"e20":10000,"g95p":0,"power":0},"s22":{"diesel":20000,"g91":10000,"g95":10000,"e20":10000,"g95p":0,"power":0},"s23":{"diesel":20000,"g91":10000,"g95":10000,"e20":0,"g95p":0,"power":0},"s24":{"diesel":30000,"g91":15000,"g95":15000,"e20":15000,"g95p":0,"power":0},"s25":{"diesel":20000,"g91":10000,"g95":10000,"e20":0,"g95p":0,"power":0},"s26":{"diesel":20000,"g91":9000,"g95":10000,"e20":10000,"g95p":0,"power":0},"s27":{"diesel":48000,"g91":7000,"g95":14000,"e20":0,"g95p":0,"power":0},"s28":{"diesel":20000,"g91":20000,"g95":20000,"e20":20000,"g95p":0,"power":60000},"s29":{"diesel":30000,"g91":10000,"g95":10000,"e20":0,"g95p":0,"power":0},"s30":{"diesel":-1,"g91":-1,"g95":-1,"e20":-1,"g95p":-1,"power":-1},"s31":{"diesel":18000,"g91":18000,"g95":9000,"e20":9000,"g95p":0,"power":0},"s32":{"diesel":20000,"g91":0,"g95":20000,"e20":0,"g95p":0,"power":0},"s33":{"diesel":40000,"g91":10000,"g95":20000,"e20":10000,"g95p":0,"power":0},"s34":{"diesel":30000,"g91":10000,"g95":10000,"e20":10000,"g95p":0,"power":0},"s35":{"diesel":40000,"g91":15000,"g95":15000,"e20":15000,"g95p":0,"power":15000},"s36":{"diesel":24000,"g91":15000,"g95":9000,"e20":0,"g95p":0,"power":0},"s37":{"diesel":24000,"g91":9000,"g95":9000,"e20":0,"g95p":0,"power":0},"s38":{"diesel":26000,"g91":16000,"g95":10000,"e20":0,"g95p":0,"power":0},"s39":{"diesel":20000,"g91":13000,"g95":7000,"e20":0,"g95p":0,"power":0},"s40":{"diesel":10000,"g91":7000,"g95":10000,"e20":0,"g95p":0,"power":0},"s41":{"diesel":10000,"g91":10000,"g95":10000,"e20":10000,"g95p":0,"power":0},"s42":{"diesel":15000,"g91":9000,"g95":15000,"e20":0,"g95p":0,"power":0},"s43":{"diesel":20000,"g91":0,"g95":20000,"e20":0,"g95p":0,"power":0},"s44":{"diesel":20000,"g91":14000,"g95":6000,"e20":0,"g95p":0,"power":0},"s45":{"diesel":20000,"g91":0,"g95":0,"e20":0,"g95p":0,"power":0},"s46":{"diesel":9000,"g91":9000,"g95":9000,"e20":0,"g95p":0,"power":0},"s47":{"diesel":10000,"g91":5000,"g95":5000,"e20":0,"g95p":0,"power":0},"s48":{"diesel":14000,"g91":6000,"g95":14000,"e20":6000,"g95p":0,"power":0},"s49":{"diesel":20000,"g91":20000,"g95":20000,"e20":0,"g95p":0,"power":0},"s50":{"diesel":20000,"g91":10000,"g95":10000,"e20":0,"g95p":0,"power":0},"s51":{"diesel":40000,"g91":0,"g95":5000,"e20":0,"g95p":0,"power":0},"s52":{"diesel":10000,"g91":0,"g95":10000,"e20":0,"g95p":0,"power":0}};
 
 function getStationFuels(sid){const caps=FUEL_CAPS[sid];if(!caps)return FUELS;return FUELS.filter(f=>caps[f.key]&&caps[f.key]!==0);}
 function getStationCap(sid){const caps=FUEL_CAPS[sid];if(!caps)return 0;return Object.values(caps).filter(v=>v>0).reduce((a,b)=>a+b,0);}
@@ -1432,9 +1447,9 @@ function sumFuel(stations,key){return stations.reduce((a,s)=>a+(getSD(s.id)[key]
 let isAdminView=false;
 function isPublicView(){return !isAdminView;}
 let lastSyncTime='—';
-function updateBannerTime(time){lastSyncTime=time;const el=document.getElementById('banner-last-update');if(el)el.textContent='🕐 อัปเดตล่าสุด: '+time;}
+function updateBannerTime(time){lastSyncTime=time;const el=document.getElementById('banner-last-update');if(el)el.textContent='📅 ข้อมูล ณ วันที่: '+time;}
 function setAdminView(on){isAdminView=on;renderDashboard();document.getElementById('admin-view-badge').style.display=on?'inline-flex':'none';document.getElementById('trend-lock').textContent=on?'':'🔒';
-  const timeSpan=`<br><span style="font-size:10px;opacity:.75" id="banner-last-update">🕐 อัปเดตล่าสุด: ${lastSyncTime}</span>`;
+  const timeSpan=`<br><span style="font-size:10px;opacity:.75" id="banner-last-update">📅 ข้อมูล ณ วันที่: ${lastSyncTime}</span>`;
   document.getElementById('public-banner').innerHTML=on?'<span class="public-banner-icon">🔓</span><div class="public-banner-text"><strong>โหมดผู้ดูแลระบบ</strong> แสดงตัวเลขลิตรจริง'+timeSpan+'</div>':'<span class="public-banner-icon">ℹ️</span><div class="public-banner-text"><strong>ข้อมูลสถานการณ์น้ำมัน</strong> จังหวัดหนองบัวลำภู · แสดงเป็นร้อยละ (%) ของความจุ · ครอบคลุม 6 อำเภอ 51 สถานี'+timeSpan+'</div>';
   document.getElementById('chart-title-main').textContent=on?'ปริมาณน้ำมันแยกประเภท (ลิตร)':'สัดส่วนน้ำมันแยกประเภท (%)';
   if(mapInst)updateMapMarkers();
@@ -1526,7 +1541,12 @@ function pullFromSheet(){
     if(!json.ok)throw new Error(json.message||'Sheet error');
     const onInputPage=document.getElementById('page-input').classList.contains('active');
     Object.keys(json.data).forEach(sid=>{if(DATA[sid]===undefined)return;if(onInputPage&&sid===currentSid)return;DATA[sid]={...DATA[sid],...json.data[sid]};});
-    persistData();const now=new Date().toLocaleTimeString('th-TH');setSyncBadge('ok','ซิงค์แล้ว '+now);updateBannerTime(now);
+    persistData();
+    // หาวันที่กรอกล่าสุดจากข้อมูล
+    const allDates=Object.values(DATA).map(d=>d.report_date||'').filter(Boolean).sort();
+    const latestDate=allDates.length>0?allDates[allDates.length-1]:'';
+    const displayDate=latestDate?new Date(latestDate).toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'}):new Date().toLocaleTimeString('th-TH');
+    const now=new Date().toLocaleTimeString('th-TH');setSyncBadge('ok','ซิงค์แล้ว '+now);updateBannerTime(displayDate);
     if(!onInputPage)showToast('ดึงข้อมูลสำเร็จ ✓');renderDashboard();if(mapInst)updateMapMarkers();
   }).catch(err=>{setSyncBadge('err','ดึงไม่สำเร็จ');showToast('Error: '+err.message,3000,true);}).finally(()=>setButtons(false));
 }
@@ -1586,19 +1606,42 @@ function loadStationPanel(){
   const brandEl=document.getElementById('sp-brand');brandEl.textContent=stInfo?stInfo.brand:'';brandEl.className='brand brand-'+(stInfo?stInfo.brand:'');
   const spill=document.getElementById('sp-status-pill');spill.className='status-pill pill-none';spill.innerHTML='รอกรอกข้อมูล';
   const capEl=document.getElementById('sp-cap');
-  capEl.value=cap>0?cap:'ยังไม่ได้ข้อมูล';capEl.readOnly=true;capEl.style.background='#f3f4f6';capEl.style.color='#6b7280';
+  if(capEl){capEl.value=cap>0?cap:'';capEl.readOnly=true;capEl.style.background='#f3f4f6';capEl.style.color='#6b7280';}
   updateCapBar(0,cap);
+  // สร้าง fuel grid
   const stFuels=getStationFuels(sid);const caps=FUEL_CAPS[sid]||{};
   const grid=document.getElementById('fuel-grid');
-  grid.innerHTML=stFuels.map(f=>{const fc=caps[f.key]||0;const capLbl=fc>0?`<span style="font-size:9px;color:#9ca3af;margin-left:auto">ความจุ ${fc.toLocaleString()} ล.</span>`:'';return `<div class="fuel-cell"><div class="fuel-cell-label"><span class="fuel-dot" style="background:${f.color}"></span>${f.label}${capLbl}</div><input class="fuel-cell-input" type="number" id="fci-${f.key}" min="0" max="${fc>0?fc:''}" step="100" value="" placeholder="0" oninput="onFuelCellInput('${f.key}',this)" inputmode="numeric"><div class="fuel-cell-unit">ลิตร</div></div>`;}).join('');
+  grid.innerHTML=stFuels.map(f=>{
+    const fc=caps[f.key]||0;
+    // สีสถานะตามสัดส่วน
+    const pct=fc>0&&(DATA[sid][f.key]||0)>0?Math.round((DATA[sid][f.key]||0)/fc*100):0;
+    const statusColor=pct>50?'#059669':pct>=25?'#d97706':pct>0?'#dc2626':'#e5e7eb';
+    const capBar=fc>0?`<div style="height:4px;background:#f3f4f6;border-radius:2px;margin-top:3px;overflow:hidden"><div style="height:100%;width:${Math.min(pct,100)}%;background:${statusColor};border-radius:2px;transition:width .3s"></div></div>`:'';
+    const capLbl=fc>0?`<span style="font-size:9px;color:#9ca3af;margin-left:auto">max ${fc.toLocaleString()} ล.</span>`:'';
+    return `<div class="fuel-cell"><div class="fuel-cell-label"><span class="fuel-dot" style="background:${f.color}"></span>${f.label}${capLbl}</div><input class="fuel-cell-input" type="number" id="fci-${f.key}" min="0" max="${fc>0?fc:''}" step="100" value="" placeholder="0" oninput="onFuelCellInput('${f.key}',this)" inputmode="numeric"><div class="fuel-cell-unit">ลิตร</div>${capBar}</div>`;
+  }).join('');
   document.getElementById('sp-sync-time').textContent=d.updated_at?'บันทึกล่าสุด '+d.updated_at:'';setRtBadge(false);
   setServiceStatus(d.service_status||'open');
   document.getElementById('sp-delivery-date').value=d.delivery_date||'';
+  document.getElementById('sp-delivery-time').value=d.delivery_time||'';
   document.getElementById('sp-delivery-note').value=d.delivery_note||'';
+  document.getElementById('sp-empty-date').value=d.empty_date||'';
+  document.getElementById('sp-empty-time').value=d.empty_time||'';
+  document.getElementById('sp-empty-note').value=d.empty_note||'';
+  // วันที่รายงาน = วันปัจจุบันเสมอ (read-only)
   const today=new Date();
-  document.getElementById('sp-report-date').value=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
-  document.getElementById('sp-time-slot').value='';
-  document.querySelectorAll('.sp-time-btn').forEach(b=>b.classList.remove('active'));
+  const todayStr=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  const todayTH=today.toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('sp-report-date').value=todayStr;
+  document.getElementById('sp-report-date-display').textContent='📅 '+todayTH;
+  // ตั้ง time-slot อัตโนมัติตามเวลาปัจจุบัน + แสดงเวลากรอก
+  const h=today.getHours(),m=today.getMinutes();
+  const fillCount=DATA[sid]._fill_count||0;
+  const fillCountNext=fillCount+1;
+  const nowTimeStr=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+' น.';
+  const autoSlot=h<10?'08:00':h<14?'12:00':'16:00';
+  document.getElementById('sp-time-slot').value=autoSlot;
+  document.getElementById('sp-fill-time-display').textContent=`ครั้งที่ ${fillCountNext} · ${nowTimeStr}`;
 }
 window.setTimeSlot=function(time){
   document.getElementById('sp-time-slot').value=time;
@@ -1622,9 +1665,12 @@ function saveServiceStatus(){
 }
 function onFuelCellInput(fkey,el){
   if(!currentSid)return;const val=parseFloat(el.value)||0;const cap=DATA[currentSid].cap||0;
+  const fc=(FUEL_CAPS[currentSid]||{})[fkey]||0;
   const otherSum=FUELS.filter(f=>f.key!==fkey).reduce((a,f)=>a+(DATA[currentSid][f.key]||0),0);const newTotal=otherSum+val;
   if(cap>0&&newTotal>cap){const maxAllowed=Math.max(0,cap-otherSum);el.value=maxAllowed;DATA[currentSid][fkey]=maxAllowed;el.classList.add('over-cap');showCapWarn(fkey,cap,newTotal);setTimeout(()=>el.classList.remove('over-cap'),1500);}
   else{DATA[currentSid][fkey]=val;el.classList.remove('over-cap');el.classList.add('dirty');}
+  // อัปเดต color bar ใน fuel cell
+  if(fc>0){const pct=Math.min(Math.round((DATA[currentSid][fkey]||0)/fc*100),100);const sc=pct>50?'#059669':pct>=25?'#d97706':pct>0?'#dc2626':'#e5e7eb';const bar=el.parentElement.querySelector('div[style*="height:4px"]>div');if(bar){bar.style.width=pct+'%';bar.style.background=sc;}}
   const remain=getRemain(currentSid);updateCapBar(remain,cap);
 }
 function showCapWarn(fkey,cap,tried){const fuelName=FUELS.find(f=>f.key===fkey)?.label||fkey;showToast(`⚠️ ${fuelName}: เกินความจุ`,2500,true);}
@@ -1644,17 +1690,28 @@ function saveCurrentToSheet(){
   if(!currentSid)return;
   const timeSlot=document.getElementById('sp-time-slot').value;
   const reportDate=document.getElementById('sp-report-date').value;
-  if(!timeSlot){showToast('กรุณาเลือกช่วงเวลาก่อนบันทึก',2500,true);return;}
-  if(!reportDate){showToast('กรุณาเลือกวันที่ก่อนบันทึก',2500,true);return;}
+  if(!reportDate){showToast('ไม่พบวันที่รายงาน',2500,true);return;}
   FUELS.forEach(f=>{const el=document.getElementById('fci-'+f.key);if(el){DATA[currentSid][f.key]=parseFloat(el.value)||0;el.classList.remove('dirty');el.classList.add('saving');}});
   const capEl=document.getElementById('sp-cap');if(capEl)DATA[currentSid].cap=parseFloat(capEl.value)||0;
   DATA[currentSid].delivery_date=document.getElementById('sp-delivery-date').value||'';
+  DATA[currentSid].delivery_time=document.getElementById('sp-delivery-time').value||'';
   DATA[currentSid].delivery_note=document.getElementById('sp-delivery-note').value||'';
+  DATA[currentSid].empty_date=document.getElementById('sp-empty-date').value||'';
+  DATA[currentSid].empty_time=document.getElementById('sp-empty-time').value||'';
+  DATA[currentSid].empty_note=document.getElementById('sp-empty-note').value||'';
   DATA[currentSid].time_slot=timeSlot;
   DATA[currentSid].report_date=reportDate;
-  saveOneStation(currentSid).then(()=>{renderDashboard();FUELS.forEach(f=>{DATA[currentSid][f.key]=0;const el=document.getElementById('fci-'+f.key);if(el){el.value='';el.classList.remove('dirty','saving');}});document.getElementById('sp-delivery-date').value='';document.getElementById('sp-delivery-note').value='';persistData();updateCapBar(0,DATA[currentSid].cap||0);showToast('บันทึกสำเร็จ ✓');});
+  // นับจำนวนครั้งที่กรอก
+  DATA[currentSid]._fill_count=(DATA[currentSid]._fill_count||0)+1;
+  // อัปเดต banner วันที่กรอก
+  const todayTH=new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+  updateBannerTime(todayTH);
+  saveOneStation(currentSid).then(()=>{renderDashboard();FUELS.forEach(f=>{DATA[currentSid][f.key]=0;const el=document.getElementById('fci-'+f.key);if(el){el.value='';el.classList.remove('dirty','saving');}});document.getElementById('sp-delivery-date').value='';document.getElementById('sp-delivery-time').value='';document.getElementById('sp-delivery-note').value='';document.getElementById('sp-empty-date').value='';document.getElementById('sp-empty-time').value='';document.getElementById('sp-empty-note').value='';persistData();updateCapBar(0,DATA[currentSid].cap||0);
+    // อัปเดต fill-time display
+    const now=new Date();const h=now.getHours(),m=now.getMinutes();const nowStr=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+' น.';const fc=DATA[currentSid]._fill_count||1;document.getElementById('sp-fill-time-display').textContent=`ครั้งที่ ${fc+1} · ${nowStr}`;
+    showToast('บันทึกสำเร็จ ✓');});
 }
-function clearCurrentStation(){if(!currentSid)return;if(!confirm('ล้างข้อมูลสถานีนี้?'))return;DATA[currentSid]={cap:0,diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0,updated_at:'',delivery_date:'',delivery_note:''};persistData();loadStationPanel();showToast('ล้างข้อมูลแล้ว');}
+function clearCurrentStation(){if(!currentSid)return;if(!confirm('ล้างข้อมูลสถานีนี้?'))return;DATA[currentSid]={cap:0,diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0,updated_at:'',delivery_date:'',delivery_time:'',delivery_note:'',empty_date:'',empty_time:'',empty_note:''};persistData();loadStationPanel();showToast('ล้างข้อมูลแล้ว');}
 
 
 let mainChartInst=null,donutChartInst=null;
@@ -2006,8 +2063,12 @@ function checkSalesPin(){
 function showSalesForm(isAdmin){
   document.getElementById('sales-pin-gate').style.display='none';
   document.getElementById('sales-form').style.display='block';
-  // ตั้งวันที่เป็นวันนี้
-  const today=new Date();document.getElementById('sales-date').value=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  // ตั้งวันที่เป็นวันนี้ (hidden + display)
+  const today=new Date();
+  const todayStr=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  const todayTH=today.toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('sales-date').value=todayStr;
+  const dispEl=document.getElementById('sales-date-display');if(dispEl)dispEl.textContent='📅 '+todayTH;
   // Admin เห็น slicer เลือกอำเภอ/สถานี
   const amphoeSel=document.getElementById('sales-amphoe-sel');
   const stationSel=document.getElementById('sales-station-sel');
