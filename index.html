@@ -98,12 +98,20 @@ body {
 .header-date { font-size: 10px; color: #94a3b8; white-space: nowrap; }
 
 @media(max-width:600px){
-  .header { padding: .4rem .5rem; gap: 6px; }
+  .header { padding: .4rem .5rem; gap: 4px; flex-wrap: nowrap; }
   .header-title { font-size: 11px; }
   .header-sub { display: none; }
   .header-date { display: none; }
-  .header-logos { gap: 5px; }
-  .header-logo { height: 32px; width: 32px; border-width: 1.5px; }
+  .header-logos { gap: 4px; }
+  .header-logo { height: 30px; width: 30px; border-width: 1.5px; }
+  .header-right { gap: 4px; flex-shrink: 0; max-width: 55vw; overflow: hidden; }
+  .sync-badge { font-size: 9px; padding: 2px 6px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+  #admin-view-badge { font-size: 9px; padding: 2px 5px; }
+  #admin-view-badge span:last-child { display: none; }
+}
+@media(max-width:400px){
+  .header-logos { display: none; }
+  .header-right { max-width: 60vw; }
 }
 @media(max-width:360px){
   .header-title { font-size: 10px; }
@@ -147,7 +155,8 @@ body {
 @media(max-width:600px){
   .mode-hint { display: none; }
   .mode-label { display: none; }
-  .mode-btn { font-size: 11px; padding: 5px 9px; min-height: 32px; }
+  .mode-btn { font-size: 11px; padding: 5px 10px; min-height: 32px; }
+  .mode-toggle { padding: .3rem .4rem; gap: 5px; }
 }
 
 /* ── NAV ── */
@@ -169,7 +178,10 @@ body {
 .nav-tab:hover { color: #e2e8f0; }
 .nav-tab.active { color: #fff; border-bottom-color: var(--amber); }
 @media(max-width:600px){
-  .nav-tab { padding: .45rem .5rem; font-size: 10.5px; }
+  .nav-tab { padding: .4rem .45rem; font-size: 10px; min-height: 36px; }
+}
+@media(max-width:380px){
+  .nav-tab { padding: .35rem .35rem; font-size: 9.5px; }
 }
 
 /* ── PAGES ── */
@@ -749,7 +761,31 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
 }
 
 
+/* ── STICKY SAVE BAR ── */
+.sticky-save-bar {
+  position: sticky; bottom: 0; left: 0; right: 0;
+  background: #fff;
+  border-top: 2px solid var(--gray-200);
+  padding: .6rem .85rem;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  z-index: 50;
+  box-shadow: 0 -4px 16px rgba(0,0,0,.08);
+  padding-bottom: max(.6rem, var(--safe-bottom));
+}
+@media(max-width:600px){
+  .sticky-save-bar { padding: .5rem .65rem; padding-bottom: max(.5rem, var(--safe-bottom)); }
+  .sticky-save-bar .btn { font-size:11px; padding:5px 10px; }
+}
+
 .nav-tab.has-alert { color: #fbbf24 !important; }
+/* ── REPORT RESPONSIVE ── */
+@media(max-width:600px){
+  .rpt-kpi-grid { grid-template-columns: repeat(2,1fr) !important; }
+  #report-content { font-size: 11px; }
+}
+@media(max-width:480px){
+  .rpt-kpi-grid { grid-template-columns: repeat(2,1fr) !important; }
+}
 .tab-badge {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 16px; height: 16px; border-radius: 8px;
@@ -828,8 +864,50 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
 }
 .sidebar-open-fab.show { display:flex; }
 @media(max-width:700px){
-  .map-sidebar { width:100% !important; position:absolute; top:0; left:0; height:100%; z-index:500; }
-  .map-sidebar.collapsed { width:0 !important; }
+  .map-sidebar {
+    width:100% !important;
+    position:absolute;
+    /* bottom sheet แทน full screen */
+    top:auto !important;
+    bottom:0; left:0; right:0;
+    height:52% !important;
+    z-index:500;
+    border-radius:16px 16px 0 0;
+    box-shadow:0 -4px 24px rgba(0,0,0,.18);
+    border-right:none;
+    border-top:1px solid var(--gray-200);
+    transition:transform .3s ease, opacity .3s ease;
+    transform:translateY(0);
+  }
+  .map-sidebar.collapsed {
+    width:100% !important;
+    transform:translateY(110%) !important;
+    opacity:0;
+    pointer-events:none;
+  }
+  .map-sidebar-header {
+    border-radius:16px 16px 0 0;
+    cursor:grab;
+  }
+  /* drag handle indicator */
+  .map-sidebar-header::before {
+    content:'';
+    display:block;
+    width:36px; height:4px;
+    background:rgba(255,255,255,.35);
+    border-radius:2px;
+    margin:0 auto 6px;
+  }
+  .map-page { position:relative; }
+  /* FAB ขยับให้พ้น bottom sheet */
+  .sidebar-open-fab {
+    bottom:10px !important; top:auto !important;
+    left:50% !important; transform:translateX(-50%);
+    width:auto !important; padding:0 18px;
+    border-radius:20px !important;
+    font-size:13px !important;
+  }
+  .sidebar-open-fab::before { content:'📋 '; }
 }
 .map-sidebar-title { font-family:'Kanit',sans-serif; font-size:13px; font-weight:600; }
 .map-sidebar-sub { font-size:10px; color:#94a3b8; margin-top:1px; }
@@ -1103,7 +1181,7 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
 <!-- ===================== MAP ===================== -->
 <div class="page" id="page-map">
 <div class="map-page" id="map-page-wrap">
-  <button class="sidebar-open-fab" id="sidebar-open-fab" onclick="toggleMapSidebar()" title="เปิดรายการสถานี">☰</button>
+  <button class="sidebar-open-fab" id="sidebar-open-fab" onclick="toggleMapSidebar()" title="เปิดรายการสถานี">รายการสถานี</button>
   <div class="map-sidebar" id="map-sidebar">
     <div class="map-sidebar-header">
       <div class="map-sidebar-header-text">
@@ -1114,26 +1192,26 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
     </div>
     <div class="map-filter">
       <select id="map-pump-filter" onchange="filterMapStations()">
-        <option value="all">🏪 ทุกปั้ม (51 สถานี)</option>
-        <option value="brand">⛽ แบรนด์ (35 สถานี)</option>
-        <option value="local">📍 ในพื้นที่ (15 สถานี)</option>
+        <option value="all">ทุกปั้ม (51 สถานี)</option>
+        <option value="brand">แบรนด์ (35 สถานี)</option>
+        <option value="local">ในพื้นที่ (15 สถานี)</option>
       </select>
       <select id="map-amphoe-filter" onchange="filterMapStations()"><option value="all">ทุกอำเภอ</option></select>
       <select id="map-status-filter" onchange="filterMapStations()">
         <option value="all">ทุกสถานะ</option>
-        <option value="ok">✅ ปกติ (มากกว่า 50%)</option>
-        <option value="watch">⚠️ น้อย (5-50%)</option>
-        <option value="danger">🔴 หมด (ต่ำกว่า 5%)</option>
+        <option value="ok">ปกติ (มากกว่า 50%)</option>
+        <option value="watch">น้อย (5-50%)</option>
+        <option value="danger">หมด (ต่ำกว่า 5%)</option>
         <option value="none">— ไม่มีข้อมูล</option>
       </select>
       <select id="map-fuel-filter" onchange="filterMapStations()">
         <option value="all">ทุกประเภทน้ำมัน</option>
-        <option value="diesel">⛽ ดีเซล B7</option>
-        <option value="g91">🔵 แก๊สโซฮอล์ 91</option>
-        <option value="g95">🟢 แก๊สโซฮอล์ 95</option>
-        <option value="e20">🟣 E20</option>
-        <option value="g95p">💎 95 พรีเมี่ยม</option>
-        <option value="power">🔴 พาวเวอร์ดีเซล</option>
+        <option value="diesel">ดีเซล B7</option>
+        <option value="g91">แก๊สโซฮอล์ 91</option>
+        <option value="g95">แก๊สโซฮอล์ 95</option>
+        <option value="e20">E20</option>
+        <option value="g95p">95 พรีเมี่ยม</option>
+        <option value="power">พาวเวอร์ดีเซล</option>
       </select>
     </div>
     <div class="map-legend">
@@ -1232,11 +1310,11 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
         </span>
       </div>
       <div class="fuel-grid" id="sales-fuel-grid"></div>
-      <div style="display:flex;align-items:center;gap:8px;padding:.6rem 0;flex-wrap:wrap">
+      <div class="sticky-save-bar">
         <span style="font-size:11px;color:var(--gray-400)" id="sales-save-status"></span>
         <div style="flex:1"></div>
         <button class="btn" onclick="clearSalesForm()">ล้าง</button>
-        <button class="btn btn-success" onclick="saveSalesToSheet()" id="btn-save-sales">💾 บันทึกยอดจำหน่าย</button>
+        <button class="btn btn-success" onclick="saveSalesToSheet()" id="btn-save-sales" style="min-width:120px">💾 บันทึกยอดจำหน่าย</button>
       </div>
     </div>
   </div>
@@ -1245,7 +1323,7 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
 
 <!-- ===================== REPORT ===================== -->
 <div class="page" id="page-report">
-<div class="settings-wrap" style="max-width:700px">
+<div class="settings-wrap" style="max-width:700px;padding-left:.4rem;padding-right:.4rem">
   <div class="step-guide">
     <div class="step-guide-title">🖨️ สรุปรายงานสถานการณ์น้ำมัน</div>
     <div style="font-size:11px;color:var(--gray-500);margin-top:4px">สรุปข้อมูล ณ ปัจจุบัน พร้อมพิมพ์หรือบันทึกเป็น PDF</div>
@@ -1329,6 +1407,15 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
     <div class="slicer-grp">
       <span class="slicer-label">สถานี</span>
       <select id="sel-station" onchange="renderDashboard()"></select>
+    </div>
+    <div class="slicer-grp">
+      <span class="slicer-label">เรียงตาม</span>
+      <select id="sel-sort" onchange="renderDashboard()" style="min-width:130px">
+        <option value="amphoe">อำเภอ</option>
+        <option value="ok">เติมได้ปกติ</option>
+        <option value="watch">น้ำมันน้อย</option>
+        <option value="danger">วิกฤต</option>
+      </select>
     </div>
     <button class="btn btn-warn" onclick="pullFromSheet()" id="btn-pull" style="white-space:nowrap;flex-shrink:0">↓ ดึงข้อมูล</button>
   </div>
@@ -1470,12 +1557,12 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
         </div>
         <div class="fuel-grid" id="fuel-grid"></div>
 
-        <div class="sp-actions">
+        <div class="sticky-save-bar">
           <div class="sp-rt-badge off" id="rt-badge"><span class="rt-dot"></span>Realtime</div>
           <span class="sp-sync-time" id="sp-sync-time"></span>
-          <div class="spacer"></div>
+          <div style="flex:1"></div>
           <button class="btn" onclick="clearCurrentStation()" style="font-size:11px">ล้าง</button>
-          <button class="btn btn-success" id="btn-save-one" onclick="saveCurrentToSheet()">💾 บันทึก</button>
+          <button class="btn btn-success" id="btn-save-one" onclick="saveCurrentToSheet()" style="min-width:100px">💾 บันทึก</button>
         </div>
       </div>
 
@@ -2134,16 +2221,71 @@ function renderStationCards(stations){
   const stText={ok:'#065f46',watch:'#9a3412',danger:'#991b1b',none:'#9ca3af'};
   const stLabel={ok:'ปกติ',watch:'น้อย',danger:'หมด',none:'—'};
 
-  const grouped=[];
-  const stSet=new Set(stations.map(s=>s.id));
-  GROUPS.forEach(g=>{
-    const matching=g.stations.filter(s=>stSet.has(s.id));
-    if(matching.length>0)grouped.push({amphoe:g.amphoe,stations:matching});
-  });
+  const sortMode=document.getElementById('sel-sort')?.value||'amphoe';
+  const statusOrder={danger:0,watch:1,ok:2,none:3};
 
+  // helper: get station overall status key
+  const getStKey=(sid)=>{
+    const d=getSD(sid),r=getRemain(sid),p=d.cap>0?Math.round(r/d.cap*100):0;
+    const fuelStatuses=getStationFuels(sid).map(f=>{
+      const fc=FUEL_CAPS[sid]?.[f.key]||0,v=d[f.key]||0;
+      const fp=fc>0?Math.round(v/fc*100):0;
+      return v===0?'none':fp>50?'ok':fp>=5?'watch':'danger';
+    }).filter(k=>k!=='none');
+    if(!fuelStatuses.length)return 'none';
+    if(fuelStatuses.includes('danger'))return 'danger';
+    if(fuelStatuses.includes('watch'))return 'watch';
+    return 'ok';
+  };
+
+  let grouped=[];
+  const stSet=new Set(stations.map(s=>s.id));
+
+  const labelMap={
+    ok:'✅ เติมได้ปกติ — ไปได้เลยมีน้ำมัน',
+    watch:'⚠️ น้ำมันน้อย — รีบไปก่อนน้ำมันหมด',
+    danger:'🔴 วิกฤต — อาจจะต้องรอน้ำมันเข้า'
+  };
+  const emptyMsg={
+    ok:'ขณะนี้ยังไม่มีสถานีที่น้ำมันปกติ',
+    watch:'ขณะนี้ไม่มีสถานีที่น้ำมันน้อย',
+    danger:'ขณะนี้ไม่มีสถานีวิกฤต — น้ำมันเพียงพอทุกสถานี 🎉'
+  };
+
+  if(sortMode==='amphoe'){
+    // เรียงตามอำเภอ (default)
+    GROUPS.forEach(g=>{
+      const matching=g.stations.filter(s=>stSet.has(s.id));
+      if(matching.length>0)grouped.push({amphoe:g.amphoe,stations:matching,isGroup:true});
+    });
+  } else if(sortMode==='ok'||sortMode==='watch'||sortMode==='danger'){
+    // กรองเฉพาะ status ที่เลือก จัดกลุ่มตามอำเภอ
+    GROUPS.forEach(g=>{
+      const matching=g.stations.filter(s=>stSet.has(s.id)&&getStKey(s.id)===sortMode);
+      if(matching.length>0)grouped.push({amphoe:g.amphoe,stations:matching,isGroup:true,statusKey:sortMode});
+    });
+    if(grouped.length===0){
+      document.getElementById('station-cards-grid').innerHTML=`<div style="padding:2rem;text-align:center;color:var(--gray-400);font-size:12px">${emptyMsg[sortMode]}</div>`;
+      return;
+    }
+  }
+
+  const groupHeaderStyle={
+    danger:'background:linear-gradient(135deg,#dc2626,#ef4444)',
+    watch:'background:linear-gradient(135deg,#d97706,#f59e0b)',
+    ok:'background:linear-gradient(135deg,#059669,#10b981)',
+    none:'background:linear-gradient(135deg,#6b7280,#9ca3af)',
+  };
+
+  const totalFiltered=grouped.reduce((a,g)=>a+g.stations.length,0);
   let html='';
-  grouped.forEach(({amphoe,stations:stList})=>{
-    html+=`<div class="kpi-section-label" style="margin-top:.75rem;margin-bottom:.5rem"><span class="sl-icon">📍</span><span class="sl-text">${amphoe} (${stList.length} สถานี)</span></div>`;
+  if(sortMode!=='amphoe'&&labelMap[sortMode]){
+    html+=`<div style="margin-bottom:.5rem;padding:.55rem .75rem;border-radius:10px;${groupHeaderStyle[sortMode]};color:#fff;font-size:12px;font-weight:600;font-family:'Kanit',sans-serif">${labelMap[sortMode]} · พบ ${totalFiltered} สถานี</div>`;
+  }
+  grouped.forEach(({amphoe,stations:stList,isGroup,statusKey})=>{
+    const hStyle=statusKey?groupHeaderStyle[statusKey]:'background:linear-gradient(135deg,var(--navy),var(--navy-light))';
+    // ถ้ากรอง status เดียว → แสดง label ความหมายด้านบนครั้งแรก
+    html+=`<div class="kpi-section-label" style="margin-top:.75rem;margin-bottom:.5rem;${hStyle}"><span class="sl-icon">📍</span><span class="sl-text">${amphoe} (${stList.length} สถานี)</span></div>`;
     html+=`<div class="st-cards-grid">`;
     stList.forEach(s=>{
       const d=getSD(s.id),remain=getRemain(s.id),cap=d.cap||0;
@@ -2400,7 +2542,9 @@ function initTrend(){
     sel.value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
   }
   const af=document.getElementById('trend-amphoe-sel');if(af.options.length===1){GROUPS.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.amphoe;af.appendChild(o);});}
-  af.onchange=()=>{buildTrendStationFilter();renderTrendCharts();};buildTrendStationFilter();if(trendData.length===0)loadTrend();
+  af.onchange=()=>{buildTrendStationFilter();renderTrendCharts();};buildTrendStationFilter();
+  // โหลดอัตโนมัติเสมอเมื่อเปิดหน้า (ไม่ต้องกดปุ่ม)
+  loadTrend();
 }
 function buildTrendStationFilter(){const amphoeId=document.getElementById('trend-amphoe-sel').value;const ss=document.getElementById('trend-station-sel');const prev=ss.value;ss.innerHTML='<option value="all">ทุกสถานี</option>';const pool=amphoeId==='all'?GROUPS.flatMap(g=>g.stations):GROUPS.find(g=>g.id===amphoeId)?.stations||[];pool.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;ss.appendChild(o);});if([...ss.options].some(o=>o.value===prev))ss.value=prev;}
 let salesTrendData=[], trendSalesChartMain=null, trendSalesChartSubs={};
@@ -2769,7 +2913,7 @@ function renderReport(){
       <div style="font-size:11px;color:var(--gray-400);margin-top:2px">ข้อมูล ณ วันที่ ${dateStr} เวลา ${timeStr}</div>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:.75rem">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:.75rem" class="rpt-kpi-grid">
       <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:.5rem .6rem;text-align:center">
         <div style="font-size:10px;color:#065f46;font-weight:700">สถานีทั้งหมด</div>
         <div style="font-family:'Kanit',sans-serif;font-size:20px;font-weight:800;color:#059669">${allSt.length}</div>
@@ -2811,7 +2955,8 @@ function renderReport(){
       <div style="font-family:'Kanit',sans-serif;font-size:12px;font-weight:700;color:var(--navy);background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;padding:.35rem .65rem;border-radius:6px;margin-bottom:4px">
         📍 ${g.amphoe} (${stList.length} สถานี)
       </div>
-      <table style="width:100%;border-collapse:collapse;font-size:11px">
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:6px">
+      <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:520px">
         <thead>
           <tr style="background:#f3f4f6">
             <th style="padding:5px 7px;text-align:left;border-bottom:1.5px solid #e5e7eb;font-weight:700;color:var(--gray-700)">ชื่อสถานี</th>
@@ -2855,7 +3000,7 @@ function renderReport(){
         <td style="padding:5px 7px;border-bottom:1px solid #f3f4f6;color:var(--gray-400);white-space:nowrap">${upd}</td>
       </tr>`;
     });
-    html+=`</tbody></table></div>`;
+    html+=`</tbody></table></div></div>`;
   });
 
   html+=`<div style="font-size:10px;color:var(--gray-400);text-align:center;margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--gray-200)">
@@ -2901,8 +3046,13 @@ if(GS_URL)setSyncBadge('ok','พร้อมซิงค์');
 buildDashboardSelects();setMode('view',true);renderDashboard();startAutoRefresh();initThaiDateSelects();
 if(GS_URL)setTimeout(()=>pullFromSheet(),600);
 
-// Auto close map sidebar on mobile
-if(window.innerWidth<700){sidebarOpen=false;document.getElementById('map-sidebar').classList.add('collapsed');document.getElementById('sidebar-open-fab').classList.add('show');}
+// Map sidebar: บนมือถือเปิด bottom sheet อัตโนมัติ, บนคอม sidebar ซ้าย
+if(window.innerWidth<700){
+  sidebarOpen=true; // เปิดเป็น bottom sheet
+  // ไม่ต้อง collapse
+} else {
+  sidebarOpen=true;
+}
 
 // Re-render charts on resize
 let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{if(document.getElementById('page-dashboard').classList.contains('active'))renderDashboard();},300);});
