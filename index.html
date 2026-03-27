@@ -1085,8 +1085,6 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
 <div class="mode-toggle">
   <span class="mode-label">โหมด:</span>
   <button class="mode-btn active" id="mode-btn-view" onclick="setMode('view',true)">👁 ดูข้อมูล</button>
-  <button class="mode-btn" id="mode-btn-map" onclick="switchTab('map')">🗺️ แผนที่</button>
-  <button class="mode-btn" id="mode-btn-edit" onclick="switchTab('input')">✏️ กรอกข้อมูลน้ำมันคงเหลือ</button>
   <button class="mode-btn" id="mode-btn-settings" onclick="requestSettings()">⚙️ ตั้งค่า</button>
   <span class="mode-hint" id="mode-hint">โหมดดูข้อมูล</span>
 </div>
@@ -1638,24 +1636,30 @@ let CURRENT_MODE=localStorage.getItem(LS_MODE)||'view';
 function formatThaiDateTime(raw){
   if(!raw||raw==='—'||raw==='')return '';
   const thaiM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-  // กรณี ISO เช่น 2026-03-26T04:06:20.000Z หรือ 2026-03-26T11:06:20+07:00
-  if(raw.includes('T')||(/^\d{4}-\d{2}-\d{2}/.test(raw)&&raw.length>10)){
+
+  // กรณีเวลาเปล่า HH:MM:SS หรือ HH:MM (จาก Apps Script เช่น "14:30:00")
+  if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(raw.trim())){
+    const parts=raw.trim().split(':');
+    return `${String(parseInt(parts[0])).padStart(2,'0')}:${parts[1]} น.`;
+  }
+
+  // กรณี ISO หรือ date string
+  if(raw.includes('T')||raw.includes('-')){
     try{
       const d=new Date(raw);
       if(isNaN(d.getTime()))return raw;
+      // ตรวจปีสมเหตุ (ค.ศ. 2020-2100) ป้องกันปี 1900 หรือ default date
+      const yr=d.getFullYear();
+      if(yr<2010||yr>2100)return raw;
       const day=d.getDate();
       const mon=thaiM[d.getMonth()];
-      const year=d.getFullYear()+543;
+      const yearTH=yr+543;
       const hh=String(d.getHours()).padStart(2,'0');
       const mm=String(d.getMinutes()).padStart(2,'0');
-      return `${day} ${mon} ${year} · ${hh}:${mm} น.`;
+      return `${day} ${mon} ${yearTH} · ${hh}:${mm} น.`;
     }catch(e){return raw;}
   }
-  // กรณีเวลาเปล่า HH:MM:SS หรือ HH:MM (บันทึกโดย Apps Script)
-  if(/^\d{1,2}:\d{2}/.test(raw)){
-    const parts=raw.split(':');
-    return `${String(parts[0]).padStart(2,'0')}:${parts[1]} น.`;
-  }
+
   return raw;
 }
 
@@ -1663,8 +1667,10 @@ function formatThaiDateTime(raw){
 function formatThaiDateShort(iso){
   if(!iso)return '';
   const p=iso.split('-');if(p.length<3)return iso;
+  const yr=parseInt(p[0]);
+  if(yr<2010||yr>2100)return iso; // ป้องกันปีผิด เช่น 1900
   const m=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-  return `${parseInt(p[2])} ${m[parseInt(p[1])-1]} ${parseInt(p[0])+543}`;
+  return `${parseInt(p[2])} ${m[parseInt(p[1])-1]} ${yr+543}`;
 }
 
 function getSD(sid){return DATA[sid]||{cap:0,diesel:0,g91:0,g95:0,e20:0,g95p:0,power:0,updated_at:''};}
@@ -1722,7 +1728,7 @@ function getFuelStatus(pct){
 function setMode(mode,skipPin){
   CURRENT_MODE=mode;localStorage.setItem(LS_MODE,mode);
   document.getElementById('mode-btn-view').classList.toggle('active',mode==='view');
-  document.getElementById('mode-btn-edit').classList.toggle('active',mode==='edit');
+  document.getElementById('mode-btn-edit')?.classList.toggle('active',mode==='edit');
   if(mode==='view')document.getElementById('mode-hint').textContent='โหมดดูข้อมูล';
 }
 
@@ -1748,8 +1754,8 @@ function switchTab(tab){
   const idx=tabs.indexOf(tab);
   const navTabs=document.querySelectorAll('.nav-tab');
   if(navTabs[idx])navTabs[idx].classList.add('active');
-  document.getElementById('mode-btn-map').classList.toggle('active',tab==='map');
-  document.getElementById('mode-btn-edit').classList.toggle('active',tab==='input');
+  document.getElementById('mode-btn-map')?.classList.toggle('active',tab==='map');
+  document.getElementById('mode-btn-edit')?.classList.toggle('active',tab==='input');
   if(tab==='dashboard'){renderDashboard();document.getElementById('mode-btn-view').classList.add('active');}
   if(tab==='map')initMap();
   if(tab==='report'){
@@ -1790,7 +1796,12 @@ function saveOneStation(sid){
   const stInfo=ALL_STATIONS.find(s=>s.id===sid)||{};
   const payload={...DATA[sid],station_name:stInfo.name||sid,amphoe:stInfo.amphoe||'',brand:stInfo.brand||''};
   return gsPost(GS_URL,{action:'save_one',station_id:sid,data:payload}).then(()=>{
-    const now=new Date().toLocaleTimeString('th-TH');DATA[sid].updated_at=new Date().toISOString();persistData();
+    // บันทึกเวลาแบบ local ISO (ไม่ใช่ UTC) เพื่อให้ตรงกับ timezone ไทย
+    const _now=new Date();const _off=_now.getTimezoneOffset()*60000;
+    DATA[sid].updated_at=new Date(_now-_off).toISOString().slice(0,19).replace('T',' ').replace(' ','T')+'';
+    // เก็บเป็น yyyy-MM-ddTHH:mm:ss local
+    DATA[sid].updated_at=`${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}T${String(_now.getHours()).padStart(2,'0')}:${String(_now.getMinutes()).padStart(2,'0')}:${String(_now.getSeconds()).padStart(2,'0')}`;
+    persistData();
     setSyncBadge('ok','บันทึกแล้ว '+now);const el=document.getElementById('sp-sync-time');if(el)el.textContent='บันทึกแล้ว '+now;
     setRtBadge(true);showToast('บันทึกสำเร็จ ✓');
   }).catch(err=>showToast('บันทึกไม่สำเร็จ: '+err.message,3000,true));
