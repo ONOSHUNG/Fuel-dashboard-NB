@@ -1920,23 +1920,12 @@ function onFuelCellInput(fkey,el){
   const cap=DATA[currentSid].cap||0;
   const fc=(FUEL_CAPS[currentSid]||{})[fkey]||0;
 
-  // ✅ ล็อค 1: ไม่เกินความจุรายประเภท (fc)
+  // ล็อคตามความจุรายประเภท เช่น ดีเซล max 20,000 ล. แก๊ส 91 max 9,000 ล.
   if(fc>0&&val>fc){
     val=fc; el.value=fc;
     el.classList.add('over-cap');
     const fuelName=FUELS.find(f=>f.key===fkey)?.label||fkey;
-    showToast(`⚠️ ${fuelName}: ล็อคที่ความจุสูงสุด ${fc.toLocaleString()} ล.`,2200,true);
-    setTimeout(()=>el.classList.remove('over-cap'),1500);
-  }
-
-  // ✅ ล็อค 2: รวมทุกประเภทไม่เกิน total cap
-  const otherSum=FUELS.filter(f=>f.key!==fkey).reduce((a,f)=>a+(DATA[currentSid][f.key]||0),0);
-  const newTotal=otherSum+val;
-  if(cap>0&&newTotal>cap){
-    val=Math.max(0,cap-otherSum);
-    el.value=val;
-    el.classList.add('over-cap');
-    showToast(`⚠️ รวมน้ำมันเกินความจุคลัง ${cap.toLocaleString()} ล.`,2200,true);
+    showToast(`⚠️ ${fuelName}: ล็อคที่ ${fc.toLocaleString()} ล. (ความจุสูงสุด)`,2200,true);
     setTimeout(()=>el.classList.remove('over-cap'),1500);
   }
 
@@ -1956,7 +1945,7 @@ function onFuelCellInput(fkey,el){
 function showCapWarn(fkey,cap,tried){const fuelName=FUELS.find(f=>f.key===fkey)?.label||fkey;showToast(`⚠️ ${fuelName}: เกินความจุ`,2500,true);}
 function onCapChange(){if(!currentSid)return;const v=parseFloat(document.getElementById('sp-cap').value)||0;DATA[currentSid].cap=v;const remain=getRemain(currentSid);updateCapBar(remain,v);}
 function updateCapBar(remain,cap){
-  const pct=cap>0?Math.round(remain/cap*100):0;const over=pct>100;
+  const pct=cap>0?Math.round(remain/cap*100):0;const over=false; // ไม่ block บันทึกจาก total cap เพราะล็อครายประเภทแล้ว
   const bc=over?'#dc2626':pct>=50?'#10B981':pct>=25?'#F59E0B':'#EF4444';
   document.getElementById('sp-bar-fill').style.width=Math.min(pct,100)+'%';document.getElementById('sp-bar-fill').style.background=bc;
   document.getElementById('sp-pct').textContent=cap>0?pct+'%':'—';document.getElementById('sp-pct').style.color=cap>0?bc:'#9ca3af';
