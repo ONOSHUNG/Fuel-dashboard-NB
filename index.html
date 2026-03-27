@@ -1636,31 +1636,55 @@ let CURRENT_MODE=localStorage.getItem(LS_MODE)||'view';
 function formatThaiDateTime(raw){
   if(!raw||raw==='—'||raw==='')return '';
   const thaiM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const s=String(raw).trim();
 
-  // กรณีเวลาเปล่า HH:MM:SS หรือ HH:MM (จาก Apps Script เช่น "14:30:00")
-  if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(raw.trim())){
-    const parts=raw.trim().split(':');
-    return `${String(parseInt(parts[0])).padStart(2,'0')}:${parts[1]} น.`;
+  // ── format 1: yyyy-MM-ddTHH:mm:ss (local, ไม่มี Z) เช่น "2026-03-26T11:06:20"
+  const m1=s.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+  if(m1){
+    const[,yr,mo,dy,hh,mm]=m1;
+    const y=parseInt(yr);
+    if(y>=2010&&y<=2100)
+      return `${parseInt(dy)} ${thaiM[parseInt(mo)-1]} ${y+543} · ${hh}:${mm} น.`;
   }
 
-  // กรณี ISO หรือ date string
-  if(raw.includes('T')||raw.includes('-')){
+  // ── format 2: yyyy-MM-ddTHH:mm:ssZ หรือ +offset (UTC ISO) เช่น "2026-03-26T04:06:20.000Z"
+  if(s.includes('T')&&(s.endsWith('Z')||s.includes('+'))){
     try{
-      const d=new Date(raw);
-      if(isNaN(d.getTime()))return raw;
-      // ตรวจปีสมเหตุ (ค.ศ. 2020-2100) ป้องกันปี 1900 หรือ default date
-      const yr=d.getFullYear();
-      if(yr<2010||yr>2100)return raw;
-      const day=d.getDate();
-      const mon=thaiM[d.getMonth()];
-      const yearTH=yr+543;
-      const hh=String(d.getHours()).padStart(2,'0');
-      const mm=String(d.getMinutes()).padStart(2,'0');
-      return `${day} ${mon} ${yearTH} · ${hh}:${mm} น.`;
-    }catch(e){return raw;}
+      const d=new Date(s);
+      if(!isNaN(d.getTime())){
+        const y=d.getFullYear();
+        if(y>=2010&&y<=2100)
+          return `${d.getDate()} ${thaiM[d.getMonth()]} ${y+543} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} น.`;
+      }
+    }catch(e){}
   }
 
-  return raw;
+  // ── format 3: HH:MM:SS หรือ HH:MM (จาก Apps Script เช่น "14:30:00")
+  if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(s)){
+    const p=s.split(':');
+    return `${String(parseInt(p[0])).padStart(2,'0')}:${p[1]} น.`;
+  }
+
+  // ── format 4: yyyy-MM-dd เท่านั้น (ไม่มีเวลา)
+  const m4=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(m4){
+    const[,yr,mo,dy]=m4;
+    const y=parseInt(yr);
+    if(y>=2010&&y<=2100)
+      return `${parseInt(dy)} ${thaiM[parseInt(mo)-1]} ${y+543}`;
+  }
+
+  // ── fallback: ลอง parse แล้วตรวจปี
+  try{
+    const d=new Date(s);
+    if(!isNaN(d.getTime())){
+      const y=d.getFullYear();
+      if(y>=2010&&y<=2100)
+        return `${d.getDate()} ${thaiM[d.getMonth()]} ${y+543} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} น.`;
+    }
+  }catch(e){}
+
+  return ''; // ถ้าแปลงไม่ได้เลย คืนว่างแทนแสดง raw
 }
 
 // แปลง yyyy-MM-dd → "26 มี.ค. 2569"
@@ -1796,10 +1820,8 @@ function saveOneStation(sid){
   const stInfo=ALL_STATIONS.find(s=>s.id===sid)||{};
   const payload={...DATA[sid],station_name:stInfo.name||sid,amphoe:stInfo.amphoe||'',brand:stInfo.brand||''};
   return gsPost(GS_URL,{action:'save_one',station_id:sid,data:payload}).then(()=>{
-    // บันทึกเวลาแบบ local ISO (ไม่ใช่ UTC) เพื่อให้ตรงกับ timezone ไทย
-    const _now=new Date();const _off=_now.getTimezoneOffset()*60000;
-    DATA[sid].updated_at=new Date(_now-_off).toISOString().slice(0,19).replace('T',' ').replace(' ','T')+'';
-    // เก็บเป็น yyyy-MM-ddTHH:mm:ss local
+    // บันทึกเวลา local ไทย รูปแบบ yyyy-MM-ddTHH:mm:ss
+    const _now=new Date();
     DATA[sid].updated_at=`${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}T${String(_now.getHours()).padStart(2,'0')}:${String(_now.getMinutes()).padStart(2,'0')}:${String(_now.getSeconds()).padStart(2,'0')}`;
     persistData();
     setSyncBadge('ok','บันทึกแล้ว '+now);const el=document.getElementById('sp-sync-time');if(el)el.textContent='บันทึกแล้ว '+now;
