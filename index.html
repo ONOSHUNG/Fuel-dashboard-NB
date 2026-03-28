@@ -2253,14 +2253,18 @@ function renderStationCards(stations){
   // helper: get station overall status key
   const getStKey=(sid)=>{
     const d=getSD(sid),r=getRemain(sid),p=d.cap>0?Math.round(r/d.cap*100):0;
+    const caps=FUEL_CAPS[sid]||{};
     const fuelStatuses=getStationFuels(sid).map(f=>{
-      const fc=FUEL_CAPS[sid]?.[f.key]||0,v=d[f.key]||0;
-      const fp=fc>0?Math.round(v/fc*100):0;
+      const fc=caps[f.key]||0;
+      if(fc<=0)return null; // ไม่มีขาย ไม่นับ
+      const v=d[f.key]||0;
+      const fp=Math.round(v/fc*100);
       return v===0?'none':fp>50?'ok':fp>=5?'watch':'danger';
-    }).filter(k=>k!=='none');
-    if(!fuelStatuses.length)return 'none';
-    if(fuelStatuses.includes('danger'))return 'danger';
-    if(fuelStatuses.includes('watch'))return 'watch';
+    }).filter(k=>k!==null);
+    const active=fuelStatuses.filter(k=>k!=='none');
+    if(!active.length)return 'none';
+    if(active.includes('danger'))return 'danger';
+    if(active.includes('watch'))return 'watch';
     return 'ok';
   };
 
@@ -2326,7 +2330,8 @@ function renderStationCards(stations){
         const v=d[f.key]||0;
         const fpct=fuelCap>0?Math.round(v/fuelCap*100):0;
         const sKey=v===0?'none':fpct>50?'ok':fpct>=5?'watch':'danger';
-        if(v>0)fuelStatuses.push(sKey);
+        // นับเฉพาะประเภทที่มีความจุ (fuelCap>0) = มีขายจริง ไม่นับประเภทที่ไม่มีขาย
+        if(fuelCap>0)fuelStatuses.push(sKey==='none'?'none':sKey);
         const barW=Math.min(fpct,100);
         const barColor=sKey==='none'?'#e5e7eb':stColor[sKey];
         const pctDisplay=v===0?'—':fpct+'%';
@@ -2338,10 +2343,13 @@ function renderStationCards(stations){
         </div>`;
       }).join('');
 
+      // overall = ดูเฉพาะน้ำมันที่มีขาย (fuelCap>0) ไม่นับประเภทที่ไม่มี
+      const activeFuelStatuses=fuelStatuses.filter(k=>k!=='none');
       let overallKey;
       if(fuelStatuses.length===0)overallKey='none';
-      else if(fuelStatuses.includes('danger'))overallKey='danger';
-      else if(fuelStatuses.includes('watch'))overallKey='watch';
+      else if(activeFuelStatuses.length===0)overallKey='none';
+      else if(activeFuelStatuses.includes('danger'))overallKey='danger';
+      else if(activeFuelStatuses.includes('watch'))overallKey='watch';
       else overallKey='ok';
 
       const timeSlotLabel=d.time_slot?` · ⏰ ${d.time_slot} น.`:'';
@@ -2388,7 +2396,7 @@ function renderStationCards(stations){
               <div class="st-card-meta">${updatedText}</div>
               ${staleHtml}
             </div>
-            <span class="st-card-status-badge" style="background:${stBg[overallKey]};color:${stText[overallKey]};border:1.5px solid ${stColor[overallKey]}">${stLabel[overallKey]}</span>
+            
           </div>
           <div class="st-fuel-rows" style="${!isOpen?'opacity:.35;pointer-events:none;filter:grayscale(1)':''}">
             ${!isOpen?'<div style="text-align:center;padding:.5rem 0;font-size:11px;color:#dc2626;font-weight:600;letter-spacing:.02em">🚫 ปัจจุบันปิดให้บริการ ไม่สามารถเติมน้ำมันได้</div>':''}
