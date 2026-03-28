@@ -1374,8 +1374,8 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
       <span class="settings-label">Auto-refresh</span>
       <select id="sel-interval" onchange="saveInterval()" style="border:1px solid var(--gray-300);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'Noto Sans Thai',sans-serif;min-height:34px;">
         <option value="0">ปิด</option>
-        <option value="30">ทุก 30 วินาที</option>
-        <option value="60" selected>ทุก 1 นาที</option>
+        <option value="30" selected>ทุก 30 วินาที</option>
+        <option value="60">ทุก 1 นาที</option>
         <option value="300">ทุก 5 นาที</option>
       </select>
     </div>
@@ -1715,7 +1715,7 @@ function persistData(){localStorage.setItem(LS_DATA,JSON.stringify(DATA));}
 let DATA=loadData();
 const DEFAULT_GS_URL='https://script.google.com/macros/s/AKfycbyGsO6e53iYL6S5GykurNc2KZTLTwJMXLFqgrh6-UZSZcp10DVNExamoFIdqJy-8P5EvA/exec';
 let GS_URL=localStorage.getItem(LS_URL)||DEFAULT_GS_URL;
-let AUTO_INTERVAL=parseInt(localStorage.getItem(LS_INTERVAL)||'60');
+let AUTO_INTERVAL=parseInt(localStorage.getItem(LS_INTERVAL)||'30');
 let refreshTimer=null;
 let CURRENT_MODE=localStorage.getItem(LS_MODE)||'view';
 
@@ -1867,7 +1867,12 @@ function switchTab(tab){
   if(navTabs[idx])navTabs[idx].classList.add('active');
   document.getElementById('mode-btn-map')?.classList.toggle('active',tab==='map');
   document.getElementById('mode-btn-edit')?.classList.toggle('active',tab==='input');
-  if(tab==='dashboard'){renderDashboard();document.getElementById('mode-btn-view').classList.add('active');}
+  if(tab==='dashboard'){
+    renderDashboard();
+    document.getElementById('mode-btn-view').classList.add('active');
+    // ดึงข้อมูลใหม่จาก Sheet ทุกครั้งที่กลับมาหน้านี้
+    if(GS_URL)setTimeout(()=>pullFromSheet(),200);
+  }
   if(tab==='map'){
     initMap();
     // หลัง init → update markers ด้วยข้อมูลล่าสุดทันที
@@ -1940,7 +1945,16 @@ async function testAndSaveURL(){
 }
 function clearURL(){GS_URL='';localStorage.removeItem(LS_URL);document.getElementById('gs-url').value='';document.getElementById('url-hint').textContent='ล้างแล้ว';setSyncBadge('none','ยังไม่ได้ตั้งค่า');}
 function saveInterval(){AUTO_INTERVAL=parseInt(document.getElementById('sel-interval').value);localStorage.setItem(LS_INTERVAL,AUTO_INTERVAL);startAutoRefresh();}
-function startAutoRefresh(){if(refreshTimer)clearInterval(refreshTimer);if(AUTO_INTERVAL>0&&GS_URL){refreshTimer=setInterval(()=>{const onInputPage=document.getElementById('page-input').classList.contains('active');if(!onInputPage)pullFromSheet();},AUTO_INTERVAL*1000);}}
+function startAutoRefresh(){
+  if(refreshTimer)clearInterval(refreshTimer);
+  if(AUTO_INTERVAL>0&&GS_URL){
+    refreshTimer=setInterval(()=>{
+      // ดึงข้อมูลเสมอ ยกเว้นตอนกำลังกรอกข้อมูลอยู่ (ป้องกัน overwrite)
+      const onInputPage=document.getElementById('page-input').classList.contains('active');
+      if(!onInputPage)pullFromSheet();
+    },AUTO_INTERVAL*1000);
+  }
+}
 
 let currentSid=null,inputMode=null,inputStationId=null;
 const STATION_PINS={"s01":"0039001","s02":"0039002","s03":"0039003","s04":"0039004","s05":"0039005","s06":"0039006","s07":"0039007","s08":"0039008","s09":"0039009","s10":"0039010","s11":"0039011","s12":"0039012","s13":"0039013","s14":"0039014","s15":"0039015","s16":"0039101","s17":"0039102","s18":"0039103","s19":"0039104","s20":"0039201","s21":"0039202","s22":"0039203","s23":"0039204","s24":"0039205","s25":"0039206","s26":"0039301","s27":"0039302","s28":"0039303","s29":"0039304","s30":"0039305","s31":"0039401","s32":"0039402","s33":"0039403","s34":"0039501","s35":"0039502","s36":"0039601","s37":"0039602","s38":"0039603","s39":"0039604","s40":"0039605","s41":"0039606","s42":"0039607","s43":"0039608","s44":"0039609","s45":"0039610","s46":"0039611","s47":"0039612","s48":"0039613","s49":"0039614","s50":"0039615","s51":"0039107","s52":"0039616"};
@@ -3099,9 +3113,18 @@ function printReport(){
 
 // ── INIT ──
 document.getElementById('header-date').textContent='ข้อมูล ณ '+new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
-if(GS_URL)setSyncBadge('ok','พร้อมซิงค์');
-buildDashboardSelects();setMode('view',true);renderDashboard();startAutoRefresh();initThaiDateSelects();
-if(GS_URL)setTimeout(()=>pullFromSheet(),600);
+buildDashboardSelects();setMode('view',true);renderDashboard();initThaiDateSelects();
+
+if(GS_URL){
+  // ดึงจาก Sheet ทันทีเมื่อเปิด — Sheet คือแหล่งข้อมูลจริง localStorage เป็นแค่ cache
+  setSyncBadge('ing','กำลังโหลดข้อมูล...');
+  setTimeout(()=>pullFromSheet(),300);
+  // เริ่ม auto-refresh หลังดึงครั้งแรกเสร็จ
+  setTimeout(()=>startAutoRefresh(),2000);
+} else {
+  setSyncBadge('none','ยังไม่ได้ตั้งค่า');
+  startAutoRefresh();
+}
 
 // Map sidebar: บนมือถือเปิด bottom sheet อัตโนมัติ, บนคอม sidebar ซ้าย
 if(window.innerWidth<700){
