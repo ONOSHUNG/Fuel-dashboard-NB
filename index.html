@@ -1868,7 +1868,11 @@ function switchTab(tab){
   document.getElementById('mode-btn-map')?.classList.toggle('active',tab==='map');
   document.getElementById('mode-btn-edit')?.classList.toggle('active',tab==='input');
   if(tab==='dashboard'){renderDashboard();document.getElementById('mode-btn-view').classList.add('active');}
-  if(tab==='map')initMap();
+  if(tab==='map'){
+    initMap();
+    // หลัง init → update markers ด้วยข้อมูลล่าสุดทันที
+    setTimeout(()=>{if(mapInst)updateMapMarkers();},300);
+  }
   if(tab==='report'){
     if(!isAdminView){showToast('หน้ารายงานสำหรับผู้ดูแลระบบเท่านั้น',3000,true);return;}
     initReportFilters();renderReport();
@@ -1897,7 +1901,15 @@ function pullFromSheet(){
     const latestDate=allDates.length>0?allDates[allDates.length-1]:'';
     const displayDate=latestDate?new Date(latestDate).toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'}):new Date().toLocaleTimeString('th-TH');
     const now=new Date().toLocaleTimeString('th-TH');setSyncBadge('ok','ซิงค์แล้ว '+now);updateBannerTime(displayDate);
-    if(!onInputPage)showToast('ดึงข้อมูลสำเร็จ ✓');renderDashboard();if(mapInst)updateMapMarkers();
+    if(!onInputPage)showToast('ดึงข้อมูลสำเร็จ ✓');
+    renderDashboard();
+    // sync แผนที่เสมอ ไม่ว่าจะ init แล้วหรือยัง
+    if(mapInst){
+      updateMapMarkers();
+    } else if(document.getElementById('page-map').classList.contains('active')){
+      // หน้าแผนที่เปิดอยู่แต่ยังไม่ init → init พร้อม data ใหม่
+      initMap();
+    }
   }).catch(err=>{setSyncBadge('err','ดึงไม่สำเร็จ');showToast('Error: '+err.message,3000,true);}).finally(()=>setButtons(false));
 }
 
@@ -2340,7 +2352,9 @@ function renderStationCards(stations){
       }
       const _thaiDateShort=(iso)=>{if(!iso)return iso;const p=iso.split('-');const m=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];return p.length>=3?`${parseInt(p[2])} ${m[parseInt(p[1])-1]} ${parseInt(p[0])+543}`:iso;};
       const deliveryHtml=d.delivery_date?`<div class="st-card-delivery"><span>🚛 น้ำมันเข้า: <strong>${_thaiDateShort(d.delivery_date)}</strong>${d.delivery_time?` · ${d.delivery_time} น.`:''}</span>${d.delivery_note?`<span style="opacity:.7"> · ${d.delivery_note}</span>`:''}</div>`:'';
-      const mapBtn=hasCoords?`<a class="st-card-btn btn-map" href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}&travelmode=driving" target="_blank" style="text-decoration:none">📍 แผนที่</a>`:`<span class="st-card-btn" style="opacity:.4;cursor:default">📍 ไม่มีพิกัด</span>`;
+      const mapBtn=hasCoords
+        ?`<button class="st-card-btn btn-map" onclick="goToStationMap('${s.id}')" style="cursor:pointer">🗺️ ดูในแผนที่</button>`
+        :`<span class="st-card-btn" style="opacity:.4;cursor:default">📍 ไม่มีพิกัด</span>`;
       const inputBtn=(isAdminView||inputMode)?`<button class="st-card-btn btn-input" onclick="goToStationInput('${s.id}')">✏️ กรอกข้อมูล</button>`:'';
 
       const svcStatus=d.service_status||'open';
@@ -2349,7 +2363,7 @@ function renderStationCards(stations){
         ?`<div class="st-svc-bar st-svc-open"><span class="st-svc-dot st-svc-dot-pulse"></span>เปิดให้บริการ</div>`
         :`<div class="st-svc-bar st-svc-closed"><span class="st-svc-dot-off"></span>ปิดให้บริการ</div>`;
 
-      html+=`<div class="st-card" ${!isOpen?'style="opacity:.55"':''}>
+      html+=`<div class="st-card" data-sid="${s.id}" ${!isOpen?'style="opacity:.55"':''}>
         <div class="st-card-stripe" style="background:${!isOpen?'#dc2626':stColor[overallKey]}"></div>
         <div class="st-card-inner">
           ${svcHtml}
@@ -2379,7 +2393,50 @@ function renderStationCards(stations){
 
 function goToStationInput(sid){
   switchTab('input');
-  // ถ้ายังไม่ login จะเห็นหน้า PIN
+}
+
+// ข้อ 2: จาก Dashboard card → ไปแผนที่ + focus สถานีนั้น
+function goToStationMap(sid){
+  switchTab('map');
+  // รอให้ map init เสร็จแล้วค่อย focus
+  const tryFocus=()=>{
+    if(mapInst&&mapMarkers[sid]){
+      focusStation(sid);
+    } else {
+      setTimeout(tryFocus,200);
+    }
+  };
+  setTimeout(tryFocus,300);
+}
+
+// ข้อ 3: จาก Map popup → ไป Dashboard + scroll ไปการ์ดนั้น + highlight
+function goToStationDashboard(sid){
+  // ปิด popup
+  if(mapInst)mapInst.closePopup();
+  switchTab('dashboard');
+  // รีเซ็ต filter ให้เห็นสถานีนั้น
+  const stInfo=ALL_STATIONS.find(s=>s.id===sid);
+  if(stInfo){
+    const grp=GROUPS.find(g=>g.stations.some(s=>s.id===sid));
+    if(grp){
+      document.getElementById('sel-amphoe').value=grp.id;
+      onAmphoeChange();
+    }
+    document.getElementById('sel-station').value=sid;
+    document.getElementById('sel-sort').value='amphoe';
+  }
+  renderDashboard();
+  // scroll ไปการ์ด + highlight
+  setTimeout(()=>{
+    const card=document.querySelector(`.st-card[data-sid="${sid}"]`);
+    if(card){
+      card.scrollIntoView({behavior:'smooth',block:'center'});
+      card.style.outline='3px solid #3b82f6';
+      card.style.outlineOffset='3px';
+      card.style.transition='outline .3s';
+      setTimeout(()=>{card.style.outline='';card.style.outlineOffset='';},2500);
+    }
+  },400);
 }
 
 // ข้อ 4: กรองด่วนตาม status จาก status bar
@@ -2501,7 +2558,7 @@ function buildPopupHtml(s){
   const remainDisplay=pub?pct+'%':remain.toLocaleString()+' ล.';
   const capDisplay=pub?'—':cap.toLocaleString()+' ล.';
   const fuelRows=FUELS.map(f=>{const v=d[f.key]||0;const fpct=cap>0?Math.round(v/cap*100):0;const fst=getFuelStatus(fpct);const display=pub?(v>0?fpct+'%':'—'):(v>0?v.toLocaleString()+' ล.':'—');return `<div class="map-popup-row"><span class="map-popup-label"><span style="width:7px;height:7px;border-radius:2px;background:${f.color};display:inline-block"></span>${f.label}</span><span class="map-popup-val" style="color:${f.color}">${display} ${pub&&v>0?fst.badge:''}</span></div>`;}).join('');
-  return `<div class="map-popup"><div class="map-popup-head" style="background:${bg};border-bottom:1px solid #e5e7eb"><div><div class="map-popup-name">${s.name}</div><div style="font-size:10px;color:#6b7280">${s.amphoe} · <span style="color:${color};font-weight:600">${si.label}</span></div></div><span style="font-size:9px;padding:2px 6px;border-radius:8px;background:${color};color:#fff;font-weight:600">${s.brand}</span></div><div class="map-popup-body"><div class="map-popup-pct" style="color:${remain>0?bc:'#9ca3af'}">${remain>0?pct+'%':'ไม่มีข้อมูล'}</div><div class="map-popup-bar"><div class="map-popup-bar-fill" style="width:${pct}%;background:${bc}"></div></div><div class="map-popup-row"><span class="map-popup-label">⛽ คงเหลือ</span><span class="map-popup-val">${remainDisplay}</span></div>${pub?'':`<div class="map-popup-row"><span class="map-popup-label">🏭 ความจุ</span><span class="map-popup-val">${capDisplay}</span></div>`}<div style="border-top:1px solid #f3f4f6;margin-top:4px;padding-top:4px">${fuelRows}</div><div style="font-size:9px;color:#9ca3af;margin-top:4px;text-align:right">${formatThaiDateShort(d.report_date)}${d.updated_at?' · '+formatThaiDateTime(d.updated_at):'—'}</div><a class="gmaps-btn" href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}&travelmode=driving" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>นำทาง Google Maps</a></div></div>`;
+  return `<div class="map-popup"><div class="map-popup-head" style="background:${bg};border-bottom:1px solid #e5e7eb"><div><div class="map-popup-name">${s.name}</div><div style="font-size:10px;color:#6b7280">${s.amphoe} · <span style="color:${color};font-weight:600">${si.label}</span></div></div><span style="font-size:9px;padding:2px 6px;border-radius:8px;background:${color};color:#fff;font-weight:600">${s.brand}</span></div><div class="map-popup-body"><div class="map-popup-pct" style="color:${remain>0?bc:'#9ca3af'}">${remain>0?pct+'%':'ไม่มีข้อมูล'}</div><div class="map-popup-bar"><div class="map-popup-bar-fill" style="width:${pct}%;background:${bc}"></div></div><div class="map-popup-row"><span class="map-popup-label">⛽ คงเหลือ</span><span class="map-popup-val">${remainDisplay}</span></div>${pub?'':`<div class="map-popup-row"><span class="map-popup-label">🏭 ความจุ</span><span class="map-popup-val">${capDisplay}</span></div>`}<div style="border-top:1px solid #f3f4f6;margin-top:4px;padding-top:4px">${fuelRows}</div><div style="font-size:9px;color:#9ca3af;margin-top:4px;text-align:right">${formatThaiDateShort(d.report_date)}${d.updated_at?' · '+formatThaiDateTime(d.updated_at):'—'}</div><button onclick="goToStationDashboard('${s.id}')" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:8px;margin-bottom:6px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;cursor:pointer;font-family:'Noto Sans Thai',sans-serif;font-size:12px;font-weight:600;color:#065f46">📊 ดูรายละเอียดในแดชบอร์ด</button><a class="gmaps-btn" href="https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}&travelmode=driving" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>นำทาง Google Maps</a></div></div>`;
 }
 function updateMapMarkers(){ALL_STATIONS.forEach(s=>{if(!mapMarkers[s.id])return;const si=getStationStatus(s.id);const pct=getStationPct(s.id);const size=si.key==='danger'?44:si.key==='none'?30:38;const icon=L.divIcon({className:'',html:buildMarkerHtml(si,pct),iconSize:[size,size],iconAnchor:[size/2,size/2],popupAnchor:[0,-size/2-4]});mapMarkers[s.id].setIcon(icon);mapMarkers[s.id].setPopupContent(buildPopupHtml(s));});renderMapSidebar();}
 function getFuelPct(sid,fuelKey){const d=getSD(sid);const cap=d.cap||0;if(cap===0)return 0;return Math.round((d[fuelKey]||0)/cap*100);}
