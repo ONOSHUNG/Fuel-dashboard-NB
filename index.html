@@ -1171,7 +1171,7 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
 <div class="nav-tabs">
   <div class="nav-tab active" onclick="switchTab('dashboard')">📊 แดชบอร์ด</div>
   <div class="nav-tab" onclick="switchTab('map')">🗺️ แผนที่</div>
-  <div class="nav-tab" onclick="switchTab('trend')" id="nav-tab-trend">📈 แนวโน้ม <span id="trend-lock" style="font-size:9px">🔒</span></div>
+  <div class="nav-tab" onclick="switchTab('trend')" id="nav-tab-trend">📈 แนวโน้ม</div>
   <div class="nav-tab" onclick="switchTab('input')">✏️ กรอกข้อมูลน้ำมันคงเหลือ</div>
   <div class="nav-tab" onclick="switchTab('sales')">🛒 กรอกจำหน่าย</div>
   <div class="nav-tab" id="tab-settings" onclick="switchTab('settings')" style="display:none">⚙️ ตั้งค่า</div>
@@ -1238,10 +1238,7 @@ td.td-cap    { color:var(--gray-500); font-family:'Kanit',sans-serif; text-align
       <span class="slicer-label">อำเภอ</span>
       <select id="trend-amphoe-sel" onchange="renderTrendCharts()"><option value="all">ทุกอำเภอ</option></select>
     </div>
-    <div class="slicer-grp">
-      <span class="slicer-label">สถานี</span>
-      <select id="trend-station-sel" onchange="renderTrendCharts()"><option value="all">ทุกสถานี</option></select>
-    </div>
+    <select id="trend-station-sel" style="display:none"><option value="all">ทุกสถานี</option></select>
     <button class="btn btn-warn" onclick="loadTrend()" style="margin-left:auto;flex-shrink:0">↓ โหลด</button>
   </div>
   <div class="trend-content">
@@ -1792,7 +1789,7 @@ let isAdminView=false;
 function isPublicView(){return !isAdminView;}
 let lastSyncTime='—';
 function updateBannerTime(time){lastSyncTime=time;const el=document.getElementById('banner-last-update');if(el)el.textContent='📅 ข้อมูล ณ วันที่: '+time;}
-function setAdminView(on){isAdminView=on;renderDashboard();document.getElementById('admin-view-badge').style.display=on?'inline-flex':'none';document.getElementById('trend-lock').textContent=on?'':'🔒';
+function setAdminView(on){isAdminView=on;renderDashboard();document.getElementById('admin-view-badge').style.display=on?'inline-flex':'none';
   document.getElementById('tab-report').style.display=on?'':'none';
   const timeSpan=`<br><span style="font-size:10px;opacity:.75" id="banner-last-update">📅 ข้อมูล ณ วันที่: ${lastSyncTime}</span>`;
   document.getElementById('public-banner').innerHTML=on?'<span class="public-banner-icon">🔓</span><div class="public-banner-text"><strong>โหมดผู้ดูแลระบบ</strong> แสดงตัวเลขลิตรจริง'+timeSpan+'</div>':'<span class="public-banner-icon">ℹ️</span><div class="public-banner-text"><strong>ข้อมูลสถานการณ์น้ำมัน</strong> จังหวัดหนองบัวลำภู · แสดงเป็นร้อยละ (%) ของความจุ · ครอบคลุม 6 อำเภอ 51 สถานี'+timeSpan+'</div>';
@@ -1882,7 +1879,6 @@ function switchTab(tab){
     initReportFilters();renderReport();
   }
   if(tab==='trend'){
-    if(!isAdminView){showToast('แท็บแนวโน้มสำหรับผู้ดูแลระบบเท่านั้น กรุณาเข้าสู่ระบบก่อน',3000,true);return;}
     initTrend();
   }
   if(tab==='input'){if(!inputMode){document.getElementById('input-pin-screen').style.display='block';document.getElementById('input-admin-screen').style.display='none';}}
